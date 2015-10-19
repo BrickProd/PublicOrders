@@ -1,0 +1,57 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+	xmlns:ic="http://schemas.microsoft.com/expression/2010/interactions"
+	xmlns:local="clr-namespace:PublicOrders"
+    xmlns:views="clr-namespace:PublicOrders.Views"
+	mc:Ignorable="d"
+	x:Class="PublicOrders.MainView"
+	d:DesignWidth="640" d:DesignHeight="500">
+	<UserControl.Resources>
+		<local:MainViewModel x:Key="MainViewModelDataSource" />
+	</UserControl.Resources>
+
+	<Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}">
+		<TabControl Margin="0" TabStripPlacement="Left">
+			<TabItem Header="Поиск победителей">
+                <Grid Background="#FFE5E5E5">
+                    <views:WinnerSearchPanel></views:WinnerSearchPanel>
+                </Grid>
+            </TabItem>
+			<TabItem Header="Фильтр заказов">
+                <Grid Background="#FFE5E5E5">
+                    <views:OrderFilterPanel></views:OrderFilterPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Создать документ">
+                <Grid Background="#FFE5E5E5">
+                    <views:CreateDocumentPanel></views:CreateDocumentPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Редактор товара">
+                <Grid Background="#FFE5E5E5">
+                    <views:ProductEditorPanel></views:ProductEditorPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Загрузить товар">
+                <Grid Background="#FFE5E5E5">
+                    <views:LoadProductsPanel></views:LoadProductsPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+		
+		
+		
+		<!--<TextBlock Text="{Binding ViewModelProperty}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Content="Update Value" Height="41" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,125,0,0">
+			<i:Interaction.Triggers>
+				<i:EventTrigger EventName="Click">
+					<ic:CallMethodAction MethodName="ViewModelMethod" TargetObject="{Binding}"/>
+				</i:EventTrigger>
+			</i:Interaction.Triggers>
+		</Button>-->
+	</Grid>
+</UserControl>

@@ -1,0 +1,42 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PublicOrders.Views"
+             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.ProductEditorPanel"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="500">
+    <UserControl.DataContext>
+        <ViewModels:ProductEditorViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <TabControl>
+            <TabItem Header="Товары">
+                <DataGrid x:Name="productGrid" Margin="10,30.96,187,10" ItemsSource="{Binding Products}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Торговый знак" Binding="{Binding TradeMark}" Width="*"></DataGridTextColumn>
+                        <DataGridComboBoxColumn Header="Рубрика" ItemsSource="{Binding Rubrics}" DisplayMemberPath="Name" SelectedValuePath="RubricId" SelectedValueBinding="{Binding RubricId}"  Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Рубрики">
+                <DataGrid x:Name="rubricGrid" Margin="10,30.96,210,10" ItemsSource="{Binding Rubrics}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"></DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Инструкции">
+                <DataGrid x:Name="instructionGrid" Margin="10,30.96,168,10" ItemsSource="{Binding Instructions}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"></DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+       
+
+    </Grid>
+</UserControl>

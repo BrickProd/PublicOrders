@@ -1,0 +1,42 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PublicOrders.Views"
+             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.LoadProductsPanel"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="500">
+    <UserControl.DataContext>
+        <ViewModels:LoadProductsViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="12*"/>
+            <ColumnDefinition Width="31*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="textBlock" Margin="5" Grid.Row="1" TextWrapping="Wrap" Text="Шаблон:"/>
+        <TextBlock x:Name="textBlock1" Margin="5" Grid.Row="2" TextWrapping="Wrap" Text="Документ:"/>
+        <ComboBox x:Name="comboBox" Grid.Column="1" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0"/>
+        <Button x:Name="button" Content="Загрузить" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}"/>
+        <TextBox x:Name="textBox" Grid.Column="1" Margin="5" Grid.Row="2" TextWrapping="Wrap" Text="{Binding DocPath}">
+            <TextBox.Template>
+                <ControlTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0"></TextBox>
+                        <Button HorizontalAlignment="Right" Content="..." Background="Transparent" Grid.Column="1" Foreground="Gray" Padding="5 0" Command="{Binding OpenFileCommand}"></Button>
+                    </Grid>
+                </ControlTemplate>
+            </TextBox.Template>
+        </TextBox>
+
+    </Grid>
+</UserControl>
