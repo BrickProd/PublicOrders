@@ -13,6 +13,7 @@ using PublicOrders.Models;
 using System.Windows;
 using System.IO;
 using PublicOrders.Processors;
+using Microsoft.Win32;
 
 namespace PublicOrders.ViewModels
 {
@@ -92,7 +93,38 @@ namespace PublicOrders.ViewModels
 
         private void OpenFile()
         {
-            //открой файл и захуярь путь в DocPath
+            Stream myStream = null;
+            OpenFileDialog openLoadingFileDialog = new OpenFileDialog();
+
+            if ((DocPath != null) && (DocPath.Trim() != ""))
+            {
+                FileInfo fi = new FileInfo(DocPath);
+                if (!fi.Exists)
+                {
+                    openLoadingFileDialog.InitialDirectory = "c:\\";
+                }
+                else {
+                    openLoadingFileDialog.InitialDirectory = fi.Directory.FullName;
+                }
+            }
+            else {
+                openLoadingFileDialog.InitialDirectory = "c:\\";
+            }
+            openLoadingFileDialog.Filter = "doc/docx files (*.doc/*.docx)|*.doc*";
+            openLoadingFileDialog.FilterIndex = 2;
+            openLoadingFileDialog.RestoreDirectory = true;
+
+            if (openLoadingFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    DocPath = openLoadingFileDialog.FileName;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
         }
 
         #endregion

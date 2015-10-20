@@ -44,9 +44,9 @@ namespace PublicOrders.Processors
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("комитет"):
-                        /*CommitteeLoadProcessor committeeLoadProcessor = new CommitteeLoadProcessor();
+                        CommitteeLoadProcessor committeeLoadProcessor = new CommitteeLoadProcessor();
                         resultType = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
-                        done_del(resultType, template, productsAddedCount, productsRepeatCount, message);*/
+                        done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     default:
                         done_del(ResultType.Error, template, productsAddedCount, productsRepeatCount, "Данный движок не обучает шаблоны типа: <" + template.Name + ">");

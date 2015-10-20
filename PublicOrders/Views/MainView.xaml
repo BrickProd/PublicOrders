@@ -26,7 +26,7 @@
                     <views:OrderFilterPanel></views:OrderFilterPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Создать документ">
+            <TabItem Header="Создать документ" >
                 <Grid Background="#FFE5E5E5">
                     <views:CreateDocumentPanel></views:CreateDocumentPanel>
                 </Grid>

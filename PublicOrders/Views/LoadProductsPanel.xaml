@@ -26,12 +26,12 @@
         <TextBlock x:Name="textBlock1" Margin="5" Grid.Row="2" TextWrapping="Wrap" Text="Документ:"/>
         <ComboBox x:Name="comboBox" Grid.Column="1" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0"/>
         <Button x:Name="button" Content="Загрузить" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}"/>
-        <TextBox x:Name="textBox" Grid.Column="1" Margin="5" Grid.Row="2" TextWrapping="Wrap" Text="{Binding DocPath}">
+        <TextBox x:Name="textBox" Grid.Column="1" Margin="5" Grid.Row="2" TextWrapping="Wrap">
             <TextBox.Template>
                 <ControlTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0"></TextBox>
+                        <TextBox Grid.Column="0" Text="{Binding DocPath}"></TextBox>
                         <Button HorizontalAlignment="Right" Content="..." Background="Transparent" Grid.Column="1" Foreground="Gray" Padding="5 0" Command="{Binding OpenFileCommand}"></Button>
                     </Grid>
                 </ControlTemplate>

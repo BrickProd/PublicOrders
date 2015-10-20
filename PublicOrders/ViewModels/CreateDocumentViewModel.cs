@@ -44,11 +44,15 @@ namespace PublicOrders.ViewModels
             get { return _selectedTemplate; }
             set {
                 _selectedTemplate = value;
+
                 // Выбираем продукты по шаблону
-                TemplateProducts = new ObservableCollection<Product>(SelectedTemplate.Products);
+                TemplateProducts = new ObservableCollection<Product>(dc.Templates.Find(SelectedTemplate.TemplateId).Products);
 
                 OnPropertyChanged("SelectedTemplate");
             }
+        }
+
+        private void InitObjects() {
         }
 
         private ObservableCollection<Product> _templateProducts = null;
