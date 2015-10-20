@@ -118,124 +118,65 @@ namespace PublicOrders.Processors
 
                         dc.Products.Add(product);
                         productAddedCount++;
-
-                        // Добавляем первое свойство
-                        property = new Property();
-                        product.Properties.Add(property);
-
-                        // Требуемый параметр
-                        ParamValue pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Требуемый параметр" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
-
-                        // Требуемое значение
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Требуемое значение" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
-
-                        // Значение, предлагаемое участником
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Значение, предлагаемое участником" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        try
-                        {
-                            pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
-                        }
-                        catch {
-                            pv.Value = "";
-                        }
-
-                        // Единица измерения
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
-
-                        // Сертификация
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        try
-                        {
-                            pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
-                        }
-                        catch
-                        {
-                            pv.Value = "";
-                        }
                     }
-                    else
+
+                    // Добавляем свойство
+                    property = new Property();
+                    product.Properties.Add(property);
+
+                    // Требуемый параметр
+                    ParamValue pv = new ParamValue();
+                    property.ParamValues.Add(pv);
+
+                    pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Требуемый параметр" && m.Template.Name.ToLower() == "форма 2");
+                    pv.Property = property;
+                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
+
+                    // Требуемое значение
+                    pv = new ParamValue();
+                    property.ParamValues.Add(pv);
+
+                    pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Требуемое значение" && m.Template.Name.ToLower() == "форма 2");
+                    pv.Property = property;
+                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
+
+                    // Значение, предлагаемое участником
+                    pv = new ParamValue();
+                    property.ParamValues.Add(pv);
+
+                    pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Значение, предлагаемое участником" && m.Template.Name.ToLower() == "форма 2");
+                    pv.Property = property;
+                    try
                     {
-                        // Добавляем следующее свойство
-                        property = new Property();
-                        product.Properties.Add(property);
-
-                        // Требуемый параметр
-                        ParamValue pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Требуемый параметр" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
-
-                        // Требуемое значение
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Требуемое значение" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
-
-                        // Значение, предлагаемое участником
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Значение, предлагаемое участником" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        try
-                        {
-                            pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
-                        }
-                        catch
-                        {
-                            pv.Value = "";
-                        }
-
-                        // Единица измерения
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
-
-                        // Сертификация
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        try
-                        {
-                            pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
-                        }
-                        catch
-                        {
-                            pv.Value = "";
-                        }
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
                     }
+                    catch {
+                        pv.Value = "";
+                    }
+
+                    // Единица измерения
+                    pv = new ParamValue();
+                    property.ParamValues.Add(pv);
+
+                    pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "форма 2");
+                    pv.Property = property;
+                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
+
+                    // Сертификация
+                    pv = new ParamValue();
+                    property.ParamValues.Add(pv);
+
+                    pv.Param = dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "форма 2");
+                    pv.Property = property;
+                    try
+                    {
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
+                    }
+                    catch
+                    {
+                        pv.Value = "";
+                    }
+                    
                 }
 
                 // Закрываем приложение

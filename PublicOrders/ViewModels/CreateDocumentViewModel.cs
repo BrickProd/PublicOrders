@@ -38,9 +38,32 @@ namespace PublicOrders.ViewModels
         public DocumentDbContext dc { get; set; }
         public ObservableCollection<Document> Documents { get; set; }
         public ObservableCollection<Template> Templates { get; set; }
-        public Template SelectedTemplate { get; set; }
 
-        public ObservableCollection<Product> SelectedProducts { get; set; }
+        private Template _selectedTemplate = null;
+        public Template SelectedTemplate {
+            get { return _selectedTemplate; }
+            set {
+                _selectedTemplate = value;
+                // Выбираем продукты по шаблону
+                TemplateProducts = new ObservableCollection<Product>(SelectedTemplate.Products);
+
+                OnPropertyChanged("SelectedTemplate");
+            }
+        }
+
+        private ObservableCollection<Product> _templateProducts = null;
+        public ObservableCollection<Product> TemplateProducts
+        {
+            get
+            {
+                return _templateProducts;
+            }
+            set
+            {
+                _templateProducts = value;
+                OnPropertyChanged("TemplateProducts");
+            }
+        }
 
         public ObservableCollection<Instruction> Instructions { get; set; }
         public Instruction SelectedInstruction { get; set; }
@@ -68,7 +91,7 @@ namespace PublicOrders.ViewModels
             Document document = new Document();
             document.Instruction = SelectedInstruction;
 
-            foreach (Product product in SelectedProducts) {
+            foreach (Product product in TemplateProducts) {
                 document.Products.Add(product);
 
             }
@@ -92,11 +115,9 @@ namespace PublicOrders.ViewModels
         {
             dc = new DocumentDbContext();
 
-            SelectedProducts = new ObservableCollection<Product>();
-            //Documents = new ObservableCollection<Document>(dc.Documents);
-            //Templates = new ObservableCollection<object>(база);
-            //Products = new ObservableCollection<object>(база);
-            //Instructions = new ObservableCollection<object>(база);
+            TemplateProducts = new ObservableCollection<Product>();
+            Templates = new ObservableCollection<Template>(dc.Templates);
+            Instructions = new ObservableCollection<Instruction>(dc.Instructions);
         }
     }
 }

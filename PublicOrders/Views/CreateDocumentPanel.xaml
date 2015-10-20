@@ -21,7 +21,7 @@
         <ComboBox x:Name="comboBox" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedIndex="0"/>
         <ComboBox x:Name="comboBox1" Margin="5" Grid.Row="3" ItemsSource="{Binding Instructions}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
         <Button x:Name="button" Content="Создать" HorizontalAlignment="Right" Margin="5" Grid.Row="4" Width="100" Command="{Binding CreateDocumentCommand}"/>
-        <DataGrid x:Name="dataGrid" Margin="5,10" Grid.Row="2" ItemsSource="{Binding Products}"/>
+        <DataGrid x:Name="dataGrid" Margin="5,10" Grid.Row="2" ItemsSource="{Binding TemplateProducts}"/>
 
     </Grid>
 </UserControl>
