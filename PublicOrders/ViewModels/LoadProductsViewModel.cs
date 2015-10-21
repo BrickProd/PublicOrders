@@ -15,12 +15,12 @@ using System.IO;
 using PublicOrders.Processors;
 using Microsoft.Win32;
 
+using PublicOrders.ViewModels;
+
 namespace PublicOrders.ViewModels
 {
     public class LoadProductsViewModel : INotifyPropertyChanged
     {
-        DocumentDbContext dc = null;
-
         private string _docPath;
         public string DocPath
         {
@@ -29,10 +29,11 @@ namespace PublicOrders.ViewModels
             {
                 _docPath = value;
                 OnPropertyChanged("DocPath");
+                this.ButtonLoadProdsEnabled = this.DocPath != "";
             }
         }
 
-        private bool _buttonLoadProdsEnabled = true;
+        private bool _buttonLoadProdsEnabled;
         public bool ButtonLoadProdsEnabled
         {
             get { return _buttonLoadProdsEnabled; }
@@ -43,12 +44,32 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public ObservableCollection<Template> Templates { get; set; }
-        public Template SelectedTemplate { get; set; }
-        
+        private ObservableCollection<Template> _templates;
+        public ObservableCollection<Template> Templates
+        {
+            get { return _templates; }
+            set {
+                _templates = value;
+                OnPropertyChanged("Templates"); }
+        }
+
+        private Template _selectedTemplate;
+        public Template SelectedTemplate
+        {
+            get { return _selectedTemplate; }
+            set
+            {
+                _selectedTemplate = value;
+                OnPropertyChanged("SelectedTemplate");
+            }
+        }
+
         #region КОМАНДЫ
         private DelegateCommand loadCommand;
         private DelegateCommand openFileCommand;
+        
+
+
         public ICommand LoadCommand
         {
             get
@@ -93,6 +114,8 @@ namespace PublicOrders.ViewModels
 
         private void OpenFile()
         {
+            this.Templates.Add(new Template() {Name = "Test"});
+
             Stream myStream = null;
             OpenFileDialog openLoadingFileDialog = new OpenFileDialog();
 
@@ -164,16 +187,25 @@ namespace PublicOrders.ViewModels
 
         public LoadProductsViewModel()
         {
-            dc = new DocumentDbContext();
-            Templates = new ObservableCollection<Template>(dc.Templates);
+            DocPath = "";
+            ButtonLoadProdsEnabled = DocPath != "";
+            //dc = new DocumentDbContext();
+            var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+            if (mvm != null) Templates = mvm.TemplateCollection;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        #region [INotifyPropertyChanged]
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler PropertyChanged;        
+        private void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
+
+        #endregion [/INotifyPropertyChanged]
     }
 }

@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="500">
     <UserControl.DataContext>
-        <ViewModels:LoadProductsViewModel/>
+        <ViewModels:LoadProductsViewModel></ViewModels:LoadProductsViewModel>
     </UserControl.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -24,27 +24,17 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Margin="5" Grid.Row="1" TextWrapping="Wrap" Text="Шаблон:"/>
         <TextBlock x:Name="textBlock1" Margin="5" Grid.Row="2" TextWrapping="Wrap" Text="Документ:"/>
-        <ComboBox x:Name="comboBox" Grid.Column="1" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0"/>
-        <Button x:Name="button" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}" >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Content" Value="Загрузить"></Setter>
-                    <Setter Property="IsEnabled" Value="True"></Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=DocPath, Path=Text}" Value="">
-                            <Setter Property="Content" Value="Выберите документ..."></Setter>
-                            <Setter Property="IsEnabled" Value="False"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
+        <ComboBox x:Name="comboBox" Grid.Column="1" Margin="5,5,0,5" Grid.Row="1" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=TemplateCollection }"  SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0" HorizontalAlignment="Left" Width="160"/>
+        <ComboBox x:Name="comboBox2" Grid.Column="1" Margin="170,5,5,5" Grid.Row="1" ItemsSource="{Binding Templates }"  SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0"/>
+        <Button x:Name="button" Content="Загрузить" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}" IsEnabled="{Binding ButtonLoadProdsEnabled, Mode=TwoWay}">
+
         </Button>
         <TextBox x:Name="textBox" Grid.Column="1" Margin="5" Grid.Row="2" TextWrapping="Wrap">
             <TextBox.Template>
                 <ControlTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
-                        <TextBox x:Name="DocPath" Grid.Column="0" Text="{Binding DocPath}"></TextBox>
+                        <TextBox x:Name="DocPath" Grid.Column="0" Text="{Binding DocPath, Mode=TwoWay}"></TextBox>
                         <Button HorizontalAlignment="Right" Content="..." Background="Transparent" Grid.Column="1" Foreground="Gray" Padding="5 0" Command="{Binding OpenFileCommand}"></Button>
                     </Grid>
                 </ControlTemplate>

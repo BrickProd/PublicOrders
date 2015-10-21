@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PublicOrders.ViewModels;
 
 namespace PublicOrders.Views
 {
@@ -20,6 +21,11 @@ namespace PublicOrders.Views
     /// </summary>
     public partial class LoadProductsPanel : UserControl
     {
+        protected LoadProductsViewModel VM
+        {
+            get { return (LoadProductsViewModel)Resources["LoadProductsViewModel"]; }
+        }
+
         public LoadProductsPanel()
         {
             InitializeComponent();

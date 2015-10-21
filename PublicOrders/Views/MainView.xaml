@@ -14,7 +14,7 @@
 		<local:MainViewModel x:Key="MainViewModelDataSource" />
 	</UserControl.Resources>
 
-	<Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}">
+	<Grid x:Name="LayoutRoot" DataContext="{StaticResource MainViewModelDataSource}" d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}">
 		<TabControl Margin="0" TabStripPlacement="Left">
 			<TabItem Header="Поиск победителей">
                 <Grid Background="#FFE5E5E5">

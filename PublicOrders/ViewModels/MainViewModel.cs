@@ -1,47 +1,31 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using PublicOrders.Models;
 
 namespace PublicOrders
 {
 	public class MainViewModel : INotifyPropertyChanged
 	{
-		public MainViewModel()
-		{
-			// Insert code required on object creation below this point.
-		}
-		
-		private string viewModelProperty = "Runtime Property Value";
-		/// <summary>
-		/// Sample ViewModel property; this property is used in the view to display its value using a Binding.
-		/// </summary>
-		/// <returns></returns>
-		public string ViewModelProperty
-		{ 
-			get
-			{
-				return this.viewModelProperty;
-			}
-			set
-			{
-				this.viewModelProperty = value;
-				this.NotifyPropertyChanged("ViewModelProperty");
-			}
-		}
-		
-		/// <summary>
-		/// Sample ViewModel method; this method is invoked by a Behavior that is associated with it in the View.
-		/// </summary>
-		public void ViewModelMethod()
-		{ 
-			if(!this.ViewModelProperty.EndsWith("Updated Value", StringComparison.Ordinal)) 
-			{ 
-				this.ViewModelProperty = this.ViewModelProperty + " - Updated Value";
-			}
-		}
-		
-		#region INotifyPropertyChanged
-		public event PropertyChangedEventHandler PropertyChanged;
+        public DocumentDbContext dc { get; set; }
+        public  ObservableCollection<Product> ProductCollection { get; set; }
+        public  ObservableCollection<Template> TemplateCollection { get; set; }
 
+        public MainViewModel()
+		{
+			dc=new DocumentDbContext();
+
+            ProductCollection = new ObservableCollection<Product>(dc.Products);
+            TemplateCollection = new ObservableCollection<Template>(dc.Templates);
+
+
+		}
+		
+        
+        
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
 		private void NotifyPropertyChanged(String info)
 		{
 			if (PropertyChanged != null)
