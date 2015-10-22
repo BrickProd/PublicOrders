@@ -19,7 +19,7 @@ namespace PublicOrders.ViewModels
 {
     public class LoadProductsViewModel : INotifyPropertyChanged
     {
-        DocumentDbContext dc = null;
+        //DocumentDbContext dc = null;
 
         private string _docPath;
         public string DocPath
@@ -164,8 +164,8 @@ namespace PublicOrders.ViewModels
 
         public LoadProductsViewModel()
         {
-            dc = new DocumentDbContext();
-            Templates = new ObservableCollection<Template>(dc.Templates);
+            //dc = new DocumentDbContext();
+            Templates = new ObservableCollection<Template>(Globals.dcGlobal.Templates);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -5,12 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using PublicOrders.Models;
 using System.Threading;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace PublicOrders.Processors
 {
-    delegate void CreateDocumentDone_delegete(string message);
+    delegate void CreateDocumentDone_delegete(ResultType resultType, string message);
     class CreateDocumentProcessor
     {
+        object falseValue = false;
+        object trueValue = true;
+        Object missingObj = System.Reflection.Missing.Value;
+        Object trueObj = true;
+        Object falseObj = false;
+        Object begin = Type.Missing;
+        Object end = Type.Missing;
+
         private Document document = null;
         private Template template;
         CreateDocumentDone_delegete done_del = null;
@@ -24,12 +33,71 @@ namespace PublicOrders.Processors
 
         private void Operate_thread()
         {
-            /*PublicOrderEngine publicOrderEngine = new PublicOrderEngine();
-            string message = "";
-            publicOrderEngine.CreateDocFromTemplate(document.base_ID, docTemplate, connectionString, out message);
-            publicOrderEngine.Close();*/
+            try
+            {
+                string message = "";
+                Word.Application application = new Word.Application();
+                ResultType createResult = ResultType.Done;
+                //application.DisplayAlerts = Microsoft.Office.Interop.Word.WdAlertLevel.wdAlertsNone;
+                Word._Document doc = null;
 
-            done_del("");
+                switch (template.Name.ToLower().Trim())
+                {
+                    case ("свобода"):
+                        FreedomProcessor freedomProcessor = new FreedomProcessor();
+                        createResult = freedomProcessor.Create(document, application, out doc, out message);
+                        break;
+                    case ("форма 2"):
+                        Form2Processor form2Processor = new Form2Processor();
+                        createResult = form2Processor.Create(document, application, out doc, out message);
+                        break;
+                    case ("комитет"):
+                        CommitteeProcessor committeeProcessor = new CommitteeProcessor();
+                        createResult = committeeProcessor.Create(document, application, out doc, out message);
+                        break;
+                    default:
+                        doc = null;
+                        message = "Данный движок не обрабатывает шаблоны типа: <" + Convert.ToString(template.Name.Trim()) + ">";
+                        done_del(ResultType.Error, message);
+                        return;
+                }
+
+                switch (createResult)
+                {
+                    case (ResultType.Done):
+                        // Добавление инструкции
+                        // Получаем путь инструкции
+                        string instText = "";
+                        if (document.Instruction != null)
+                        {
+                            instText = document.Instruction.Text;
+                        }
+                        else {
+                            instText = "";
+                        }
+                        
+                        if (instText != "")
+                        {
+                            application.Selection.EndKey(Word.WdUnits.wdStory, Word.WdMovementType.wdMove);
+                            Word.Paragraph lastPar = doc.Paragraphs.Add(ref missingObj);
+                            lastPar.Range.Text = instText;
+                            lastPar.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        }
+
+                        break;
+                    case (ResultType.Error):
+                        done_del(ResultType.Error, message);
+                        return;
+                    default:
+                        break;
+                }
+
+                done_del(createResult, message);
+            }
+            catch (Exception ex)
+            {
+                done_del(ResultType.Error, ex.Message + '\n' + ex.StackTrace);
+            }
         }
 
         public void Operate()

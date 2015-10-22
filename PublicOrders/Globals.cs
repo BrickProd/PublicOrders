@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 namespace PublicOrders.Models
 {
@@ -21,6 +22,9 @@ namespace PublicOrders.Models
     }
     class Globals
     {
+        public static ObservableCollection<Product> ProductsGlobal { get; set; }
+        public static DocumentDbContext dcGlobal { get; set; }
+
         public static string CleanWordCell(string cellText)
         {
             if ((cellText.Length == 1) && (cellText[0] == '\a'))

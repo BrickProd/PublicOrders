@@ -34,17 +34,17 @@ namespace PublicOrders.Processors
                 switch (template.Name.Trim().ToLower())
                 {
                     case ("свобода"):
-                        FreedomLoadProcessor freedomLoadProcessor = new FreedomLoadProcessor();
+                        FreedomProcessor freedomLoadProcessor = new FreedomProcessor();
                         resultType = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("форма 2"):
-                        Form2LoadProcessor form2LoadProcessor = new Form2LoadProcessor();
+                        Form2Processor form2LoadProcessor = new Form2Processor();
                         resultType = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("комитет"):
-                        CommitteeLoadProcessor committeeLoadProcessor = new CommitteeLoadProcessor();
+                        CommitteeProcessor committeeLoadProcessor = new CommitteeProcessor();
                         resultType = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;

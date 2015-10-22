@@ -82,9 +82,9 @@
     <Compile Include="Models\Rubric.cs" />
     <Compile Include="Models\Template.cs" />
     <Compile Include="Processors\CreateDocumentProcessor.cs" />
-    <Compile Include="Processors\CommitteeLoadProcessor.cs" />
-    <Compile Include="Processors\Form2LoadProcessor.cs" />
-    <Compile Include="Processors\FreedomLoadProcessor.cs" />
+    <Compile Include="Processors\CommitteeProcessor.cs" />
+    <Compile Include="Processors\Form2Processor.cs" />
+    <Compile Include="Processors\FreedomProcessor.cs" />
     <Compile Include="Processors\LoadProductsProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />

@@ -31,7 +31,7 @@
                     <Setter Property="Content" Value="Загрузить"></Setter>
                     <Setter Property="IsEnabled" Value="True"></Setter>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=DocPath, Path=Text}" Value="">
+                        <DataTrigger Binding="{Binding DocPath}" Value="ggg">
                             <Setter Property="Content" Value="Выберите документ..."></Setter>
                             <Setter Property="IsEnabled" Value="False"></Setter>
                         </DataTrigger>
@@ -44,7 +44,7 @@
                 <ControlTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
-                        <TextBox x:Name="DocPath" Grid.Column="0" Text="{Binding DocPath}"></TextBox>
+                        <TextBox x:Name="DocPath" Grid.Column="0" Text="{Binding DocPath, Mode=TwoWay}"></TextBox>
                         <Button HorizontalAlignment="Right" Content="..." Background="Transparent" Grid.Column="1" Foreground="Gray" Padding="5 0" Command="{Binding OpenFileCommand}"></Button>
                     </Grid>
                 </ControlTemplate>

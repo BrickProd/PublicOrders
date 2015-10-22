@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using PublicOrders.Models;
 
 namespace PublicOrders
 {
 	public class MainViewModel : INotifyPropertyChanged
 	{
-		public MainViewModel()
+        //public DocumentDbContext dc { get; set; }
+        public MainViewModel()
 		{
-			// Insert code required on object creation below this point.
-		}
+            // Insert code required on object creation below this point.
+            Globals.dcGlobal = new DocumentDbContext();
+            Globals.ProductsGlobal = new ObservableCollection<Product>(Globals.dcGlobal.Products);
+        }
 		
 		private string viewModelProperty = "Runtime Property Value";
 		/// <summary>

@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PublicOrders.Annotations;
 
 namespace PublicOrders.Models
 {
-    public class Product
+    public class Product : INotifyPropertyChanged
     {
         public int ProductId { get; set; }
 
-        [Column(TypeName = "nvarchar"), MaxLength(256)]
+        
+        
+        private string _name;
         [Index]
-        public string Name { get; set; }
+        [Column(TypeName = "nvarchar"), MaxLength(256)]
+        public string Name { get { return _name; }
+                set {
+                _name = value;
+                OnPropertyChanged("Name");
+            } }
 
         [Column(TypeName = "nvarchar"), MaxLength(256)]
         [Index]
@@ -75,6 +86,15 @@ namespace PublicOrders.Models
         public Product()
         {
             
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -35,7 +35,7 @@ namespace PublicOrders.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public DocumentDbContext dc { get; set; }
+        //public DocumentDbContext dc { get; set; }
         public ObservableCollection<Document> Documents { get; set; }
         public ObservableCollection<Template> Templates { get; set; }
 
@@ -45,8 +45,9 @@ namespace PublicOrders.ViewModels
             set {
                 _selectedTemplate = value;
 
+                // TemplateProducts = new ObservableCollection<Product>(dc.Products.SelectMany(m => m.Templates.FirstOrDefault(l => l.Name.Trim().ToLower() == SelectedTemplate.Name.Trim().ToLower())));
                 // Выбираем продукты по шаблону
-                TemplateProducts = new ObservableCollection<Product>(dc.Templates.Find(SelectedTemplate.TemplateId).Products);
+                TemplateProducts = new ObservableCollection<Product>(Globals.dcGlobal.Templates.Find(SelectedTemplate.TemplateId).Products);
 
                 OnPropertyChanged("SelectedTemplate");
             }
@@ -95,11 +96,9 @@ namespace PublicOrders.ViewModels
             Document document = new Document();
             document.Instruction = SelectedInstruction;
 
-            foreach (Product product in TemplateProducts) {
-                document.Products.Add(product);
+            document.Products = TemplateProducts;
 
-            }
-            dc.Documents.Add(document);
+            Globals.dcGlobal.Documents.Add(document);
 
             ButtonCreateDocEnabled = false;
             CreateDocumentDone_delegete done_del = new CreateDocumentDone_delegete(CreateDocumentDone_Proc);
@@ -108,20 +107,26 @@ namespace PublicOrders.ViewModels
         }
         #endregion
 
-        private void CreateDocumentDone_Proc(string message) {
-            Application.Current.Dispatcher.BeginInvoke(new Action(() => {
-                MessageBox.Show("Документ создан успешно!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            }));
+        private void CreateDocumentDone_Proc(ResultType resultType, string message) {
+            switch (resultType) {
+                case (ResultType.Done):
+                    MessageBox.Show("Документ создан успешно!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    break;
+                default:
+                    MessageBox.Show("Ошибка при создании документа!\n" + message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+            }
+
             ButtonCreateDocEnabled = true;
         }
 
         public CreateDocumentViewModel()
         {
-            dc = new DocumentDbContext();
+            //dc = new DocumentDbContext();
 
             TemplateProducts = new ObservableCollection<Product>();
-            Templates = new ObservableCollection<Template>(dc.Templates);
-            Instructions = new ObservableCollection<Instruction>(dc.Instructions);
+            Templates = new ObservableCollection<Template>(Globals.dcGlobal.Templates);
+            Instructions = new ObservableCollection<Instruction>(Globals.dcGlobal.Instructions);
         }
     }
 }

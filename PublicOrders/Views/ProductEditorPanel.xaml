@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.ProductEditorPanel"
              mc:Ignorable="d" 
@@ -13,13 +14,22 @@
     <Grid>
         <TabControl>
             <TabItem Header="Товары">
-                <DataGrid x:Name="productGrid" Margin="10,30.96,187,10" ItemsSource="{Binding Products}" AutoGenerateColumns="False">
+                    <DataGrid x:Name="productGrid" 
+                              Margin="10,30.96,187,10"  
+                              ItemsSource="{Binding Products}" 
+                              SelectedItem="{Binding SelectedProduct, UpdateSourceTrigger=LostFocus}"
+                              AutoGenerateColumns="False">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="CellEditEnding">
+                            <i:InvokeCommandAction Command="{Binding UpdateProductCommand}"></i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"></DataGridTextColumn>
-                        <DataGridTextColumn Header="Торговый знак" Binding="{Binding TradeMark}" Width="*"></DataGridTextColumn>
-                        <DataGridComboBoxColumn Header="Рубрика" ItemsSource="{Binding Rubrics}" DisplayMemberPath="Name" SelectedValuePath="RubricId" SelectedValueBinding="{Binding RubricId}"  Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name, Mode=TwoWay}" Width="*"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Торговый знак" Binding="{Binding TradeMark}" Width="*"></DataGridTextColumn>
+                            <DataGridComboBoxColumn Header="Рубрика" ItemsSource="{Binding Rubrics}" DisplayMemberPath="Name" SelectedValuePath="RubricId" SelectedValueBinding="{Binding RubricId}"  Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
             </TabItem>
             <TabItem Header="Рубрики">
                 <DataGrid x:Name="rubricGrid" Margin="10,30.96,210,10" ItemsSource="{Binding Rubrics}">
@@ -36,7 +46,6 @@
                 </DataGrid>
             </TabItem>
         </TabControl>
-       
 
     </Grid>
 </UserControl>
