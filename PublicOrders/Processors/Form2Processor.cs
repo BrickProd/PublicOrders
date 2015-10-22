@@ -280,7 +280,10 @@ namespace PublicOrders.Processors
                     int propertiesCount = 0;
                     foreach (Product product in document.Products)
                     {
-                        propertiesCount += product.Properties.SelectMany(m => m.ParamValues.Where(l => l.Param.Template.Name.Trim().ToLower() == "форма 2")).Count();
+                        var myTemplate = product.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "форма 2");
+                        IEnumerable<Property> productProperties = product.Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
+
+                        propertiesCount += productProperties.Count();
                     }
 
                     Object defaultTableBehavior =
@@ -387,12 +390,15 @@ namespace PublicOrders.Processors
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
+                        // Получаем свойства продукта на шаблон
+                        var myTemplate = document.Products.ElementAt(productIndexCompilator).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "форма 2");
+                        IEnumerable<Property> productProperties = document.Products.ElementAt(productIndexCompilator).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
 
                         if (propertyIndexCompilator == 0)
                         {
                             // Объединяем ячейки по продукту (т.к. свойство занимает строку)
                             begCell = wordtable.Cell(i + 4, 1).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 1).Range.End;
+                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 1).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -405,7 +411,7 @@ namespace PublicOrders.Processors
                             }
 
                             begCell = wordtable.Cell(i + 4, 2).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 2).Range.End;
+                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 2).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -418,7 +424,7 @@ namespace PublicOrders.Processors
                             }
 
                             begCell = wordtable.Cell(i + 4, 3).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 3).Range.End;
+                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 3).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -431,7 +437,7 @@ namespace PublicOrders.Processors
                             }
 
                             begCell = wordtable.Cell(i + 4, 8).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 8).Range.End;
+                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 8).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -453,7 +459,7 @@ namespace PublicOrders.Processors
                             doc.Tables[1].Cell(i + 4, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                             // Сертификация
-                            paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Сертификация");
+                            paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Сертификация");
                             if (paramValue != null) {
                                 doc.Tables[1].Cell(i + 4, 8).Range.Text = paramValue.Value;
                             } else {
@@ -464,7 +470,7 @@ namespace PublicOrders.Processors
                         }
 
                         // Требуемый параметр
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Требуемый параметр");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Требуемый параметр");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 4, 4).Range.Text = paramValue.Value;
@@ -476,7 +482,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Требуемое значение
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Требуемое значение");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Требуемое значение");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 4, 5).Range.Text = paramValue.Value;
@@ -488,7 +494,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Значение, предлагаемое участником
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Значение, предлагаемое участником");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Значение, предлагаемое участником");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 4, 6).Range.Text = paramValue.Value;
@@ -500,7 +506,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Единица измерения
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Единица измерения");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Единица измерения");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 4, 7).Range.Text = paramValue.Value;
@@ -512,7 +518,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         propertyIndexCompilator++;
-                        if (document.Products.ElementAt(productIndexCompilator).Properties.Count == propertyIndexCompilator)
+                        if (productProperties.Count() == propertyIndexCompilator)
                         {
                             propertyIndexCompilator = 0;
                             productIndexCompilator++;

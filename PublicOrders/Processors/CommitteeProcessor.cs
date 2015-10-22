@@ -139,6 +139,7 @@ namespace PublicOrders.Processors
                             }));
                         }
 
+                        product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
                         productAddedCount++;
                     }
                     // Добавляем свойство
@@ -277,7 +278,10 @@ namespace PublicOrders.Processors
                     int propertiesCount = 0;
                     foreach (Product product in document.Products)
                     {
-                        propertiesCount += product.Properties.Count;
+                        var myTemplate = product.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет");
+                        IEnumerable<Property> productProperties = product.Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
+
+                        propertiesCount += productProperties.Count();
                     }
 
                     Object defaultTableBehavior =
@@ -313,13 +317,16 @@ namespace PublicOrders.Processors
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
+                        // Получаем свойства продукта на шаблон
+                        var myTemplate = document.Products.ElementAt(productIndexCompilator).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет");
+                        IEnumerable<Property> productProperties = document.Products.ElementAt(productIndexCompilator).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
 
                         if (propertyIndexCompilator == 0)
                         {
                             // Объединяем ячейки по продукту
                             // Номер
                             object begCell = wordtable.Cell(i + 2, 1).Range.Start;
-                            object endCell = wordtable.Cell(i + 2 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 1).Range.End;
+                            object endCell = wordtable.Cell(i + 2 + productProperties.Count() - 1, 1).Range.End;
                             Word.Range wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -333,7 +340,7 @@ namespace PublicOrders.Processors
 
                             // Название продукта
                             begCell = wordtable.Cell(i + 2, 2).Range.Start;
-                            endCell = wordtable.Cell(i + 2 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 2).Range.End;
+                            endCell = wordtable.Cell(i + 2 + productProperties.Count() - 1, 2).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -347,7 +354,7 @@ namespace PublicOrders.Processors
 
                             // Товарный знак
                             begCell = wordtable.Cell(i + 2, 9).Range.Start;
-                            endCell = wordtable.Cell(i + 2 + document.Products.ElementAt(productIndexCompilator).Properties.Count - 1, 9).Range.End;
+                            endCell = wordtable.Cell(i + 2 + productProperties.Count() - 1, 9).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -371,7 +378,7 @@ namespace PublicOrders.Processors
 
                         ParamValue paramValue = null;
                         // Наименование показателя
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Наименование показателя");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Наименование показателя");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 2, 3).Range.Text = paramValue.Value;
@@ -383,7 +390,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 2, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Минимальные значения показателей
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Минимальные значения показателей");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Минимальные значения показателей");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 2, 4).Range.Text = paramValue.Value;
@@ -395,7 +402,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 2, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Максимальные значения показателей
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Максимальные значения показателей");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Максимальные значения показателей");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 2, 5).Range.Text = paramValue.Value;
@@ -407,7 +414,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 2, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Значения показателей, которые не могут изменяться
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Значения показателей, которые не могут изменяться");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Значения показателей, которые не могут изменяться");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 2, 6).Range.Text = paramValue.Value;
@@ -419,7 +426,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 2, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Конкретные показатели
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Конкретные показатели");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Конкретные показатели");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 2, 7).Range.Text = paramValue.Value;
@@ -431,7 +438,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 2, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         // Единица измерения
-                        paramValue = document.Products.ElementAt(productIndexCompilator).Properties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Единица измерения");
+                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Единица измерения");
                         if (paramValue != null)
                         {
                             doc.Tables[1].Cell(i + 2, 8).Range.Text = paramValue.Value;
@@ -443,7 +450,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 2, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         propertyIndexCompilator++;
-                        if (document.Products.ElementAt(productIndexCompilator).Properties.Count == propertyIndexCompilator)
+                        if (productProperties.Count() == propertyIndexCompilator)
                         {
                             propertyIndexCompilator = 0;
                             productIndexCompilator++;

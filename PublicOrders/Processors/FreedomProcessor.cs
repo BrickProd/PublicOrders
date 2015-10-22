@@ -318,15 +318,20 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Получим свойства продукта на шаблон
-                        ICollection<Property> productProperties = document.Products.ElementAt(i).Properties.Where(m => m.ParamValues.Where(l => l.Param.Template.Name.Trim().ToLower() == "свобода"));
-
+                        //Product productTest = document.Products.ElementAt(i);
+                        //IColl<Param> paramsTemplate = mvm.dc.Templates.FirstOrDefault(p => p.Name.Trim().ToLower() == "свобода").Param;
+                        //ICollection<Property> productProperties = document.Products.ElementAt(i).SelectMany(m => m.ParamValues.Where(l => l.Param.Template.Name.Trim().ToLower() == "свобода"));
+                        //ICollection<Param> paramColl = (ICollection<Param>)paramsTemplate;
+                        var myTemplate = document.Products.ElementAt(i).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "свобода");
+                        IEnumerable<Property> productProperties = document.Products.ElementAt(i).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
+                        
                         // В данном шаблоне одно свойство(строка) у продукта
-                        if (document.Products.ElementAt(i).Properties.Count != 1)
+                        if (productProperties.Count() != 1)
                         {
                             message = "Ошибка при составлении шаблона";
                             return ResultType.Error;
                         }
-                        Property property = document.Products.ElementAt(i).Properties.First();
+                        Property property = productProperties.First();
 
                         ParamValue paramValue = null;
                         // Требования заказчика
