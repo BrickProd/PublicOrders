@@ -7,6 +7,7 @@ using PublicOrders.Models;
 using System.IO;
 using Word = Microsoft.Office.Interop.Word;
 using System.Windows;
+using System.Collections.ObjectModel;
 
 namespace PublicOrders.Processors
 {
@@ -114,16 +115,30 @@ namespace PublicOrders.Processors
                         }
 
                         // Проверить на повтор
-                        if (mvm.ProductCollection.FirstOrDefault(m => (m.Name == product.Name && m.TradeMark == product.TradeMark)) != null)
+                        Product repeatProduct = mvm.dc.Products.FirstOrDefault(m => (m.Name == product.Name && m.TradeMark == product.TradeMark));
+                        if (repeatProduct != null)
                         {
-                            productRepeatCount++;
-                            continue;
+                            if (repeatProduct.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет") == null)
+                            {
+                                product = repeatProduct;
+                            }
+                            else
+                            {
+                                productRepeatCount++;
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+
+                            mvm.dc.Products.Add(product);
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                mvm.ProductCollection.Add(product);
+                            }));
                         }
 
-                        product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
-                        product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-
-                        mvm.ProductCollection.Add(product);
                         productAddedCount++;
                     }
                     // Добавляем свойство
@@ -184,6 +199,7 @@ namespace PublicOrders.Processors
                 application = null;
 
                 mvm.dc.SaveChanges();
+                mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
                 return ResultType.Done;
 

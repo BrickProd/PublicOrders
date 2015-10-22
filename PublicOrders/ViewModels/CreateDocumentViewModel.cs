@@ -108,8 +108,6 @@ namespace PublicOrders.ViewModels
         {
             this.ButtonCreateDocEnabled = false;
 
-            
-
             if (mvm != null)
             {
                 Templates = mvm.TemplateCollection;
