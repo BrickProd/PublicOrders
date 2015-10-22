@@ -164,6 +164,9 @@
       <SubType>Designer</SubType>
     </DesignData>
     <None Include="packages.config" />
+    <None Include="Templates_Test\template_1.docx" />
+    <None Include="Templates_Test\template_2.docx" />
+    <None Include="Templates_Test\template_3.docx" />
     <Page Include="Views\LoadProductsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
