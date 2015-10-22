@@ -18,7 +18,8 @@ namespace PublicOrders.ViewModels
 {
     public class CreateDocumentViewModel : INotifyPropertyChanged
     {
-        private bool _buttonCreateDocEnabled = true;
+        MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+        private bool _buttonCreateDocEnabled;
         public bool ButtonCreateDocEnabled
         {
             get { return _buttonCreateDocEnabled; }
@@ -44,11 +45,6 @@ namespace PublicOrders.ViewModels
             get { return _selectedTemplate; }
             set {
                 _selectedTemplate = value;
-
-                // TemplateProducts = new ObservableCollection<Product>(dc.Products.SelectMany(m => m.Templates.FirstOrDefault(l => l.Name.Trim().ToLower() == SelectedTemplate.Name.Trim().ToLower())));
-                // Выбираем продукты по шаблону
-                TemplateProducts = new ObservableCollection<Product>(Globals.dcGlobal.Templates.Find(SelectedTemplate.TemplateId).Products);
-
                 OnPropertyChanged("SelectedTemplate");
             }
         }
@@ -57,18 +53,6 @@ namespace PublicOrders.ViewModels
         }
 
         private ObservableCollection<Product> _templateProducts = null;
-        public ObservableCollection<Product> TemplateProducts
-        {
-            get
-            {
-                return _templateProducts;
-            }
-            set
-            {
-                _templateProducts = value;
-                OnPropertyChanged("TemplateProducts");
-            }
-        }
 
         public ObservableCollection<Instruction> Instructions { get; set; }
         public Instruction SelectedInstruction { get; set; }
@@ -96,9 +80,9 @@ namespace PublicOrders.ViewModels
             Document document = new Document();
             document.Instruction = SelectedInstruction;
 
-            document.Products = TemplateProducts;
+            document.Products = SelectedTemplate.Products;
 
-            Globals.dcGlobal.Documents.Add(document);
+            mvm.dc.Documents.Add(document);
 
             ButtonCreateDocEnabled = false;
             CreateDocumentDone_delegete done_del = new CreateDocumentDone_delegete(CreateDocumentDone_Proc);
@@ -122,11 +106,15 @@ namespace PublicOrders.ViewModels
 
         public CreateDocumentViewModel()
         {
-            //dc = new DocumentDbContext();
+            this.ButtonCreateDocEnabled = false;
 
-            TemplateProducts = new ObservableCollection<Product>();
-            Templates = new ObservableCollection<Template>(Globals.dcGlobal.Templates);
-            Instructions = new ObservableCollection<Instruction>(Globals.dcGlobal.Instructions);
+            
+
+            if (mvm != null)
+            {
+                Templates = mvm.TemplateCollection;
+            }
+            Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
         }
     }
 }

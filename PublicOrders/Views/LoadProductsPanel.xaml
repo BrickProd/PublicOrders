@@ -25,19 +25,8 @@
         <TextBlock x:Name="textBlock" Margin="5" Grid.Row="1" TextWrapping="Wrap" Text="Шаблон:"/>
         <TextBlock x:Name="textBlock1" Margin="5" Grid.Row="2" TextWrapping="Wrap" Text="Документ:"/>
         <ComboBox x:Name="comboBox" Grid.Column="1" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0"/>
-        <Button x:Name="button" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}" >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Content" Value="Загрузить"></Setter>
-                    <Setter Property="IsEnabled" Value="True"></Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding DocPath}" Value="ggg">
-                            <Setter Property="Content" Value="Выберите документ..."></Setter>
-                            <Setter Property="IsEnabled" Value="False"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
+        <Button x:Name="button" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}" IsEnabled="{Binding ButtonLoadProdsEnabled, Mode=TwoWay}">
+            Загрузка
         </Button>
         <TextBox x:Name="textBox" Grid.Column="1" Margin="5" Grid.Row="2" TextWrapping="Wrap">
             <TextBox.Template>

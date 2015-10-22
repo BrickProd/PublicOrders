@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using PublicOrders.Models;
 using System.IO;
 using Word = Microsoft.Office.Interop.Word;
+using System.Windows;
 
 namespace PublicOrders.Processors
 {
     class CommitteeProcessor
     {
         Object missingObj = System.Reflection.Missing.Value;
+
+        private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
         public ResultType Learn(string docPath, out int productAddedCount, out int productRepeatCount, out string message)
         {
@@ -111,16 +114,16 @@ namespace PublicOrders.Processors
                         }
 
                         // Проверить на повтор
-                        if (Globals.dcGlobal.Products.FirstOrDefault(m => (m.Name == product.Name && m.TradeMark == product.TradeMark)) != null)
+                        if (mvm.ProductCollection.FirstOrDefault(m => (m.Name == product.Name && m.TradeMark == product.TradeMark)) != null)
                         {
                             productRepeatCount++;
                             continue;
                         }
 
-                        product.Templates.Add(Globals.dcGlobal.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
-                        product.Rubric = Globals.dcGlobal.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+                        product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
+                        product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
 
-                        Globals.dcGlobal.Products.Add(product);
+                        mvm.ProductCollection.Add(product);
                         productAddedCount++;
                     }
                     // Добавляем свойство
@@ -131,7 +134,7 @@ namespace PublicOrders.Processors
                     ParamValue pv = new ParamValue();
                     property.ParamValues.Add(pv);
 
-                    pv.Param = Globals.dcGlobal.Params.FirstOrDefault(m => m.Name == "Наименование показателя" && m.Template.Name.ToLower() == "комитет");
+                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Наименование показателя" && m.Template.Name.ToLower() == "комитет");
                     pv.Property = property;
                     pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
 
@@ -139,7 +142,7 @@ namespace PublicOrders.Processors
                     pv = new ParamValue();
                     property.ParamValues.Add(pv);
 
-                    pv.Param = Globals.dcGlobal.Params.FirstOrDefault(m => m.Name == "Минимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
+                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Минимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
                     pv.Property = property;
                     pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
 
@@ -147,7 +150,7 @@ namespace PublicOrders.Processors
                     pv = new ParamValue();
                     property.ParamValues.Add(pv);
 
-                    pv.Param = Globals.dcGlobal.Params.FirstOrDefault(m => m.Name == "Максимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
+                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Максимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
                     pv.Property = property;
                     pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
 
@@ -155,7 +158,7 @@ namespace PublicOrders.Processors
                     pv = new ParamValue();
                     property.ParamValues.Add(pv);
 
-                    pv.Param = Globals.dcGlobal.Params.FirstOrDefault(m => m.Name == "Значения показателей, которые не могут изменяться" && m.Template.Name.ToLower() == "комитет");
+                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Значения показателей, которые не могут изменяться" && m.Template.Name.ToLower() == "комитет");
                     pv.Property = property;
                     pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
 
@@ -163,7 +166,7 @@ namespace PublicOrders.Processors
                     pv = new ParamValue();
                     property.ParamValues.Add(pv);
 
-                    pv.Param = Globals.dcGlobal.Params.FirstOrDefault(m => m.Name == "Конкретные показатели" && m.Template.Name.ToLower() == "комитет");
+                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Конкретные показатели" && m.Template.Name.ToLower() == "комитет");
                     pv.Property = property;
                     pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
 
@@ -171,7 +174,7 @@ namespace PublicOrders.Processors
                     pv = new ParamValue();
                     property.ParamValues.Add(pv);
 
-                    pv.Param = Globals.dcGlobal.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "комитет");
+                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "комитет");
                     pv.Property = property;
                     pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
                 }
@@ -180,7 +183,7 @@ namespace PublicOrders.Processors
                 application.Quit(ref missing, ref missing, ref missing);
                 application = null;
 
-                Globals.dcGlobal.SaveChanges();
+                mvm.dc.SaveChanges();
 
                 return ResultType.Done;
 

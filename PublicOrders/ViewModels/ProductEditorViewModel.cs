@@ -17,6 +17,7 @@ namespace PublicOrders.ViewModels
 {
     public class ProductEditorViewModel : INotifyPropertyChanged
     {
+        private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
         //public DocumentDbContext dc { get; set; }
 
@@ -25,11 +26,11 @@ namespace PublicOrders.ViewModels
         {
             get
             {
-                return Globals.ProductsGlobal;
+                return _products;
             }
             set
             {
-                Globals.ProductsGlobal = value;
+                _products = value;
                 OnPropertyChanged("Products");
             }
 
@@ -66,9 +67,9 @@ namespace PublicOrders.ViewModels
 
         private void UpdateProduct() {
             //string sss = "";
-            Globals.dcGlobal.Entry(SelectedProduct).State = EntityState.Modified;
+            mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
             //dc.Entry(SelectedProduct).State = EntityState.Modified;
-            Globals.dcGlobal.SaveChanges();
+            mvm.dc.SaveChanges();
         }
 
         public ObservableCollection<object> Rubrics { get; set; }
@@ -97,8 +98,10 @@ namespace PublicOrders.ViewModels
 
         public ProductEditorViewModel()
         {
-            //dc = new DocumentDbContext();
-
+            if (mvm != null)
+            {
+                Products = mvm.ProductCollection;
+            }
             //Products = new ObservableCollection<Product>(dc.Products);
 
             //Rubrics = new ObservableCollection<object>(база);

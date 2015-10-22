@@ -29,10 +29,11 @@ namespace PublicOrders.ViewModels
             {
                 _docPath = value;
                 OnPropertyChanged("DocPath");
+                this.ButtonLoadProdsEnabled = this.DocPath != "";
             }
         }
 
-        private bool _buttonLoadProdsEnabled = true;
+        private bool _buttonLoadProdsEnabled;
         public bool ButtonLoadProdsEnabled
         {
             get { return _buttonLoadProdsEnabled; }
@@ -164,8 +165,11 @@ namespace PublicOrders.ViewModels
 
         public LoadProductsViewModel()
         {
-            //dc = new DocumentDbContext();
-            Templates = new ObservableCollection<Template>(Globals.dcGlobal.Templates);
+            this.ButtonLoadProdsEnabled = false;
+
+            var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+            if (mvm != null) Templates = mvm.TemplateCollection;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

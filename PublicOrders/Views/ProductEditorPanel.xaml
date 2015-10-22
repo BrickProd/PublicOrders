@@ -17,13 +17,13 @@
                     <DataGrid x:Name="productGrid" 
                               Margin="10,30.96,187,10"  
                               ItemsSource="{Binding Products}" 
-                              SelectedItem="{Binding SelectedProduct, UpdateSourceTrigger=LostFocus}"
+                              SelectedItem="{Binding SelectedProduct}"
                               AutoGenerateColumns="False">
-                    <i:Interaction.Triggers>
+                    <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="CellEditEnding">
                             <i:InvokeCommandAction Command="{Binding UpdateProductCommand}"></i:InvokeCommandAction>
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                    </i:Interaction.Triggers>-->
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name, Mode=TwoWay}" Width="*"></DataGridTextColumn>
                             <DataGridTextColumn Header="Торговый знак" Binding="{Binding TradeMark}" Width="*"></DataGridTextColumn>

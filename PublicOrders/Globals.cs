@@ -22,9 +22,6 @@ namespace PublicOrders.Models
     }
     class Globals
     {
-        public static ObservableCollection<Product> ProductsGlobal { get; set; }
-        public static DocumentDbContext dcGlobal { get; set; }
-
         public static string CleanWordCell(string cellText)
         {
             if ((cellText.Length == 1) && (cellText[0] == '\a'))
