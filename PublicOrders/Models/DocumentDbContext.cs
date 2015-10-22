@@ -10,7 +10,7 @@ namespace PublicOrders.Models
     public class DocumentDbContext : DbContext
     {
         public DocumentDbContext()
-            : base("DefaultConnection")
+            : base("PublicOrdersDocsConnection")
         {
             Database.SetInitializer<DocumentDbContext>(new DocInitializer());
         }

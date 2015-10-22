@@ -7,17 +7,25 @@ namespace PublicOrders
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        // Документы
         public DocumentDbContext dc { get; set; }
         public ObservableCollection<Template> TemplateCollection {get;set;}
         public ObservableCollection<Product> ProductCollection { get; set; }
 
-        //public DocumentDbContext dc { get; set; }
+        // Победители
+        public WinnersDbContext wc { get; set; }
+        public ObservableCollection<Customer> CustomerCollection { get; set; }
+
         public MainViewModel()
 		{
-            // Insert code required on object creation below this point.
+            // Документы
             dc = new DocumentDbContext();
             TemplateCollection = new ObservableCollection<Template>(dc.Templates);
             ProductCollection = new ObservableCollection<Product>(dc.Products);
+
+            // Победители
+            wc = new WinnersDbContext();
+            CustomerCollection = new ObservableCollection<Customer>(wc.Customers);
         }
 		
 		

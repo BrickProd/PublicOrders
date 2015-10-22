@@ -71,16 +71,11 @@
     </ApplicationDefinition>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
-    <Compile Include="Models\Document.cs" />
     <Compile Include="Models\DocumentDbContext.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Models\Instruction.cs" />
-    <Compile Include="Models\Param.cs" />
-    <Compile Include="Models\ParamValue.cs" />
-    <Compile Include="Models\Product.cs" />
-    <Compile Include="Models\Property.cs" />
-    <Compile Include="Models\Rubric.cs" />
-    <Compile Include="Models\Template.cs" />
+    <Compile Include="Models\PublicOrders_Docs.cs" />
+    <Compile Include="Models\PublicOrders_Winners.cs" />
+    <Compile Include="Models\WinnersDbContext.cs" />
     <Compile Include="Processors\CreateDocumentProcessor.cs" />
     <Compile Include="Processors\CommitteeProcessor.cs" />
     <Compile Include="Processors\Form2Processor.cs" />
