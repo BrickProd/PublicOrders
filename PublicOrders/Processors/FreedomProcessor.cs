@@ -317,6 +317,9 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 5).Range.Text = document.Products.ElementAt(i).TradeMark;
                         doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
+                        // Получим свойства продукта на шаблон
+                        ICollection<Property> productProperties = document.Products.ElementAt(i).Properties.Where(m => m.ParamValues.Where(l => l.Param.Template.Name.Trim().ToLower() == "свобода"));
+
                         // В данном шаблоне одно свойство(строка) у продукта
                         if (document.Products.ElementAt(i).Properties.Count != 1)
                         {
