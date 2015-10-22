@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.LoadProductsPanel"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="500">
+             d:DesignHeight="500" d:DesignWidth="500" Padding="20 0 20 0">
     <UserControl.DataContext>
         <ViewModels:LoadProductsViewModel/>
     </UserControl.DataContext>

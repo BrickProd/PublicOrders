@@ -6,11 +6,11 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.WinnerSearchPanel"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="500">
+             d:DesignHeight="400" d:DesignWidth="500" Padding="20 0 20 0">
     <UserControl.DataContext>
         <ViewModels:WinnerSearchViewModel/>
     </UserControl.DataContext>
-    <Grid>
+    <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="18*"/>
             <ColumnDefinition Width="7*"/>
