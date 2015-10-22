@@ -145,12 +145,12 @@ namespace PublicOrders.Models
         }
 
         // Транзакционные таблицы
-        private ICollection<Lot> _lots;
+        /*private ICollection<Lot> _lots;
         public virtual ICollection<Lot> Lots
         {
             get { return _lots ?? (_lots = new HashSet<Lot>()); } // Try HashSet<N>
             set { _lots = value; }
-        }
+        }*/
 
         public Order()
         {
@@ -208,6 +208,10 @@ namespace PublicOrders.Models
         [Index]
         public string Name { get; set; }
 
+        [ForeignKey("Order"), Required]
+        public int OrderId { get; set; }
+        virtual public Order Order { get; set; }
+
         [Index, Required]
         public long Price { get; set; }
 
@@ -234,12 +238,12 @@ namespace PublicOrders.Models
         public DateTime CreateDateTime { get; set; }
 
         // Транзакционные таблицы
-        private ICollection<Order> _orders;
+        /*private ICollection<Order> _orders;
         public virtual ICollection<Order> Orders
         {
             get { return _orders ?? (_orders = new HashSet<Order>()); } // Try HashSet<N>
             set { _orders = value; }
-        }
+        }*/
 
         public Lot()
         {

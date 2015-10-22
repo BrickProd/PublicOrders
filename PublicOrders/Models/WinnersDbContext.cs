@@ -36,12 +36,12 @@ namespace PublicOrders.Models
                 m.MapRightKey("OrderId");
             });
 
-            modelBuilder.Entity<Order>().HasMany(o => o.Lots).WithMany(d => d.Orders).Map(m =>
+            /*modelBuilder.Entity<Order>().HasMany(o => o.Lots).WithMany(d => d.Orders).Map(m =>
             {
                 m.ToTable("Orders_Lots");
                 m.MapLeftKey("OrderId");
                 m.MapRightKey("LotId");
-            });
+            });*/
         }
 
         public class WinnersInitializer : CreateDatabaseIfNotExists<WinnersDbContext>
