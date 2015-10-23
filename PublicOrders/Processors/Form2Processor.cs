@@ -133,10 +133,15 @@ namespace PublicOrders.Processors
                             product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
 
                             mvm.dc.Products.Add(product);
-                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            try
                             {
-                                mvm.ProductCollection.Add(product);
-                            }));
+                                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    mvm.ProductCollection.Add(product);
+                                }));
+                            }
+                            catch { }
+
                         }
 
                         product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "форма 2"));

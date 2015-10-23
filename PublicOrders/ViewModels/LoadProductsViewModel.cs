@@ -20,6 +20,7 @@ namespace PublicOrders.ViewModels
 {
     public class LoadProductsViewModel : INotifyPropertyChanged
     {
+        MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
         //DocumentDbContext dc = null;
 
         private string _docPath;
@@ -88,9 +89,15 @@ namespace PublicOrders.ViewModels
             }
 
             ButtonLoadProdsEnabled = false;
+
+            if ((mvm.lpProcessor != null) && (mvm.lpProcessor.isWorking()))
+            {
+                mvm.lpProcessor.Stop();
+            }
+
             LoadProductsDone_delegete done_del = new LoadProductsDone_delegete(LoadProductsDone_Proc);
-            LoadProductsProcessor lpProcessor = new LoadProductsProcessor(DocPath, SelectedTemplate, done_del);
-            lpProcessor.Operate();
+            mvm.lpProcessor = new LoadProductsProcessor(DocPath, SelectedTemplate, done_del);
+            mvm.lpProcessor.Operate();
         }
 
         private void OpenFile()
@@ -167,8 +174,6 @@ namespace PublicOrders.ViewModels
         public LoadProductsViewModel()
         {
             this.ButtonLoadProdsEnabled = false;
-
-            var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
             if (mvm != null) Templates = mvm.TemplateCollection;
         }

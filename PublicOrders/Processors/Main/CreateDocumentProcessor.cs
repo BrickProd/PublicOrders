@@ -9,9 +9,11 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace PublicOrders.Processors.Main
 {
-    delegate void CreateDocumentDone_delegete(ResultType resultType, string message);
-    class CreateDocumentProcessor
+    public delegate void CreateDocumentDone_delegete(ResultType resultType, string message);
+    public class CreateDocumentProcessor
     {
+        private bool isWork = false;
+
         private FreedomProcessor freedomProcessor = null;
         private Form2Processor form2Processor = null;
         private CommitteeProcessor committeeProcessor = null;
@@ -62,6 +64,7 @@ namespace PublicOrders.Processors.Main
                     default:
                         doc = null;
                         message = "Данный движок не обрабатывает шаблоны типа: <" + Convert.ToString(template.Name.Trim()) + ">";
+                        isWork = false;
                         done_del(ResultType.Error, message);
                         return;
                 }
@@ -90,24 +93,33 @@ namespace PublicOrders.Processors.Main
 
                         break;
                     case (ResultType.Error):
+                        isWork = false;
                         done_del(ResultType.Error, message);
                         return;
                     default:
                         break;
                 }
 
+                isWork = false;
                 done_del(createResult, message);
             }
             catch (Exception ex)
             {
+                isWork = false;
                 done_del(ResultType.Error, ex.Message + '\n' + ex.StackTrace);
             }
         }
 
         public void Operate()
         {
+            if (isWork) return;
+            isWork = true;
             Thread operate_thread = new Thread(Operate_thread);
             operate_thread.Start();
+        }
+
+        public bool isWorking() {
+            return isWork;
         }
 
         public void Stop()

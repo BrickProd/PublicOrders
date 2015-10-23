@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using PublicOrders.Models;
+using PublicOrders.Processors.Main;
 
 namespace PublicOrders
 {
@@ -34,7 +35,8 @@ namespace PublicOrders
         #endregion
 
         #region Процессоры
-
+        public CreateDocumentProcessor cdProcessor = null;
+        public LoadProductsProcessor lpProcessor = null;
         #endregion
 
         #region Фильтр

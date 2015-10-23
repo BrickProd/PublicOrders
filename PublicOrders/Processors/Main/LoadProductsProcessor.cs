@@ -9,9 +9,11 @@ using PublicOrders.Processors;
 
 namespace PublicOrders.Processors.Main
 {
-    delegate void LoadProductsDone_delegete(ResultType resultType, Template template, int productsAddedCount, int productsRepeatCount, string message);
-    class LoadProductsProcessor
+    public delegate void LoadProductsDone_delegete(ResultType resultType, Template template, int productsAddedCount, int productsRepeatCount, string message);
+    public class LoadProductsProcessor
     {
+        private bool isWork = false;
+
         private FreedomProcessor freedomProcessor = null;
         private Form2Processor form2Processor = null;
         private CommitteeProcessor committeeProcessor = null;
@@ -40,33 +42,46 @@ namespace PublicOrders.Processors.Main
                     case ("свобода"):
                         FreedomProcessor freedomLoadProcessor = new FreedomProcessor();
                         resultType = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
+                        isWork = false;
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("форма 2"):
                         Form2Processor form2LoadProcessor = new Form2Processor();
                         resultType = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
+                        isWork = false;
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("комитет"):
                         CommitteeProcessor committeeLoadProcessor = new CommitteeProcessor();
                         resultType = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
                         done_del(resultType, template, productsAddedCount, productsRepeatCount, message);
+                        isWork = false;
                         return;
                     default:
+                        isWork = false;
                         done_del(ResultType.Error, template, productsAddedCount, productsRepeatCount, "Данный движок не обучает шаблоны типа: <" + template.Name + ">");
                         return;
                 }
+                isWork = false;
             }
             catch (Exception ex)
             {
+                isWork = false;
                 done_del(ResultType.Error, template, productsAddedCount, productsRepeatCount, ex.Message + '\n' + ex.StackTrace);
             }
         }
 
         public void Operate()
         {
+            if (isWork) return;
+            isWork = true;
             Thread operate_thread = new Thread(Operate_thread);
             operate_thread.Start();
+        }
+
+        public bool isWorking()
+        {
+            return isWork;
         }
 
         public void Stop()

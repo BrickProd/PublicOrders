@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:PublicOrders.Views"
 	mc:Ignorable="d"
 	x:Class="PublicOrders.MainView"
-	d:DesignWidth="700" d:DesignHeight="600" Padding="0 20 0 20">
+	d:DesignWidth="700" d:DesignHeight="600" Padding="0 20 0 20" >
     <UserControl.Resources>
         <local:MainViewModel x:Key="MainViewModelDataSource" />
 

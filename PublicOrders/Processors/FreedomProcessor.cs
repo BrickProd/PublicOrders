@@ -144,10 +144,17 @@ namespace PublicOrders.Processors
 
 
                     mvm.dc.Products.Add(product);
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    try {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            mvm.ProductCollection.Add(product);
+                        }));
+                    }
+                    catch
                     {
-                        mvm.ProductCollection.Add(product);
-                    }));
+
+                    }
+
 
 
 

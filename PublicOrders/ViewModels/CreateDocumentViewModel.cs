@@ -86,9 +86,12 @@ namespace PublicOrders.ViewModels
             mvm.dc.Documents.Add(document);
 
             ButtonCreateDocEnabled = false;
+            if ((mvm.cdProcessor != null) && (mvm.cdProcessor.isWorking())) {
+                mvm.cdProcessor.Stop();
+            }
             CreateDocumentDone_delegete done_del = new CreateDocumentDone_delegete(CreateDocumentDone_Proc);
-            CreateDocumentProcessor cdProcessor = new CreateDocumentProcessor(document, SelectedTemplate, done_del);
-            cdProcessor.Operate();
+            mvm.cdProcessor = new CreateDocumentProcessor(document, SelectedTemplate, done_del);
+            mvm.cdProcessor.Operate();
         }
         #endregion
 
