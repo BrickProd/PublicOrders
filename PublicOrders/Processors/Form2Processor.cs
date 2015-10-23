@@ -13,6 +13,7 @@ namespace PublicOrders.Processors
 {
     class Form2Processor
     {
+        private bool isWork = false;
         Object missingObj = System.Reflection.Missing.Value;
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
@@ -22,6 +23,7 @@ namespace PublicOrders.Processors
             productRepeatCount = 0;
             try
             {
+                isWork = true;
                 message = "";
 
                 // Проверка пути документа
@@ -81,7 +83,7 @@ namespace PublicOrders.Processors
                     // Название продукта
                     try
                     {
-                        if ((Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == productName) || 
+                        if ((Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == productName) ||
                             (Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == ""))
                         {
                             isNewProduct = false;
@@ -100,6 +102,7 @@ namespace PublicOrders.Processors
 
                     if (isNewProduct)
                     {
+                        if (!isWork) break;
                         product = new Product();
                         product.Name = productName;
                         try
@@ -125,7 +128,8 @@ namespace PublicOrders.Processors
                                 continue;
                             }
                         }
-                        else {
+                        else
+                        {
                             product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
 
                             mvm.dc.Products.Add(product);
@@ -169,7 +173,8 @@ namespace PublicOrders.Processors
                     {
                         pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
                     }
-                    catch {
+                    catch
+                    {
                         pv.Value = "";
                     }
 
@@ -195,7 +200,7 @@ namespace PublicOrders.Processors
                     {
                         pv.Value = "";
                     }
-                    
+
                 }
 
                 // Закрываем приложение
@@ -215,12 +220,16 @@ namespace PublicOrders.Processors
                 message = ex.Message + '\n' + ex.StackTrace;
                 return ResultType.Error;
             }
+            finally {
+                isWork = false;
+            }
         }
 
         public ResultType Create(Document document, Word.Application application, out Word._Document doc, out string message)
         {
             try
             {
+                isWork = true;
                 message = "";
 
                 Object trueObj = true;
@@ -390,6 +399,7 @@ namespace PublicOrders.Processors
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
+                        if (!isWork) break;
                         // Получаем свойства продукта на шаблон
                         var myTemplate = document.Products.ElementAt(productIndexCompilator).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "форма 2");
                         IEnumerable<Property> productProperties = document.Products.ElementAt(productIndexCompilator).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
@@ -460,9 +470,12 @@ namespace PublicOrders.Processors
 
                             // Сертификация
                             paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Сертификация");
-                            if (paramValue != null) {
+                            if (paramValue != null)
+                            {
                                 doc.Tables[1].Cell(i + 4, 8).Range.Text = paramValue.Value;
-                            } else {
+                            }
+                            else
+                            {
                                 doc.Tables[1].Cell(i + 4, 8).Range.Text = "";
                             }
 
@@ -543,6 +556,14 @@ namespace PublicOrders.Processors
                 message = ex.Message + '\n' + ex.StackTrace;
                 return ResultType.Error;
             }
+            finally {
+                isWork = false;
+            }
+        }
+
+        public void Stop()
+        {
+            isWork = false;
         }
     }
 }

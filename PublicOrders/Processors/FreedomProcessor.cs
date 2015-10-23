@@ -13,6 +13,7 @@ namespace PublicOrders.Processors
 {
     class FreedomProcessor
     {
+        private bool isWork = false;
         Object missingObj = System.Reflection.Missing.Value;
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
@@ -23,6 +24,7 @@ namespace PublicOrders.Processors
             productRepeatCount = 0;
             try
             {
+                isWork = true;
                 message = "";
 
                 // Проверка пути документа
@@ -75,6 +77,7 @@ namespace PublicOrders.Processors
                 // Заполняем продукты
                 for (int i = 4; i <= tbl.Rows.Count; i++)
                 {
+                    if (!isWork) break;
                     Product product = new Product();
 
                     // Название продукта
@@ -138,7 +141,7 @@ namespace PublicOrders.Processors
                     product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода"));
                     product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
 
-                    
+
 
                     mvm.dc.Products.Add(product);
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -161,10 +164,15 @@ namespace PublicOrders.Processors
 
                 return ResultType.Done;
             }
+
             catch (Exception ex)
             {
                 message = ex.Message + '\n' + ex.StackTrace;
                 return ResultType.Error;
+            }
+            finally
+            {
+                isWork = false;
             }
         }
 
@@ -172,6 +180,7 @@ namespace PublicOrders.Processors
         {
             try
             {
+                isWork = true;
                 message = "";
 
                 Object trueObj = true;
@@ -308,6 +317,7 @@ namespace PublicOrders.Processors
                     // Заполняем продукты
                     for (int i = 0; i < document.Products.Count; i++)
                     {
+                        if (!isWork) break;
                         doc.Tables[1].Cell(i + 4, 1).Range.Text = Convert.ToString(i + 1) + '.';
                         doc.Tables[1].Cell(i + 4, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
@@ -390,6 +400,15 @@ namespace PublicOrders.Processors
                 message = ex.Message + '\n' + ex.StackTrace;
                 return ResultType.Error;
             }
+            finally
+            {
+                isWork = false;
+            }
+        }
+
+        public void Stop()
+        {
+            isWork = false;
         }
     }
 }

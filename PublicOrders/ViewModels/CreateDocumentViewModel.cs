@@ -13,6 +13,7 @@ using System.Windows;
 using System.ComponentModel;
 using PublicOrders.Annotations;
 using System.Runtime.CompilerServices;
+using PublicOrders.Processors.Main;
 
 namespace PublicOrders.ViewModels
 {

@@ -7,11 +7,15 @@ using PublicOrders.Models;
 using System.Threading;
 using PublicOrders.Processors;
 
-namespace PublicOrders.Processors
+namespace PublicOrders.Processors.Main
 {
     delegate void LoadProductsDone_delegete(ResultType resultType, Template template, int productsAddedCount, int productsRepeatCount, string message);
     class LoadProductsProcessor
     {
+        private FreedomProcessor freedomProcessor = null;
+        private Form2Processor form2Processor = null;
+        private CommitteeProcessor committeeProcessor = null;
+
         private string documentPath = "";
         private Template template;
         LoadProductsDone_delegete done_del = null;
@@ -63,6 +67,13 @@ namespace PublicOrders.Processors
         {
             Thread operate_thread = new Thread(Operate_thread);
             operate_thread.Start();
+        }
+
+        public void Stop()
+        {
+            if (freedomProcessor != null) freedomProcessor.Stop();
+            if (form2Processor != null) form2Processor.Stop();
+            if (committeeProcessor != null) committeeProcessor.Stop();
         }
     }
 }
