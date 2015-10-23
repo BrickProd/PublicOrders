@@ -13,6 +13,7 @@ namespace PublicOrders.Processors
 {
     class CommitteeProcessor
     {
+        private bool isWork = false;
         Object missingObj = System.Reflection.Missing.Value;
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
@@ -23,6 +24,7 @@ namespace PublicOrders.Processors
             productRepeatCount = 0;
             try
             {
+                isWork = true;
                 message = "";
 
                 // Проверка пути документа
@@ -103,6 +105,7 @@ namespace PublicOrders.Processors
 
                     if (isNewProduct)
                     {
+                        if (!isWork) break;
                         product = new Product();
                         product.Name = productName;
                         try
@@ -212,12 +215,16 @@ namespace PublicOrders.Processors
                 message = ex.Message + '\n' + ex.StackTrace;
                 return ResultType.Error;
             }
+            finally {
+                isWork = false;
+            }
         }
 
         public ResultType Create(Document document, Word.Application application, out Word._Document doc, out string message)
         {
             try
             {
+                isWork = true;
                 message = "";
 
                 Object trueObj = true;
@@ -317,6 +324,7 @@ namespace PublicOrders.Processors
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
+                        if (!isWork) break;
                         // Получаем свойства продукта на шаблон
                         var myTemplate = document.Products.ElementAt(productIndexCompilator).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет");
                         IEnumerable<Property> productProperties = document.Products.ElementAt(productIndexCompilator).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
@@ -476,6 +484,15 @@ namespace PublicOrders.Processors
                 message = ex.Message + '\n' + ex.StackTrace;
                 return ResultType.Error;
             }
+            finally
+            {
+                isWork = false;
+            }
+        }
+
+        public void Stop()
+        {
+            isWork = false;
         }
     }
 }

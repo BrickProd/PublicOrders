@@ -7,11 +7,15 @@ using PublicOrders.Models;
 using System.Threading;
 using Word = Microsoft.Office.Interop.Word;
 
-namespace PublicOrders.Processors
+namespace PublicOrders.Processors.Main
 {
     delegate void CreateDocumentDone_delegete(ResultType resultType, string message);
     class CreateDocumentProcessor
     {
+        private FreedomProcessor freedomProcessor = null;
+        private Form2Processor form2Processor = null;
+        private CommitteeProcessor committeeProcessor = null;
+
         object falseValue = false;
         object trueValue = true;
         Object missingObj = System.Reflection.Missing.Value;
@@ -44,15 +48,15 @@ namespace PublicOrders.Processors
                 switch (template.Name.ToLower().Trim())
                 {
                     case ("свобода"):
-                        FreedomProcessor freedomProcessor = new FreedomProcessor();
+                        freedomProcessor = new FreedomProcessor();
                         createResult = freedomProcessor.Create(document, application, out doc, out message);
                         break;
                     case ("форма 2"):
-                        Form2Processor form2Processor = new Form2Processor();
+                        form2Processor = new Form2Processor();
                         createResult = form2Processor.Create(document, application, out doc, out message);
                         break;
                     case ("комитет"):
-                        CommitteeProcessor committeeProcessor = new CommitteeProcessor();
+                        committeeProcessor = new CommitteeProcessor();
                         createResult = committeeProcessor.Create(document, application, out doc, out message);
                         break;
                     default:
@@ -104,6 +108,13 @@ namespace PublicOrders.Processors
         {
             Thread operate_thread = new Thread(Operate_thread);
             operate_thread.Start();
+        }
+
+        public void Stop()
+        {
+            if (freedomProcessor != null) freedomProcessor.Stop();
+            if (form2Processor != null) form2Processor.Stop();
+            if (committeeProcessor != null) committeeProcessor.Stop();
         }
     }
 }

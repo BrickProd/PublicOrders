@@ -27,8 +27,8 @@
             </GroupBox>
             <GroupBox Header="Федеральный закон" Margin="10,10,10,0" Height="65">
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton Margin="10 10 10 10">№44, №223</RadioButton>
-                    <RadioButton Margin="10 10 10 10">№44</RadioButton>
+                    <RadioButton Margin="10 10 10 10">№44(№94), №223</RadioButton>
+                    <RadioButton Margin="10 10 10 10">№44(№94)</RadioButton>
                     <RadioButton Margin="10 10 10 10">№223</RadioButton>
                 </StackPanel>
             </GroupBox>

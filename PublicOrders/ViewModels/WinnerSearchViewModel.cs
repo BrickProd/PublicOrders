@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using PublicOrders.Annotations;
 using PublicOrders.Commands;
+using System.Windows;
 
 namespace PublicOrders.ViewModels
 {
@@ -25,10 +26,33 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private bool _isWinnerSearching;
+        public bool IsWinnerSearching
+        {
+            get { return _isWinnerSearching; }
+            set
+            {
+                _isWinnerSearching = value;
+                OnPropertyChanged("IsWinnerSearching");
+            }
+        }
+
+        private int _searchingProgress;
+        public int SearchingProgress
+        {
+            get { return _searchingProgress; }
+            set
+            {
+                _searchingProgress = value;
+                OnPropertyChanged("SearchingProgress");
+            }
+        }
+
         public ObservableCollection<object> Winners { get; set; }
 
         #region КОМАНДЫ
         private DelegateCommand searchCommand;
+        private DelegateCommand searchStopCommand;
         private DelegateCommand createReportCommand;
         public ICommand SearchCommand
         {
@@ -39,6 +63,18 @@ namespace PublicOrders.ViewModels
                     searchCommand = new DelegateCommand(Search);
                 }
                 return searchCommand;
+            }
+        }
+
+        public ICommand SearchStopCommand
+        {
+            get
+            {
+                if (searchStopCommand == null)
+                {
+                    searchStopCommand = new DelegateCommand(SearchStop);
+                }
+                return searchStopCommand;
             }
         }
 
@@ -58,8 +94,23 @@ namespace PublicOrders.ViewModels
 
         private void Search()
         {
+            /*SearchDone_delegete searchDone_delege = new SearchDone_delegete(SearchDone_proc);
+            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched_proc);
+            CustomerCkeck_delegate customerCkeck_delegate = new CustomerCkeck_delegate(CustomerCkeck_proc);*/
+        }
+
+        private void SearchDone_proc(string message)
+        {
+            SearchingProgress = 0;
+            IsWinnerSearching = false;
+            MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void SearchStop()
+        {
             //метод
         }
+
         private void CreateReport()
         {
             //метод

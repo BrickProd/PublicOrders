@@ -103,7 +103,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}">
+    <Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" >
         <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0 0 0 0">
             <TabItem Header="Поиск победителей" Style="{StaticResource PanelContentStyle}">
                 <Grid >

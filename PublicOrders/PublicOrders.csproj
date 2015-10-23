@@ -74,11 +74,11 @@
     <Compile Include="Models\DocumentDbContext.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Models\WinnersDbContext.cs" />
-    <Compile Include="Processors\CreateDocumentProcessor.cs" />
+    <Compile Include="Processors\Main\CreateDocumentProcessor.cs" />
     <Compile Include="Processors\CommitteeProcessor.cs" />
     <Compile Include="Processors\Form2Processor.cs" />
     <Compile Include="Processors\FreedomProcessor.cs" />
-    <Compile Include="Processors\LoadProductsProcessor.cs" />
+    <Compile Include="Processors\Main\LoadProductsProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\LoadProductsViewModel.cs" />
@@ -152,10 +152,6 @@
     <None Include="Application.ico">
       <Visible>false</Visible>
     </None>
-    <DesignData Include="SampleData\MainViewModelSampleData.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </DesignData>
     <None Include="packages.config" />
     <None Include="Templates_Test\template_1.docx" />
     <None Include="Templates_Test\template_2.docx" />
