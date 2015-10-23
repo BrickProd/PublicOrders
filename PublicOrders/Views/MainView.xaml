@@ -61,9 +61,12 @@
                             <Trigger Property="IsSelected" Value="False">
                                 <Setter TargetName="ContentSite" Property="TextBlock.Foreground" Value="#686868" />
                             </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="#2D2D30" />
-                            </Trigger>
+                            <!--<Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Panel" Property="Background" Value="Black" />
+                                <Setter TargetName="Panel" Property="Opacity" Value="0.1" />
+                                <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="Black" />
+                            </Trigger>-->
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
                                     <Condition Property="IsSelected" Value="True" />
@@ -71,6 +74,16 @@
                                 </MultiTrigger.Conditions>
                                 <MultiTrigger.Setters>
                                     <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="White" />
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter TargetName="Panel" Property="Background" Value="#EEEEEE" />
+                                    <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
                                 </MultiTrigger.Setters>
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
@@ -125,7 +138,7 @@
                     <views:ProductEditorPanel></views:ProductEditorPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}">
+            <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8">
                 <Grid>
                     <views:LoadProductsPanel></views:LoadProductsPanel>
                 </Grid>

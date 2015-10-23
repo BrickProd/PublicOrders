@@ -10,8 +10,8 @@
     <UserControl.DataContext>
         <ViewModels:LoadProductsViewModel/>
     </UserControl.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
+    <Grid >
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="12*"/>
             <ColumnDefinition Width="31*"/>
         </Grid.ColumnDefinitions>
@@ -38,7 +38,40 @@
                     </Grid>
                 </ControlTemplate>
             </TextBox.Template>
-        </TextBox>
-
+        </TextBox>-->
+        <Border BorderBrush="DodgerBlue" BorderThickness="0 2 0 0" Margin="0">
+            <StackPanel Margin="10,10,50,10" Width="420" HorizontalAlignment="Left">
+                <Grid Margin="0 10">
+                    <StackPanel>
+                        <TextBlock Text="Шаблон" FontSize="18"></TextBlock>
+                        <ComboBox x:Name="comboBox" FontSize="18" Grid.Column="1" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedValuePath="Name" DisplayMemberPath="Name" SelectedIndex="0"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0 10">
+                    <StackPanel>
+                        <TextBlock Text="Документ" FontSize="18"></TextBlock>
+                        <TextBox x:Name="textBox" FontSize="18" Grid.Column="1" Margin="5" Grid.Row="2" TextWrapping="Wrap">
+                            <TextBox.Template>
+                                <ControlTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
+                                        <TextBox x:Name="DocPath" Grid.Column="0" Text="{Binding DocPath, Mode=TwoWay}"></TextBox>
+                                        <Button HorizontalAlignment="Right" Content="..." Background="White" Grid.Column="1" Foreground="Gray" Padding="5 0" Command="{Binding OpenFileCommand}"></Button>
+                                    </Grid>
+                                </ControlTemplate>
+                            </TextBox.Template>
+                        </TextBox>
+                        
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0 10">
+                    <StackPanel>
+                        <Button x:Name="button" Grid.Column="1" FontSize="18" Background="Transparent" HorizontalAlignment="Right" Margin="5" Grid.Row="3" Width="200" Command="{Binding LoadCommand}" IsEnabled="{Binding ButtonLoadProdsEnabled, Mode=TwoWay}">
+                            Загрузка
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>
