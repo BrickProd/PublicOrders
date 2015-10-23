@@ -73,8 +73,6 @@
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Models\DocumentDbContext.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Models\PublicOrders_Docs.cs" />
-    <Compile Include="Models\PublicOrders_Winners.cs" />
     <Compile Include="Models\WinnersDbContext.cs" />
     <Compile Include="Processors\CreateDocumentProcessor.cs" />
     <Compile Include="Processors\CommitteeProcessor.cs" />
