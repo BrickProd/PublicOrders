@@ -24,5 +24,20 @@ namespace PublicOrders.Views
         {
             InitializeComponent();
         }
+
+        private void AddNewRubricBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.AddNewRubricPanel.Visibility = Visibility.Visible;
+        }
+
+        private void CancelNewRubricBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.AddNewRubricPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void OkNewRubricBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.AddNewRubricPanel.Visibility = Visibility.Collapsed;
+        }
     }
 }

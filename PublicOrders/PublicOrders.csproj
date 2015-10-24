@@ -49,6 +49,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -80,6 +81,12 @@
     <Compile Include="Processors\FreedomProcessor.cs" />
     <Compile Include="Processors\Main\LoadProductsProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\OrderFilterViewModel.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\LoadProductsViewModel.cs" />
     <Compile Include="ViewModels\WinnerSearchViewModel.cs" />
@@ -153,6 +160,10 @@
       <Visible>false</Visible>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Templates_Test\template_1.docx" />
     <None Include="Templates_Test\template_2.docx" />
     <None Include="Templates_Test\template_3.docx" />

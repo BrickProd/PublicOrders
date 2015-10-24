@@ -4,41 +4,56 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PublicOrders.Views"
+             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="500" Padding="20 0 20 0">
+             d:DesignHeight="500" d:DesignWidth="500" Padding="20 0 20 0" FontSize="18">
+    <UserControl.DataContext>
+        <ViewModels:OrderFilterViewModel></ViewModels:OrderFilterViewModel>
+    </UserControl.DataContext>
     <Grid>
-        <StackPanel>
-            <GroupBox x:Name="groupBox" Header="Цена" Margin="10,10,10,0" Height="65">
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
-                    <TextBox Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Город" Margin="10,10,10,0" Height="65">
-                <StackPanel>
-                    <TextBox Height="23" Margin="10,10,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Дата публикации" Margin="10,10,10,0" Height="65">
-                <StackPanel Orientation="Horizontal">
-                    <DatePicker Margin="10,10,10,0"></DatePicker>
-                    <DatePicker Margin="10,10,10,0"></DatePicker>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Федеральный закон" Margin="10,10,10,0" Height="65">
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton Margin="10 10 10 10">№44(№94), №223</RadioButton>
-                    <RadioButton Margin="10 10 10 10">№44(№94)</RadioButton>
-                    <RadioButton Margin="10 10 10 10">№223</RadioButton>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Тип заказчика" Margin="10,10,10,0" Height="65">
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton Margin="10 10 10 10">Заказчик</RadioButton>
-                    <RadioButton Margin="10 10 10 10">Организация, размещающая заказ</RadioButton>
-                </StackPanel>
-            </GroupBox>
-        </StackPanel>
-
+        <Border BorderBrush="DodgerBlue" BorderThickness="0 2 0 0" Margin="0">
+            <StackPanel MaxWidth="500" HorizontalAlignment="Left">
+                <GroupBox x:Name="groupBox" Header="Цена" Margin="10,10,10,0" Padding="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MinPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+                        <TextBlock Text=" - "></TextBlock>
+                        <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MaxPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Город" Margin="10,10,10,0" Padding="5">
+                    <StackPanel>
+                        <TextBox Margin="0" TextWrapping="Wrap" Text="{Binding CustomerCity}" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Дата публикации" Margin="10,10,10,0" Padding="5">
+                    <StackPanel Orientation="Horizontal">
+                        <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectedDate="{Binding MinPublicDate}"></DatePicker>
+                        <TextBlock Text=" - "></TextBlock>
+                        <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectedDate="{Binding MaxPublicDate}"></DatePicker>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Федеральный закон" Margin="10,10,10,0" Padding="5">
+                    <StackPanel >
+                        <ComboBox SelectedItem="{Binding LawType}" SelectedValuePath="Content">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="№44(№94), №223" Tag="№44(№94), №223"></ComboBoxItem>
+                                <ComboBoxItem Content="№44(№94)" Tag="№44(№94)"></ComboBoxItem>
+                                <ComboBoxItem Content="№223" Tag="№223"></ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Тип заказчика" Margin="10,10,10,0" Padding="5">
+                    <StackPanel Orientation="Vertical">
+                        <ComboBox SelectedItem="{Binding CustomerType}">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="Заказчик"></ComboBoxItem>
+                                <ComboBoxItem Content="Организация, размещающая заказ"></ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

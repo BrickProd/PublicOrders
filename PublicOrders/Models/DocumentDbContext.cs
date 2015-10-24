@@ -177,8 +177,9 @@ namespace PublicOrders.Models
         {
             get
             {
-                var text = System.IO.File.ReadAllText(this.Path);
-                return text;
+                //var text = System.IO.File.ReadAllText(this.Path);
+                //return text;
+                return "";
             }
         }
 
