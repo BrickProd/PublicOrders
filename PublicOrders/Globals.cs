@@ -8,17 +8,27 @@ using System.Collections.ObjectModel;
 
 namespace PublicOrders.Models
 {
-    public enum ResultType
+    public enum ResultType_enum
     {
-        Done = 0,
-        DoneNetwork = 1,
-        DoneDB = 2,
-        NotSearch = 3,
-        NullSearchText = 4,
-        ReglamentaWork = 5,
-        ErrorNetwork = 6,
-        ErrorDB = 7,
-        Error = 8
+        Done = 0,           // Успешно выполненная задача
+        NotSearch = 1,      // Ничего не найдено
+        NullSearchText = 2, // Пустая строка поиска
+        ReglamentaWork = 3, // На сайте проводятся регламентские работы
+        Error = 4           // Ошибка
+    };
+    public enum CustomerType_enum
+    {
+        Customer = 0,
+        Organization = 1
+    }
+    public enum LawType_enum
+    {
+        _44 = 0,
+        _94 = 1,
+        _223 = 2,
+        _44_94 = 3,
+        _44_94_223 = 4,
+        None = 5
     }
     class Globals
     {

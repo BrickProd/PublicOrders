@@ -9,7 +9,7 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace PublicOrders.Processors.Main
 {
-    public delegate void CreateDocumentDone_delegete(ResultType resultType, string message);
+    public delegate void CreateDocumentDone_delegete(ResultType_enum ResultType_enum, string message);
     public class CreateDocumentProcessor
     {
         private bool isWork = false;
@@ -43,7 +43,7 @@ namespace PublicOrders.Processors.Main
             {
                 string message = "";
                 Word.Application application = new Word.Application();
-                ResultType createResult = ResultType.Done;
+                ResultType_enum createResult = ResultType_enum.Done;
                 //application.DisplayAlerts = Microsoft.Office.Interop.Word.WdAlertLevel.wdAlertsNone;
                 Word._Document doc = null;
 
@@ -65,13 +65,13 @@ namespace PublicOrders.Processors.Main
                         doc = null;
                         message = "Данный движок не обрабатывает шаблоны типа: <" + Convert.ToString(template.Name.Trim()) + ">";
                         isWork = false;
-                        done_del(ResultType.Error, message);
+                        done_del(ResultType_enum.Error, message);
                         return;
                 }
 
                 switch (createResult)
                 {
-                    case (ResultType.Done):
+                    case (ResultType_enum.Done):
                         // Добавление инструкции
                         // Получаем путь инструкции
                         string instText = "";
@@ -92,9 +92,9 @@ namespace PublicOrders.Processors.Main
                         }
 
                         break;
-                    case (ResultType.Error):
+                    case (ResultType_enum.Error):
                         isWork = false;
-                        done_del(ResultType.Error, message);
+                        done_del(ResultType_enum.Error, message);
                         return;
                     default:
                         break;
@@ -106,7 +106,7 @@ namespace PublicOrders.Processors.Main
             catch (Exception ex)
             {
                 isWork = false;
-                done_del(ResultType.Error, ex.Message + '\n' + ex.StackTrace);
+                done_del(ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
             }
         }
 

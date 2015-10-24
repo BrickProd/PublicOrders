@@ -95,9 +95,9 @@ namespace PublicOrders.ViewModels
         }
         #endregion
 
-        private void CreateDocumentDone_Proc(ResultType resultType, string message) {
-            switch (resultType) {
-                case (ResultType.Done):
+        private void CreateDocumentDone_Proc(ResultType_enum ResultType_enum, string message) {
+            switch (ResultType_enum) {
+                case (ResultType_enum.Done):
                     MessageBox.Show("Документ создан успешно!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                     break;
                 default:

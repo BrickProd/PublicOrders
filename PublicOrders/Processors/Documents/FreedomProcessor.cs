@@ -18,7 +18,7 @@ namespace PublicOrders.Processors
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        public ResultType Learn(string docPath, out int productAddedCount, out int productRepeatCount, out string message)
+        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out string message)
         {
             productAddedCount = 0;
             productRepeatCount = 0;
@@ -31,7 +31,7 @@ namespace PublicOrders.Processors
                 if (!File.Exists(docPath))
                 {
                     message = "Документа по пути <" + docPath + "> не существует";
-                    return ResultType.Error;
+                    return ResultType_enum.Error;
                 }
 
                 //Создаём новый Word.Application
@@ -59,17 +59,17 @@ namespace PublicOrders.Processors
                 catch
                 {
                     message = "В документе не найдена таблица для обучения";
-                    return ResultType.Error;
+                    return ResultType_enum.Error;
                 }
                 if (tbl == null)
                 {
                     message = "В документе не найдена таблица для обучения";
-                    return ResultType.Error;
+                    return ResultType_enum.Error;
                 }
                 if (tbl.Columns.Count != 6)
                 {
                     message = "Количество столбцов таблицы не совпадает со спецификацией";
-                    return ResultType.Error;
+                    return ResultType_enum.Error;
                 }
 
 
@@ -169,13 +169,13 @@ namespace PublicOrders.Processors
                 mvm.dc.SaveChanges();
                 mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
-                return ResultType.Done;
+                return ResultType_enum.Done;
             }
 
             catch (Exception ex)
             {
                 message = ex.Message + '\n' + ex.StackTrace;
-                return ResultType.Error;
+                return ResultType_enum.Error;
             }
             finally
             {
@@ -183,7 +183,7 @@ namespace PublicOrders.Processors
             }
         }
 
-        public ResultType Create(Document document, Word.Application application, out Word._Document doc, out string message)
+        public ResultType_enum Create(Document document, Word.Application application, out Word._Document doc, out string message)
         {
             try
             {
@@ -346,7 +346,7 @@ namespace PublicOrders.Processors
                         if (productProperties.Count() != 1)
                         {
                             message = "Ошибка при составлении шаблона";
-                            return ResultType.Error;
+                            return ResultType_enum.Error;
                         }
                         Property property = productProperties.First();
 
@@ -399,13 +399,13 @@ namespace PublicOrders.Processors
                 }
 
 
-                return ResultType.Done;
+                return ResultType_enum.Done;
             }
             catch (Exception ex)
             {
                 doc = null;
                 message = ex.Message + '\n' + ex.StackTrace;
-                return ResultType.Error;
+                return ResultType_enum.Error;
             }
             finally
             {

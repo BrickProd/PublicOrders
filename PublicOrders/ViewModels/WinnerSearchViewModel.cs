@@ -10,6 +10,7 @@ using System.Windows.Input;
 using PublicOrders.Annotations;
 using PublicOrders.Commands;
 using System.Windows;
+using PublicOrders.Processors;
 
 namespace PublicOrders.ViewModels
 {
@@ -121,12 +122,6 @@ namespace PublicOrders.ViewModels
         {
             //Winners = new ObservableCollection<object>(база);
         }
-
-
-
-
-
-
 
 
         public event PropertyChangedEventHandler PropertyChanged;
