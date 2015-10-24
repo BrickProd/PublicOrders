@@ -6,21 +6,6 @@ using PublicOrders.Processors.Main;
 
 namespace PublicOrders
 {
-    public enum CustomerType
-    {
-        Customer = 0,
-        Organization = 1
-    }
-    public enum LawType
-    {
-        _44 = 0,
-        _94 = 1,
-        _223 = 2,
-        _44_94 = 3,
-        _44_94_223 = 4,
-        None = 5
-    }
-
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Документы

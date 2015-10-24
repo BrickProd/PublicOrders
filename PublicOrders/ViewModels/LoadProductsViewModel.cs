@@ -138,10 +138,10 @@ namespace PublicOrders.ViewModels
 
         #endregion
 
-        private void LoadProductsDone_Proc(ResultType resultType, Template template, int productsAddedCount, int productsRepeatCount, string message) {
-            switch (resultType)
+        private void LoadProductsDone_Proc(ResultType_enum ResultType_enum, Template template, int productsAddedCount, int productsRepeatCount, string message) {
+            switch (ResultType_enum)
             {
-                case (ResultType.Done):
+                case (ResultType_enum.Done):
                     if (productsAddedCount == 0)
                     {
                         MessageBox.Show("В документе не найдено товара для загрузки!", "Предупреждение",
@@ -156,13 +156,9 @@ namespace PublicOrders.ViewModels
 
 
                     break;
-                case (ResultType.Error):
+                case (ResultType_enum.Error):
                     MessageBox.Show("Ошибка при загрузке товара!\n" + message, "Ошибка",
                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    break;
-                case (ResultType.ErrorDB):
-                    MessageBox.Show("Ошибка при загрузке товара!\n" + message, "Ошибка",
-                                        MessageBoxButton.OK, MessageBoxImage.Error);
                     break;
                 default:
                     return;
