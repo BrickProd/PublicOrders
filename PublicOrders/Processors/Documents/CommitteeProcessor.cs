@@ -149,7 +149,7 @@ namespace PublicOrders.Processors
                         product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
                         mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "комитет").Products.Add(product);
                         mvm.dc.SaveChanges();
-                        mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
+                        //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
                         productAddedCount++;
                     }
