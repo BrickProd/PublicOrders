@@ -23,8 +23,8 @@
                             <ControlTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
-                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding CustomerName, Mode=TwoWay}" ></TextBox>
-                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding OpenFileCommand}"></Button>
+                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay}" ></TextBox>
+                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}"></Button>
                                 </Grid>
                             </ControlTemplate>
                         </TextBox.Template>

@@ -147,6 +147,10 @@ namespace PublicOrders.Processors
                         }
 
                         product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
+
+                        mvm.dc.SaveChanges();
+                        mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
+
                         productAddedCount++;
                     }
                     // Добавляем свойство

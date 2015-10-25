@@ -53,8 +53,6 @@ namespace PublicOrders.ViewModels
         private void InitObjects() {
         }
 
-        private ObservableCollection<Product> _templateProducts = null;
-
         public ObservableCollection<Instruction> Instructions { get; set; }
         public Instruction SelectedInstruction { get; set; }
 

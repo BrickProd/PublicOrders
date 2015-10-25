@@ -57,6 +57,11 @@ namespace PublicOrders.Processors.Main
             lotsSearch_thread.Start();
         }
 
+        public bool isWorking()
+        {
+            return isWork;
+        }
+
         public void Stop()
         {
             isWork = false;

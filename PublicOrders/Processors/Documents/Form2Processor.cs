@@ -144,7 +144,13 @@ namespace PublicOrders.Processors
 
                         }
 
+
+
                         product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "форма 2"));
+
+                        mvm.dc.SaveChanges();
+                        mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
+
                         productAddedCount++;
                     }
 
@@ -211,9 +217,6 @@ namespace PublicOrders.Processors
                 // Закрываем приложение
                 application.Quit(ref missing, ref missing, ref missing);
                 application = null;
-
-                mvm.dc.SaveChanges();
-                mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
                 return ResultType_enum.Done;
 

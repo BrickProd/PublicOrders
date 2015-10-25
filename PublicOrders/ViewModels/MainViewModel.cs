@@ -22,6 +22,8 @@ namespace PublicOrders
         #region Процессоры
         public CreateDocumentProcessor cdProcessor = null;
         public LoadProductsProcessor lpProcessor = null;
+        public CustomersSearchProcessor csProcessor = null;
+        public LotsSearchProcessor lsProcessor = null;
         #endregion
 
         #region Фильтр

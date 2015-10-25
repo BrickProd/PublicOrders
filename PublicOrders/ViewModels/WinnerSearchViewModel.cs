@@ -11,11 +11,16 @@ using PublicOrders.Annotations;
 using PublicOrders.Commands;
 using System.Windows;
 using PublicOrders.Processors;
+using PublicOrders.Models;
+using PublicOrders.Processors.Main;
 
 namespace PublicOrders.ViewModels
 {
     public class WinnerSearchViewModel : INotifyPropertyChanged
     {
+        #region Переменные
+        MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
         private string _searchInput;
         public string SearchInput
         {
@@ -27,14 +32,25 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private bool _isWinnerSearching;
-        public bool IsWinnerSearching
+        private bool _isCustomersSearching;
+        public bool IsCustomersSearching
         {
-            get { return _isWinnerSearching; }
+            get { return _isCustomersSearching; }
             set
             {
-                _isWinnerSearching = value;
-                OnPropertyChanged("IsWinnerSearching");
+                _isCustomersSearching = value;
+                OnPropertyChanged("IsCustomersSearching");
+            }
+        }
+
+        private bool _isWinnerLotsSearching;
+        public bool IsWinnerLotsSearching
+        {
+            get { return _isWinnerLotsSearching; }
+            set
+            {
+                _isWinnerLotsSearching = value;
+                OnPropertyChanged("IsWinnerLotsSearching");
             }
         }
 
@@ -48,34 +64,89 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("SearchingProgress");
             }
         }
+        #endregion
 
-        public ObservableCollection<object> Winners { get; set; }
-
-        #region КОМАНДЫ
-        private DelegateCommand searchCommand;
-        private DelegateCommand searchStopCommand;
-        private DelegateCommand createReportCommand;
-        public ICommand SearchCommand
+        #region Коллекции
+        private ObservableCollection<Customer> _customers;
+        public ObservableCollection<Customer> Customers
         {
             get
             {
-                if (searchCommand == null)
-                {
-                    searchCommand = new DelegateCommand(Search);
-                }
-                return searchCommand;
+                return _customers;
+            }
+            set
+            {
+                _customers = value;
+                OnPropertyChanged("Customers");
             }
         }
 
-        public ICommand SearchStopCommand
+        private ObservableCollection<Lot> _winnerLots;
+        public ObservableCollection<Lot> WinnerLots
         {
             get
             {
-                if (searchStopCommand == null)
+                return _winnerLots;
+            }
+            set
+            {
+                _winnerLots = value;
+                OnPropertyChanged("WinnerLots");
+            }
+        }
+        #endregion
+
+        #region Команды
+        private DelegateCommand customersSearchCommand;
+        private DelegateCommand customersSearchStopCommand;
+        private DelegateCommand winnerLotsSearchCommand;
+        private DelegateCommand winnerLotsSearchStopCommand;
+        private DelegateCommand createReportCommand;
+        public ICommand CustomersSearchCommand
+        {
+            get
+            {
+                if (customersSearchCommand == null)
                 {
-                    searchStopCommand = new DelegateCommand(SearchStop);
+                    customersSearchCommand = new DelegateCommand(CustomersSearch);
                 }
-                return searchStopCommand;
+                return customersSearchCommand;
+            }
+        }
+
+        public ICommand CustomersSearchStopCommand
+        {
+            get
+            {
+                if (customersSearchStopCommand == null)
+                {
+                    customersSearchStopCommand = new DelegateCommand(CustomersSearchStop);
+                }
+                return customersSearchStopCommand;
+            }
+        }
+
+        public ICommand WinnerLotsSearchCommand
+        {
+            get
+            {
+                if (winnerLotsSearchCommand == null)
+                {
+                    winnerLotsSearchCommand = new DelegateCommand(WinnerLotsSearch);
+                }
+                return winnerLotsSearchCommand;
+            }
+        }
+
+        public ICommand WinnerLotsSearchStopCommand
+        {
+            get
+            {
+                if (winnerLotsSearchStopCommand == null)
+                {
+                    winnerLotsSearchStopCommand = new DelegateCommand(WinnerLotsSearchStop);
+                }
+                return winnerLotsSearchStopCommand;
             }
         }
 
@@ -90,26 +161,55 @@ namespace PublicOrders.ViewModels
                 return createReportCommand;
             }
         }
+        #endregion
 
-
-
-        private void Search()
+        #region Методы
+        private void CustomersSearch()
         {
-            /*SearchDone_delegete searchDone_delege = new SearchDone_delegete(SearchDone_proc);
-            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched_proc);
-            CustomerCkeck_delegate customerCkeck_delegate = new CustomerCkeck_delegate(CustomerCkeck_proc);*/
+
+
+            IsCustomersSearching = true;
+
+            if ((mvm.csProcessor != null) && (mvm.csProcessor.isWorking()))
+            {
+                mvm.csProcessor.Stop();
+            }
+
+            CustomersSearchDone_delegate customerSearchDone_delege = new CustomersSearchDone_delegate(CustomersSearchDone_proc);
+            mvm.csProcessor = new CustomersSearchProcessor(SearchInput, 
+                                                           CustomerType_enum.Customer, 
+                                                           100, 
+                                                           100000000, 
+                                                           "", 
+                                                           Convert.ToDateTime("2010.01.01"), 
+                                                           DateTime.Now, 
+                                                           LawType_enum._44_94_223, 
+                                                           customerSearchDone_delege, 
+                                                           SearchingProgress, 
+                                                           Customers);
+            mvm.csProcessor.Operate();
         }
 
-        private void SearchDone_proc(string message)
+
+
+        private void CustomersSearchStop()
+        {
+            //метод
+        }
+
+        private void CustomersSearchDone_proc(ResultType_enum resultSearch, string message)
         {
             SearchingProgress = 0;
-            IsWinnerSearching = false;
+            IsCustomersSearching = false;
             MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void SearchStop()
-        {
-            //метод
+        private void WinnerLotsSearch() {
+
+        }
+
+        private void WinnerLotsSearchStop() {
+
         }
 
         private void CreateReport()

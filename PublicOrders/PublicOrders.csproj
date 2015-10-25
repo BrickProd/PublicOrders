@@ -85,6 +85,7 @@
     <Compile Include="Processors\Documents\FreedomProcessor.cs" />
     <Compile Include="Processors\Documents\Main\LoadProductsProcessor.cs" />
     <Compile Include="Processors\Internet\CustomersSearchProcessor.cs" />
+    <Compile Include="Processors\Internet\InternetRequestEngine.cs" />
     <Compile Include="Processors\Internet\LotsSearchProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -171,8 +172,11 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Templates_Test\template_1.docx" />
+    <None Include="Templates_Test\template_1_full.docx" />
     <None Include="Templates_Test\template_2.docx" />
+    <None Include="Templates_Test\template_2_full.docx" />
     <None Include="Templates_Test\template_3.docx" />
+    <None Include="Templates_Test\template_3_full.docx" />
     <Page Include="Views\LoadProductsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
