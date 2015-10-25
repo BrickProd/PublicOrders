@@ -147,70 +147,88 @@ namespace PublicOrders.Processors
                         }
 
                         product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
-                        mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "комитет").Products.Add(product);
-                        mvm.dc.SaveChanges();
-                        //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
-
-                        productAddedCount++;
+                        try
+                        {
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "комитет").Products.Add(product);
+                            }));
+                        }
+                        catch { }
+                        try
+                        {
+                            mvm.dc.SaveChanges();
+                            productAddedCount++;
+                        }
+                        catch (Exception ex)
+                        {
+                            string sss = "авыаыва";
+                        }
                     }
                     // Добавляем свойство
                     property = new Property();
                     product.Properties.Add(property);
 
-                    // Наименование показателя
-                    ParamValue pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                    try
+                    {
+                        // Наименование показателя
+                        ParamValue pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Наименование показателя" && m.Template.Name.ToLower() == "комитет");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Наименование показателя" && m.Template.Name.ToLower() == "комитет");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
 
-                    // Минимальное значение показателей
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Минимальное значение показателей
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Минимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Минимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
 
-                    // Максимальное значение показателей
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Максимальное значение показателей
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Максимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Максимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
 
-                    // Значения показателей, которые не могут изменяться
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Значения показателей, которые не могут изменяться
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Значения показателей, которые не могут изменяться" && m.Template.Name.ToLower() == "комитет");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Значения показателей, которые не могут изменяться" && m.Template.Name.ToLower() == "комитет");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
 
-                    // Конкретные показатели
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Конкретные показатели
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Конкретные показатели" && m.Template.Name.ToLower() == "комитет");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Конкретные показатели" && m.Template.Name.ToLower() == "комитет");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
 
-                    // Единица измерения
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Единица измерения
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "комитет");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "комитет");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
+                    } catch (Exception ex) {
+                        string sss = "";
+                    }
+
                 }
 
                 // Закрываем приложение
                 application.Quit(ref missing, ref missing, ref missing);
                 application = null;
 
-                mvm.dc.SaveChanges();
+                //mvm.dc.SaveChanges();
                 //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
                 return ResultType_enum.Done;

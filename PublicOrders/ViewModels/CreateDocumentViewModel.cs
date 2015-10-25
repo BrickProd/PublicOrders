@@ -39,7 +39,9 @@ namespace PublicOrders.ViewModels
 
         //public DocumentDbContext dc { get; set; }
         public ObservableCollection<Document> Documents { get; set; }
+
         public ObservableCollection<Template> Templates { get; set; }
+
 
         private Template _selectedTemplate = null;
         public Template SelectedTemplate {

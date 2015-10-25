@@ -8,13 +8,22 @@ using System.Collections.ObjectModel;
 
 namespace PublicOrders.Models
 {
+    public enum CustomerLevel_enum {
+        Federal = 0,
+        Subject = 1,
+        Municipal = 2,
+        Other = 3,
+        None = 4
+    }
+
     public enum ResultType_enum
     {
         Done = 0,           // Успешно выполненная задача
         NotSearch = 1,      // Ничего не найдено
         NullSearchText = 2, // Пустая строка поиска
         ReglamentaWork = 3, // На сайте проводятся регламентские работы
-        Error = 4           // Ошибка
+        ErrorNetwork = 4,   // Не удается подключиться к сети
+        Error = 5           // Ошибка
     };
     public enum CustomerType_enum
     {
@@ -32,6 +41,30 @@ namespace PublicOrders.Models
     }
     class Globals
     {
+        public static string CutAddress(string text)
+        {
+            if (text.IndexOf("место нахождения:") > -1)
+            {
+                text = text.Substring(text.IndexOf("место нахождения:") + 17, text.Length - (text.IndexOf("место нахождения:") + 17)).Trim();
+            }
+            else
+            {
+                if (text.IndexOf("место нахождения :") > -1)
+                {
+                    text = text.Substring(text.IndexOf("место нахождения :") + 18, text.Length - (text.IndexOf("место нахождения :") + 18)).Trim();
+                }
+            }
+            return text;
+        }
+
+        public static string DecodeInternetSymbs(string text)
+        {
+            text = text.Replace("&amp;", "&");
+            text = text.Replace("&quot;", "\"");
+            text = text.Replace("&nbsp;", " ");
+            return text;
+        }
+
         public static string CleanWordCell(string cellText)
         {
             if ((cellText.Length == 1) && (cellText[0] == '\a'))
@@ -144,6 +177,36 @@ namespace PublicOrders.Models
                     return "ˉ";
                 default:
                     return "_";
+            }
+        }
+
+        public static ResultType_enum CheckDocResult(HtmlAgilityPack.HtmlDocument doc, out string message)
+        {
+            try
+            {
+                message = "";
+                if (doc == null)
+                {
+                    message = "Не удается подключиться к сети";
+                    return ResultType_enum.ErrorNetwork;
+                }
+                //Не удается отобразить эту страницу
+                if (doc.DocumentNode.InnerText.IndexOf("Не удается отобразить эту страницу") > -1)
+                {
+                    message = "Не удается подключиться к сети";
+                    return ResultType_enum.ErrorNetwork;
+                }
+                if (doc.DocumentNode.InnerText.IndexOf("Ведутся регламентные работы") > -1)
+                {
+                    message = "Ведутся регламентские работы";
+                    return ResultType_enum.ReglamentaWork;
+                }
+                return ResultType_enum.Done;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message + '\n' + ex.StackTrace;
+                return ResultType_enum.Error;
             }
         }
     }

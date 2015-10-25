@@ -10,13 +10,39 @@ namespace PublicOrders
     {
         #region Документы
         public DocumentDbContext dc { get; set; }
-        public ObservableCollection<Template> TemplateCollection {get;set;}
-        public ObservableCollection<Product> ProductCollection { get; set; }
+        private ObservableCollection<Template> _templates;
+        public ObservableCollection<Template> TemplateCollection
+        {
+            get
+            {
+                return _templates;
+            }
+            set
+            {
+                _templates = value;
+                OnPropertyChanged("Templates");
+            }
+
+        }
+        private ObservableCollection<Product> _products;
+        public ObservableCollection<Product> ProductCollection
+        {
+            get
+            {
+                return _products;
+            }
+            set
+            {
+                _products = value;
+                OnPropertyChanged("ProductsCollection");
+            }
+
+        }
         #endregion
 
         #region Победители
         public WinnersDbContext wc { get; set; }
-        public ObservableCollection<Customer> CustomerCollection { get; set; }
+        //public ObservableCollection<Customer> CustomerCollection { get; set; }
         #endregion
 
         #region Процессоры
@@ -120,7 +146,7 @@ namespace PublicOrders
 
             // Победители
             wc = new WinnersDbContext();
-            CustomerCollection = new ObservableCollection<Customer>(wc.Customers);
+            //CustomerCollection = new ObservableCollection<Customer>(wc.Customers);
         }
 		
 		

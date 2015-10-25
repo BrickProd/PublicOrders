@@ -38,6 +38,8 @@ namespace PublicOrders.Models
                 m.MapRightKey("CustomerTypeId");
             });
 
+
+
             /*modelBuilder.Entity<Customer>().HasMany(o => o.Orders).WithMany(d => d.Customers).Map(m =>
             {
                 m.ToTable("Customers_Orders");
@@ -59,12 +61,20 @@ namespace PublicOrders.Models
             {
                 var customerLevels = new List<CustomerLevel>
                 {
-                new CustomerLevel{ CustomerLevelCode = "Федеральный" },
-                new CustomerLevel{ CustomerLevelCode = "Уровень субъекта РФ" },
-                new CustomerLevel{ CustomerLevelCode = "Муниципальный" },
-                new CustomerLevel{ CustomerLevelCode = "Иное" }
+                new CustomerLevel{ CustomerLevelCode = "Federal" },
+                new CustomerLevel{ CustomerLevelCode = "Subject" },
+                new CustomerLevel{ CustomerLevelCode = "Municipal" },
+                new CustomerLevel{ CustomerLevelCode = "Other" }
                 };
                 customerLevels.ForEach(m => context.CustomerLevels.Add(m));
+
+                var customerTypes = new List<CustomerType>
+                {
+                new CustomerType{ CustomerTypeCode = "Customer" },
+                new CustomerType{ CustomerTypeCode = "Organization" },
+                };
+                customerTypes.ForEach(m => context.CustomerTypes.Add(m));
+
                 context.SaveChanges();
             }
         }

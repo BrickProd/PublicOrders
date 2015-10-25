@@ -9,6 +9,7 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using PublicOrders.Processors;
 using PublicOrders.Processors.Internet;
+using System.Text.RegularExpressions;
 
 namespace PublicOrders.Processors.Main
 {
@@ -17,6 +18,8 @@ namespace PublicOrders.Processors.Main
 
     public class CustomersSearchProcessor
     {
+        MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
         private string text = "";
         private HtmlAgilityPack.HtmlDocument doc;
         private InternetRequestEngine internetRequestEngine  = null;
@@ -55,34 +58,36 @@ namespace PublicOrders.Processors.Main
 
         private void SearchCustomers_proc()
         {
-            /*try
+            try
             {
-                message = "";
-                customers = new List<Customer>();
-
-                if (customerName == "") return ResultType.NullSearchText;
+                customers = new ObservableCollection<Customer>();
+                InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
+                if (customerName == "") {
+                    customersSearchDone_delegate(ResultType_enum.NullSearchText, "");
+                    return;
+                } 
 
                 string lawTypeStr = "";
-                switch (lawType)
+                switch (lawType_enum)
                 {
-                    case (LawType._44_94):
+                    case (LawType_enum._44_94):
                         lawTypeStr = "FZ_44";
                         break;
-                    case (LawType._223):
+                    case (LawType_enum._223):
                         lawTypeStr = "FZ_223";
                         break;
-                    case (LawType._44_94_223):
+                    case (LawType_enum._44_94_223):
                         lawTypeStr = "EVERYWHERE";
                         break;
                 }
 
                 string customerTypeStr = "";
-                switch (customerType)
+                switch (customerType_enum)
                 {
-                    case (CustomerType.Customer):
+                    case (CustomerType_enum.Customer):
                         customerTypeStr = "CUSTOMER";
                         break;
-                    case (CustomerType.Organization):
+                    case (CustomerType_enum.Organization):
                         customerTypeStr = "REPRESENTATIVE_ORGANIZATION";
                         break;
                 }
@@ -94,17 +99,17 @@ namespace PublicOrders.Processors.Main
                 text += @"okvedCode=&okvedWithSubElements=false&districtIds=&regionIds=&cityIds=&organizationTypeList=&";
                 text += @"spz=&withBlocked=false&customerIdentifyCode=&headAgencyCode=&headAgencyWithSubElements=false&";
                 text += @"organizationsWithBranches=false&legalEntitiesTypeList=&ppoWithSubElements=false&ppoCode=&";
-                text += @"address=" + customerAddress + "&town=&publishedOrderClause=true&unpublishedOrderClause=true&bik=&bankRegNum=&";
+                text += @"address=" + town + "&town=&publishedOrderClause=true&unpublishedOrderClause=true&bik=&bankRegNum=&";
                 text += @"bankIdCode=";
 
                 #region Получение заказчиков, заполнение их параметров
-                doc = explorerEngine.GetHtmlDoc(text);
+                doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
-                ResultType resultTypeCheck = Globals_DLL.CheckDocResult(doc, out checkMessage);
-                if (resultTypeCheck != ResultType.Done)
+                ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+                if (resultTypeCheck != ResultType_enum.Done)
                 {
-                    message = checkMessage;
-                    return resultTypeCheck;
+                    customersSearchDone_delegate(resultTypeCheck, checkMessage);
+                    return;
                 }
 
                 // Если заказчики не найдены
@@ -118,12 +123,13 @@ namespace PublicOrders.Processors.Main
                 HtmlAgilityPack.HtmlNode htmlNode = doc.DocumentNode.SelectSingleNode(text);
                 if (htmlNode == null)
                 {
-                    message = "Поиск не дал результатов";
-                    return ResultType.ErrorNetwork;
+                    customersSearchDone_delegate(ResultType_enum.ErrorNetwork, "");
+                    return;
                 }
                 if (htmlNode.InnerText.Trim() == "Поиск не дал результатов")
                 {
-                    return ResultType.NotSearch;
+                    customersSearchDone_delegate(ResultType_enum.NotSearch, "");
+                    return;
                 }
 
                 // Определение количества страниц заказчиков
@@ -170,8 +176,10 @@ namespace PublicOrders.Processors.Main
                 text += "/div[@class=\"registerBox\"]";
 
                 HtmlAgilityPack.HtmlNodeCollection customerCollection = doc.DocumentNode.SelectNodes(text);
-                if ((customerCollection == null) || (customerCollection.Count == 0))
-                    return ResultType.NotSearch;
+                if ((customerCollection == null) || (customerCollection.Count == 0)) {
+                    customersSearchDone_delegate(ResultType_enum.NotSearch, "");
+                    return;
+                }
 
                 // Получение параметров заказчиков
                 int customerNum = 1;
@@ -180,34 +188,226 @@ namespace PublicOrders.Processors.Main
                 {
                     string customerMessage = "";
                     customer = new Customer();
-                    ResultType customerResult = customer.FillCustomer(node, explorerEngine,
+                    ResultType_enum customerResult = FillCustomer(customer, node, internetRequestEngine,
                                                                       out customerMessage);
                     switch (customerResult)
                     {
-                        case (ResultType.Error):
-                            message = customerMessage;
-                            return ResultType.Error;
-                        case (ResultType.NotSearch):
-                            break;
+                        case (ResultType_enum.Error):
+                            customersSearchDone_delegate(ResultType_enum.Error, customerMessage);
+                            return;
                         default:
                             break;
                     }
-                    customer.customerType = customerType;
+                    // Проверить на повтор
+                    Customer repeatCustomer = mvm.wc.Customers.FirstOrDefault(m => (m.Name == customer.Name && m.Vatin == customer.Vatin));
+                    if (repeatCustomer != null)
+                    {
+                        if (repeatCustomer.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.Trim().ToLower() == customerType_enum.ToString().ToLower()) == null)
+                        {
+                            customer.CustomerTypes.Add(mvm.wc.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
+                        }
+                    }
+                    else {
+                        customer.CustomerTypes.Add(mvm.wc.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
+                        customer.CreateDateTime = DateTime.Now;
+                        mvm.wc.Customers.Add(customer);
+                        mvm.wc.SaveChanges();
+                    }
 
-                    customers.Add(customer);
+                    try
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            customers.Add(customer);
+                        }));
+                    }
+                    catch
+                    {
+
+                    }
+
                     customerNum++;
                 }
                 #endregion
                 //return ResultType.Done;
-                return ResultType.DoneNetwork;
+                customersSearchDone_delegate(ResultType_enum.Done, "");
             }
             catch (Exception ex)
             {
-                message = ex.Message + '\n' + ex.StackTrace;
-                customers = null;
-                return ResultType.Error;
-            }*/
+                customersSearchDone_delegate(ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
+                return;
+            }
         }
+
+        public ResultType_enum FillCustomer(Customer customer, HtmlAgilityPack.HtmlNode customerNode, InternetRequestEngine internetRequestEngine,
+                               out string message)
+        {
+            try
+            {
+                message = "";
+                HtmlAgilityPack.HtmlNode nodeTmp = null;
+
+                #region Определение параметров
+                text = ".//table";
+                //text += "/tbody"; !!!newBrowser
+                text += "/tr";
+                text += "/td[@class=\"descriptTenderTd\"]";
+                text += "/dl";
+                text += "/dt";
+                text += "/a";
+
+                nodeTmp = customerNode.SelectSingleNode(text);
+
+                // Название заказчика
+                if (nodeTmp.Attributes.Contains("title"))
+                    customer.Name = Globals.DecodeInternetSymbs(nodeTmp.Attributes["title"].Value.Trim());
+
+                // Определение ID 94 и 223 законов
+                // Есди существует атрибут <href>, значит указана одна ссылка на один закон
+                LawType_enum lawType = LawType_enum.None;
+                Regex regex = new Regex(@"http://.*?Id=\d*");
+                MatchCollection matchColl = null;
+                if (nodeTmp.Attributes.Contains("href"))
+                {
+                    matchColl = regex.Matches(nodeTmp.Attributes["href"].Value);
+                }
+                else
+                {
+                    matchColl = regex.Matches(nodeTmp.Attributes["onclick"].Value);
+                }
+
+                foreach (Match match in matchColl)
+                {
+                    string lawID = GetIDLaw(match.Value, out lawType);
+                    switch (lawType)
+                    {
+                        case (LawType_enum._44_94):
+                            customer.Law_44_94_ID = lawID;
+                            break;
+                        case (LawType_enum._223):
+                            customer.Law_223_ID = lawID;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    //break;
+                }
+
+                // Уровень организации
+                text = ".//table";
+                //text += "/tbody"; !!!newBrowser
+                text += "/tr";
+                text += "/td[@class=\"tenderTd\"]";
+                text += "/dl";
+                text += "/dt";
+
+                nodeTmp = customerNode.SelectSingleNode(text);
+                CustomerLevel_enum customerLevel = CustomerLevel_enum.None;
+                if (nodeTmp != null) {
+                    switch(nodeTmp.InnerText.ToLower().Trim()) {
+                        case ("федеральный уровень"):
+                            customerLevel = CustomerLevel_enum.Federal;
+                            break;
+                        case ("уровень субъекта рф"):
+                            customerLevel = CustomerLevel_enum.Subject;
+                            break;
+                        case ("муниципальный уровень"):
+                            customerLevel = CustomerLevel_enum.Municipal;
+                            break;
+                        case ("иное"):
+                            customerLevel = CustomerLevel_enum.Other;
+                            break;
+                    }
+                }
+                customer.CustomerLevel = mvm.wc.CustomerLevels.FirstOrDefault(m => m.CustomerLevelCode == customerLevel.ToString());
+
+                // ИНН (VATIN)
+                text = ".//table";
+                //text += "/tbody"; !!!newBrowser
+                text += "/tr";
+                text += "/td[@class=\"descriptTenderTd\"]";
+                text += "/dl";
+                text += "/dd[@class=\"nameOrganization\"]";
+                text += "/span";
+
+                HtmlAgilityPack.HtmlNodeCollection collectionVatin = customerNode.SelectNodes(text);
+                foreach (HtmlAgilityPack.HtmlNode nodeVatin in collectionVatin)
+                {
+                    int vatinIntPos = nodeVatin.InnerText.IndexOf("ИНН:");
+                    if (vatinIntPos > -1)
+                    {
+                        customer.Vatin = nodeVatin.InnerText.Substring(vatinIntPos + 4, nodeVatin.InnerText.Length - (vatinIntPos + 4)).Trim();
+                        break;
+                    }
+                }
+
+                // Адрес
+                text = ".//table";
+                //text += "/tbody"; !!!newBrowser
+                text += "/tr";
+                text += "/td[@class=\"descriptTenderTd\"]";
+                text += "/dl";
+                text += "/dd";
+
+                HtmlAgilityPack.HtmlNodeCollection adressDDColl = customerNode.SelectNodes(text);
+                if (adressDDColl.Count == 3)
+                {
+                    customer.Address = Globals.CutAddress(adressDDColl[2].InnerText.Trim());
+                }
+                #endregion
+
+
+                return ResultType_enum.Done;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message + "\n\n" + ex.StackTrace;
+                return ResultType_enum.Error;
+            }
+        }
+
+
+        #region Получение ID закона и его тип
+        // 223 закон   http://zakupki.gov.ru/223/ppa/public/organization/organization.html?epz=true&amp;agencyId=108667 
+        // 94-44 закон http://zakupki.gov.ru/pgz/public/action/organization/view?source=epz&amp;organizationId=1428866
+        private string GetIDLaw(string text, out LawType_enum lawType_enum)
+        {
+            lawType_enum = LawType_enum.None;
+            try
+            {
+                int IDpos = text.IndexOf("Id=");
+                if (IDpos < 0)
+                {
+                    lawType_enum = LawType_enum.None;
+                    return "";
+                }
+
+                if (text.IndexOf(@"zakupki.gov.ru/223") > -1)
+                {
+                    lawType_enum = LawType_enum._223;
+                    return text.Substring(IDpos + 3, text.Length - (IDpos + 3));
+                }
+                else
+                {
+                    if (text.IndexOf(@"zakupki.gov.ru/pgz") > -1)
+                    {
+                        lawType_enum = LawType_enum._44_94;
+                        return text.Substring(IDpos + 3, text.Length - (IDpos + 3));
+                    }
+                    else
+                    {
+                        lawType_enum = LawType_enum.None;
+                        return "";
+                    }
+                }
+            }
+            catch
+            {
+                return "";
+            }
+        }
+        #endregion
 
         public void Operate()
         {
