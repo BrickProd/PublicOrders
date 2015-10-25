@@ -138,10 +138,13 @@ namespace PublicOrders.Processors
 
                     // Добавляем к продукту значения, шаблон, рубрику 
                     product.Properties.Add(property);
+
+
+
                     product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода"));
                     product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
 
-
+                    mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "свобода").Products.Add(product);
 
                     mvm.dc.Products.Add(product);
                     try {
@@ -157,7 +160,7 @@ namespace PublicOrders.Processors
 
 
                     mvm.dc.SaveChanges();
-                    mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
+                    //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
                     productAddedCount++;
                 }
