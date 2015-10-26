@@ -75,6 +75,8 @@ namespace PublicOrders.Processors
 
                 //DocumentDbContext dc = new DocumentDbContext();
                 // Заполняем продукты
+                var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+                var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода");
                 for (int i = 4; i <= tbl.Rows.Count; i++)
                 {
                     if (!isWork) break;
@@ -112,42 +114,59 @@ namespace PublicOrders.Processors
                     // У данного шаблона одно свойство
                     Property property = new Property();
 
-                    // Требования заказчика
-                    ParamValue pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                    try
+                    {
+                        // Требования заказчика
+                        ParamValue pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требования заказчика" && m.Template.Name.ToLower() == "свобода");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требования заказчика" && m.Template.Name.ToLower() == "свобода");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
 
-                    // Требования заказчика
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Требования заказчика
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требования участника" && m.Template.Name.ToLower() == "свобода");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требования участника" && m.Template.Name.ToLower() == "свобода");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
 
-                    // Сертификация
-                    pv = new ParamValue();
-                    property.ParamValues.Add(pv);
+                        // Сертификация
+                        pv = new ParamValue();
+                        property.ParamValues.Add(pv);
 
-                    pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "свобода");
-                    pv.Property = property;
-                    pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
+                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "свобода");
+                        pv.Property = property;
+                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
 
-                    // Добавляем к продукту значения, шаблон, рубрику 
-                    product.Properties.Add(property);
+                        // Добавляем к продукту значения, шаблон, рубрику 
+                        product.Properties.Add(property);
+                    }
+                    catch {
+                        string sss = "";
+                        continue;
+                    }
 
-
-
-                    product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода"));
-                    product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-
-                    mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "свобода").Products.Add(product);
-
+                    product.Rubric = r;
                     mvm.dc.Products.Add(product);
-                    try {
+                    productAddedCount++;
+                    t.Products.Add(product);
+
+                    mvm.dc.SaveChanges();
+
+                    try
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "свобода").Products.Add(product);
+                        }));
+                    }
+                    catch { }
+
+
+                    try
+                    {
                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             mvm.ProductCollection.Add(product);
@@ -158,12 +177,10 @@ namespace PublicOrders.Processors
 
                     }
 
+                    
 
-                    mvm.dc.SaveChanges();
-                    //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
-
-                    productAddedCount++;
                 }
+
 
 
                 // Закрываем приложение

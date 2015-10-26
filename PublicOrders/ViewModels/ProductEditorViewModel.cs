@@ -19,19 +19,10 @@ namespace PublicOrders.ViewModels
     {
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        private ObservableCollection<Product> _products;
         public ObservableCollection<Product> Products
         {
-            get
-            {
-                return _products;
-            }
-            set
-            {
-                _products = value;
-                OnPropertyChanged("Products");
-            }
-
+            get;
+            set;
         }
 
 
@@ -142,12 +133,6 @@ namespace PublicOrders.ViewModels
                 Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
             }
         }
-
-
-
-
-
-
 
 
         #region INotifyPropertyChanged

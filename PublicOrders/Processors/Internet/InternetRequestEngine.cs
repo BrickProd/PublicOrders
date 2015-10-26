@@ -8,7 +8,7 @@ using HtmlAgilityPack;
 
 namespace PublicOrders.Processors.Internet
 {
-    class InternetRequestEngine
+    public class InternetRequestEngine
     {
         private bool isReady = false;
         private Random rand = null;

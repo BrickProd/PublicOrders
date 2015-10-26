@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using PublicOrders.Models;
 using System.Threading;
 using Word = Microsoft.Office.Interop.Word;
+using System.Windows;
 
 namespace PublicOrders.Processors.Main
 {
     public delegate void CreateDocumentDone_delegete(ResultType_enum ResultType_enum, string message);
     public class CreateDocumentProcessor
     {
+        //MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
         private bool isWork = false;
 
         private FreedomProcessor freedomProcessor = null;

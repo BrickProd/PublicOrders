@@ -75,8 +75,10 @@ namespace PublicOrders.Processors.Main
         {
             if (isWork) return;
             isWork = true;
-            Thread operate_thread = new Thread(Operate_thread);
-            operate_thread.Start();
+            Task operate_task = new Task(Operate_thread);
+            operate_task.Start();
+            /*Thread operate_thread = new Thread(Operate_thread);
+            operate_thread.Start();*/
         }
 
         public bool isWorking()
