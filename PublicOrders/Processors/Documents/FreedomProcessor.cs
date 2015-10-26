@@ -171,7 +171,7 @@ namespace PublicOrders.Processors
                 application = null;
 
                 return ResultType_enum.Done;
-            }
+        }
 
             catch (Exception ex)
             {

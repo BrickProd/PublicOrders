@@ -16,7 +16,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border Name="Panel" Width="160" BorderThickness="0 0 0 3">
+                        <Border Name="Panel" Width="160" BorderThickness="0 0 0 3" Background="Transparent">
                             <ContentPresenter x:Name="ContentSite"
                                               TextBlock.FontSize="18"
                                               TextBlock.FontWeight="Normal"
@@ -50,15 +50,6 @@
                                     <Setter TargetName="Panel" Property="BorderBrush" Value="#007ACB" />
                                 </MultiTrigger.Setters>
                             </MultiTrigger>
-                            <!--<MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="False" />
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                </MultiTrigger.Conditions>
-                                <MultiTrigger.Setters>
-                                    <Setter TargetName="Panel" Property="BorderBrush" Value="#EEEEEE" />
-                                </MultiTrigger.Setters>
-                            </MultiTrigger>-->
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -78,13 +69,14 @@
                 </EventTrigger>
             </Style.Triggers>
         </Style>
-        
-        
-        
+
+
+
         <DataTemplate x:Key="ListBoxItemTemplate">
             <TextBlock Text="{Binding Name}" FontSize="20" TextTrimming="WordEllipsis"></TextBlock>
         </DataTemplate>
         <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
+            <Setter Property="AllowDrop" Value="True"></Setter>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Background" Value="Transparent"></Setter>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -113,22 +105,28 @@
             <TabControl BorderThickness="0" TabStripPlacement="Top">
                 <!--ПАНЕЛЬ ТОВАРОВ-->
                 <TabItem Header="Товары" Style="{StaticResource PanelContentStyle}">
-                    <DataGrid x:Name="productGrid" 
-                              Margin="10,30.96,161.175,10"  
-                              ItemsSource="{Binding Products}" 
-                              SelectedItem="{Binding SelectedProduct}"
-                              AutoGenerateColumns="False">
-                        <!--<i:Interaction.Triggers>
-                        <i:EventTrigger EventName="CellEditEnding">
-                            <i:InvokeCommandAction Command="{Binding UpdateProductCommand}"></i:InvokeCommandAction>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>-->
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name, Mode=TwoWay}" Width="*"></DataGridTextColumn>
-                            <DataGridTextColumn Header="Торговый знак" Binding="{Binding TradeMark}" Width="*"></DataGridTextColumn>
-                            <DataGridComboBoxColumn Header="Рубрика" ItemsSource="{Binding Rubrics}" DisplayMemberPath="Name" SelectedValuePath="RubricId" SelectedValueBinding="{Binding RubricId}"  Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300*"/>
+                            <ColumnDefinition Width="295*"/>
+                            <ColumnDefinition Width="101*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ListBox x:Name="productsList" Margin="5,45,5,10" ItemsSource="{Binding SelectedRubric.Products}" BorderThickness="1 0 1 0"
+                                 Grid.Column="0" PreviewMouseLeftButtonDown="productsList_PreviewMouseLeftButtonDown"
+                             ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+                             ItemTemplate="{StaticResource ListBoxItemTemplate}"
+                             BorderBrush="LightGray" d:LayoutOverrides="Width"
+                             SelectionMode="Multiple"/>
+                        <ListBox Margin="5,45,5,10" ItemsSource="{Binding Rubrics}" BorderThickness="1 0 1 0"
+                                 Grid.Column="1" SelectedItem="{Binding SelectedRubric, Mode=TwoWay}"
+                             ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+                             ItemTemplate="{StaticResource ListBoxItemTemplate}"
+                                 Drop="ListBox_Drop"
+                             BorderBrush="LightGray" d:LayoutOverrides="Width"/>
+                    </Grid>
+
+
                 </TabItem>
 
 

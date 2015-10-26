@@ -50,6 +50,7 @@ namespace PublicOrders.ViewModels
 
         }
 
+
         private DelegateCommand updateProductCommand;
         public ICommand UpdateProductCommand
         {
@@ -62,7 +63,6 @@ namespace PublicOrders.ViewModels
                 return updateProductCommand;
             }
         }
-
         private void UpdateProduct() {
             //string sss = "";
             mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
@@ -71,6 +71,18 @@ namespace PublicOrders.ViewModels
         }
 
         public ObservableCollection<Rubric> Rubrics { get; set; }
+
+        private Rubric _selectedRubric;
+        public Rubric SelectedRubric
+        {
+            get { return _selectedRubric; }
+            set
+            {
+                _selectedRubric = value;
+                OnPropertyChanged("SelectedRubric");
+            }
+        }
+
         public string NewRubricName { get; set; }
 
 
@@ -97,6 +109,8 @@ namespace PublicOrders.ViewModels
 
 
         private DelegateCommand addRubricCommand;
+       
+
         public ICommand AddRubricCommand
         {
             get
