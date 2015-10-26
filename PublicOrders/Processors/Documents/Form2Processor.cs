@@ -77,12 +77,22 @@ namespace PublicOrders.Processors
 
                 bool isNewProduct = false;
                 string productName = "";
-                //DocumentDbContext dc = new DocumentDbContext();
+
+                var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+                var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "форма 2");
                 for (int i = 4; i <= tbl.Rows.Count; i++)
                 {
                     // Название продукта
                     try
                     {
+                        /*tbl.Cell(i, 2).Select();
+                        Word.Selection sel = application.Selection;
+                        bool sss = sel.IsEndOfRowMark;
+                        int ss = sel.Rows.Count;*/
+                        //sel.MoveDown();
+                        Word.Cell ddd = tbl.Cell(i, 2).Next;
+
+
                         if ((Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == productName) ||
                             (Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == ""))
                         {
@@ -95,7 +105,7 @@ namespace PublicOrders.Processors
                         }
 
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         isNewProduct = false;
                     }
@@ -130,9 +140,11 @@ namespace PublicOrders.Processors
                         }
                         else
                         {
-                            product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-
+                            product.Rubric = r;
                             mvm.dc.Products.Add(product);
+                            t.Products.Add(product);
+                            productAddedCount++;
+                            mvm.dc.SaveChanges();
                             try
                             {
                                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -155,15 +167,9 @@ namespace PublicOrders.Processors
                             }));
                         }
                         catch { }
-                        try
-                        {
-                            mvm.dc.SaveChanges();
-                            productAddedCount++;
-                        }
-                        catch (Exception ex)
-                        {
-                            string sss = "авыаыва";
-                        }
+
+
+
                         //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
 
                     }

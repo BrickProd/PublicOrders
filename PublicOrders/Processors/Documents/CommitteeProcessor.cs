@@ -77,7 +77,8 @@ namespace PublicOrders.Processors
                 Property property = null;
                 bool isNewProduct = false;
                 string productName = "";
-                //DocumentDbContext dc = new DocumentDbContext();
+                var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+                var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет");
                 for (int i = 2; i <= tbl.Rows.Count; i++)
                 {
                     // Название продукта
@@ -133,9 +134,11 @@ namespace PublicOrders.Processors
                         }
                         else
                         {
-                            product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-
+                            product.Rubric = r;
                             mvm.dc.Products.Add(product);
+                            t.Products.Add(product);
+                            productAddedCount++;
+                            mvm.dc.SaveChanges();
                             try
                             {
                                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -146,7 +149,7 @@ namespace PublicOrders.Processors
                             catch { }
                         }
 
-                        product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
+                        //product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
                         try
                         {
                             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -155,15 +158,6 @@ namespace PublicOrders.Processors
                             }));
                         }
                         catch { }
-                        try
-                        {
-                            mvm.dc.SaveChanges();
-                            productAddedCount++;
-                        }
-                        catch (Exception ex)
-                        {
-                            string sss = "авыаыва";
-                        }
                     }
                     // Добавляем свойство
                     property = new Property();

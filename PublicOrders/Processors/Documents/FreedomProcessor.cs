@@ -75,6 +75,8 @@ namespace PublicOrders.Processors
 
                 //DocumentDbContext dc = new DocumentDbContext();
                 // Заполняем продукты
+                var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+                var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода");
                 for (int i = 4; i <= tbl.Rows.Count; i++)
                 {
                     if (!isWork) break;
@@ -146,8 +148,13 @@ namespace PublicOrders.Processors
                         continue;
                     }
 
-                    product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода"));
-                    product.Rubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+                    product.Rubric = r;
+                    mvm.dc.Products.Add(product);
+                    productAddedCount++;
+                    t.Products.Add(product);
+
+                    mvm.dc.SaveChanges();
+
                     try
                     {
                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -157,8 +164,9 @@ namespace PublicOrders.Processors
                     }
                     catch { }
 
-                    mvm.dc.Products.Add(product);
-                    try {
+
+                    try
+                    {
                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             mvm.ProductCollection.Add(product);
@@ -169,19 +177,10 @@ namespace PublicOrders.Processors
 
                     }
 
-                    try
-                    {
-                        mvm.dc.SaveChanges();
-                        productAddedCount++;
-                    }
-                    catch (Exception ex){
-                        string sss = "авыаыва";
-                    }
-
-                    //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
-
+                    
 
                 }
+
 
 
                 // Закрываем приложение

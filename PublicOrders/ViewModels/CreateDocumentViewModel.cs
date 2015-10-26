@@ -14,6 +14,7 @@ using System.ComponentModel;
 using PublicOrders.Annotations;
 using System.Runtime.CompilerServices;
 using PublicOrders.Processors.Main;
+using System.Windows.Data;
 
 namespace PublicOrders.ViewModels
 {
@@ -41,7 +42,8 @@ namespace PublicOrders.ViewModels
         public ObservableCollection<Document> Documents { get; set; }
 
         public ObservableCollection<Template> Templates { get; set; }
-
+        public ObservableCollection<Product> Products { get; set; }
+        public CollectionViewSource FilteredProducts { get; set; }
 
         private Template _selectedTemplate = null;
         public Template SelectedTemplate {
@@ -49,6 +51,7 @@ namespace PublicOrders.ViewModels
             set {
                 _selectedTemplate = value;
                 OnPropertyChanged("SelectedTemplate");
+                this.FilteredProducts.View.Refresh();
             }
         }
 
@@ -74,6 +77,7 @@ namespace PublicOrders.ViewModels
                 return createDocumentCommand;
             }
         }
+
 
         private void CreateDocument()
         {
@@ -115,8 +119,21 @@ namespace PublicOrders.ViewModels
             if (mvm != null)
             {
                 Templates = mvm.TemplateCollection;
+                Products = mvm.ProductCollection;
             }
             Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
+            FilteredProducts = new CollectionViewSource();
+            FilteredProducts.Source = this.Products;
+            FilteredProducts.Filter += ProductFilter;
+        }
+
+        private void ProductFilter(object sender, FilterEventArgs e)
+        {
+            Product p = e.Item as Product;
+            if (p != null)
+            {
+                e.Accepted = (p.Templates.Contains(this.SelectedTemplate));
+            }
         }
     }
 }
