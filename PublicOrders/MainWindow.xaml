@@ -7,7 +7,25 @@
 	Title="MainWindow"
 	Width="800" Height="600" WindowState="Maximized" MinHeight="600" MinWidth="700">
 
-	<Grid x:Name="LayoutRoot" Background="White" Margin="0,26,0,0">
-		<local:MainView />
-	</Grid>
+    <Window.Resources>
+        <XmlDataProvider x:Key="rss" 
+   Source="http://informer.gismeteo.ru/rss/27612.xml"
+   XPath="/rss/channel"/>
+
+    </Window.Resources>
+    <Grid x:Name="LayoutRoot" Background="White" Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="532*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image Margin="0,0,0,0"  
+        		Stretch="Fill"     
+        		Source="{Binding Source={StaticResource rss}, XPath=item/enclosure/@url}" Width="40"/>
+            <TextBlock Text="{Binding Source={StaticResource rss}, XPath=item/title}"/>
+            <TextBlock Text="{Binding Source={StaticResource rss}, XPath=item/description}"/>
+        </StackPanel>
+
+        <local:MainView Margin="0,11.505,0,0" Grid.Row="1" />
+    </Grid>
 </Window>
