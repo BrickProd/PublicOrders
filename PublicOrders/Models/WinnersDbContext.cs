@@ -61,19 +61,28 @@ namespace PublicOrders.Models
             {
                 var customerLevels = new List<CustomerLevel>
                 {
-                new CustomerLevel{ CustomerLevelCode = "Federal" },
-                new CustomerLevel{ CustomerLevelCode = "Subject" },
-                new CustomerLevel{ CustomerLevelCode = "Municipal" },
-                new CustomerLevel{ CustomerLevelCode = "Other" }
+                    new CustomerLevel{ CustomerLevelCode = "Federal" },
+                    new CustomerLevel{ CustomerLevelCode = "Subject" },
+                    new CustomerLevel{ CustomerLevelCode = "Municipal" },
+                    new CustomerLevel{ CustomerLevelCode = "Other" }
                 };
                 customerLevels.ForEach(m => context.CustomerLevels.Add(m));
 
                 var customerTypes = new List<CustomerType>
                 {
-                new CustomerType{ CustomerTypeCode = "Customer" },
-                new CustomerType{ CustomerTypeCode = "Organization" },
+                    new CustomerType{ CustomerTypeCode = "Customer" },
+                    new CustomerType{ CustomerTypeCode = "Organization" },
                 };
                 customerTypes.ForEach(m => context.CustomerTypes.Add(m));
+
+                var lawTypes = new List<LawType>
+                {
+                    new LawType{ Name = "44" },
+                    new LawType{ Name = "94" },
+                    new LawType{ Name = "223" },
+                    new LawType{ Name = "None" },
+                };
+                lawTypes.ForEach(m => context.LawTypes.Add(m));
 
                 context.SaveChanges();
             }
@@ -180,7 +189,7 @@ namespace PublicOrders.Models
         public long MaxLotPrice { get; set; }
 
         [ForeignKey("LawType"), Required]
-        public int LawTypeCode { get; set; }
+        public int LawTypeId { get; set; }
         virtual public LawType LawType { get; set; }
 
         [ForeignKey("OrderType"), Required]
@@ -260,7 +269,11 @@ namespace PublicOrders.Models
     public class LawType
     {
         [Key]
-        public int LawTypeCode { get; set; }
+        public int LawTypeId { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(10)]
+        [Index]
+        public string Name { get; set; }
 
         public LawType()
         {

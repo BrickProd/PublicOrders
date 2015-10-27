@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace PublicOrders.Processors.Main
 {
-    public delegate void CustomersSearchDone_delegate(ResultType_enum ResultType_enum, string message);
+    public delegate void CustomersSearchDone_delegate(ObservableCollection<Customer> customers, ResultType_enum ResultType_enum, string message);
 
 
     public class CustomersSearchProcessor
@@ -36,12 +36,13 @@ namespace PublicOrders.Processors.Main
         private LawType_enum lawType_enum;
         private CustomersSearchDone_delegate customersSearchDone_delegate = null;
         private int searchingProgress = 0;
+
         private ObservableCollection<Customer> customers;
 
         public CustomersSearchProcessor(string _customerName, CustomerType_enum _customerType_enum, decimal _priceMin, decimal _priceMax, string _town,
                                DateTime _publishDateMin, DateTime _publishDateMax,
                                LawType_enum _lawType_enum, CustomersSearchDone_delegate _customersSearchDone_delegate,
-                               int _searchingProgress, ObservableCollection<Customer> _customers)
+                               int _searchingProgress)
         {
             customerName = _customerName;
             customerType_enum = _customerType_enum;
@@ -53,7 +54,6 @@ namespace PublicOrders.Processors.Main
             lawType_enum = _lawType_enum;
             customersSearchDone_delegate = _customersSearchDone_delegate;
             searchingProgress = _searchingProgress;
-            customers = _customers;
         }
 
         private void SearchCustomers_proc()
@@ -63,7 +63,7 @@ namespace PublicOrders.Processors.Main
                 customers = new ObservableCollection<Customer>();
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
                 if (customerName == "") {
-                    customersSearchDone_delegate(ResultType_enum.NullSearchText, "");
+                    customersSearchDone_delegate(customers, ResultType_enum.NullSearchText, "");
                     return;
                 } 
 
@@ -108,7 +108,7 @@ namespace PublicOrders.Processors.Main
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
-                    customersSearchDone_delegate(resultTypeCheck, checkMessage);
+                    customersSearchDone_delegate(customers, resultTypeCheck, checkMessage);
                     return;
                 }
 
@@ -123,12 +123,12 @@ namespace PublicOrders.Processors.Main
                 HtmlAgilityPack.HtmlNode htmlNode = doc.DocumentNode.SelectSingleNode(text);
                 if (htmlNode == null)
                 {
-                    customersSearchDone_delegate(ResultType_enum.ErrorNetwork, "");
+                    customersSearchDone_delegate(customers, ResultType_enum.ErrorNetwork, "");
                     return;
                 }
                 if (htmlNode.InnerText.Trim() == "Поиск не дал результатов")
                 {
-                    customersSearchDone_delegate(ResultType_enum.NotSearch, "");
+                    customersSearchDone_delegate(customers, ResultType_enum.NotSearch, "");
                     return;
                 }
 
@@ -177,7 +177,7 @@ namespace PublicOrders.Processors.Main
 
                 HtmlAgilityPack.HtmlNodeCollection customerCollection = doc.DocumentNode.SelectNodes(text);
                 if ((customerCollection == null) || (customerCollection.Count == 0)) {
-                    customersSearchDone_delegate(ResultType_enum.NotSearch, "");
+                    customersSearchDone_delegate(customers, ResultType_enum.NotSearch, "");
                     return;
                 }
 
@@ -193,19 +193,20 @@ namespace PublicOrders.Processors.Main
                     switch (customerResult)
                     {
                         case (ResultType_enum.Error):
-                            customersSearchDone_delegate(ResultType_enum.Error, customerMessage);
+                            customersSearchDone_delegate(customers, ResultType_enum.Error, customerMessage);
                             return;
                         default:
                             break;
                     }
-                    // Проверить на повтор
+                    // Проверить на повтор и записать в БД
                     Customer repeatCustomer = mvm.wc.Customers.FirstOrDefault(m => (m.Name == customer.Name && m.Vatin == customer.Vatin));
                     if (repeatCustomer != null)
                     {
                         if (repeatCustomer.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.Trim().ToLower() == customerType_enum.ToString().ToLower()) == null)
                         {
-                            customer.CustomerTypes.Add(mvm.wc.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
+                            repeatCustomer.CustomerTypes.Add(mvm.wc.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
                         }
+                        customer = repeatCustomer;
                     }
                     else {
                         customer.CustomerTypes.Add(mvm.wc.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
@@ -214,27 +215,17 @@ namespace PublicOrders.Processors.Main
                         mvm.wc.SaveChanges();
                     }
 
-                    try
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            customers.Add(customer);
-                        }));
-                    }
-                    catch
-                    {
-
-                    }
+                    customers.Add(customer);
 
                     customerNum++;
                 }
                 #endregion
                 //return ResultType.Done;
-                customersSearchDone_delegate(ResultType_enum.Done, "");
+                customersSearchDone_delegate(customers, ResultType_enum.Done, "");
             }
             catch (Exception ex)
             {
-                customersSearchDone_delegate(ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
+                customersSearchDone_delegate(customers, ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
                 return;
             }
         }

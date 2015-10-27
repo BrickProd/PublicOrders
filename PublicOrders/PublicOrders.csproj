@@ -84,9 +84,9 @@
     <Compile Include="Processors\Documents\Form2Processor.cs" />
     <Compile Include="Processors\Documents\FreedomProcessor.cs" />
     <Compile Include="Processors\Documents\Main\LoadProductsProcessor.cs" />
-    <Compile Include="Processors\Internet\CustomersSearchProcessor.cs" />
+    <Compile Include="Processors\Internet\Main\CustomersSearchProcessor.cs" />
     <Compile Include="Processors\Internet\InternetRequestEngine.cs" />
-    <Compile Include="Processors\Internet\LotsSearchProcessor.cs" />
+    <Compile Include="Processors\Internet\Main\LotsSearchProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

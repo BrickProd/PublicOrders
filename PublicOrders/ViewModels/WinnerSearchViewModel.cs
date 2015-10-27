@@ -21,6 +21,17 @@ namespace PublicOrders.ViewModels
         #region Переменные
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
+        private Customer _selectedCustomer = null;
+        public Customer SelectedCustomer
+        {
+            get { return _selectedCustomer; }
+            set
+            {
+                _selectedCustomer = value;
+                OnPropertyChanged("SelectedCustomer");
+            }
+        }
+
         private string _searchInput;
         public string SearchInput
         {
@@ -114,17 +125,6 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public ICommand CustomersSearchStopCommand
-        {
-            get
-            {
-                if (customersSearchStopCommand == null)
-                {
-                    customersSearchStopCommand = new DelegateCommand(CustomersSearchStop);
-                }
-                return customersSearchStopCommand;
-            }
-        }
 
         public ICommand WinnerLotsSearchCommand
         {
@@ -166,8 +166,6 @@ namespace PublicOrders.ViewModels
         #region Методы
         private void CustomersSearch()
         {
-
-
             IsCustomersSearching = true;
 
             if ((mvm.csProcessor != null) && (mvm.csProcessor.isWorking()))
@@ -185,27 +183,64 @@ namespace PublicOrders.ViewModels
                                                            DateTime.Now, 
                                                            LawType_enum._44_94_223, 
                                                            customerSearchDone_delege, 
-                                                           SearchingProgress, 
-                                                           Customers);
+                                                           SearchingProgress);
             mvm.csProcessor.Operate();
         }
 
 
 
-        private void CustomersSearchStop()
+        private void CustomersSearchDone_proc(ObservableCollection<Customer> serchedCustomers, ResultType_enum resultSearch, string message)
         {
-            //метод
-        }
+            if (serchedCustomers != null)
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Customers = serchedCustomers;
+                }));
 
-        private void CustomersSearchDone_proc(ResultType_enum resultSearch, string message)
-        {
             SearchingProgress = 0;
             IsCustomersSearching = false;
             MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            WinnerLotsSearch();
         }
 
         private void WinnerLotsSearch() {
+            if ((Customers != null) && (Customers.Count > 0)) {
+                SelectedCustomer = Customers[0];
+            }
 
+            if (SelectedCustomer == null) {
+                MessageBox.Show("Выберите заказчика!", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            IsWinnerLotsSearching = true;
+
+            if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
+            {
+                mvm.lsProcessor.Stop();
+            }
+
+            AllLotsSearched_delegete allLotsSearched_delegete = new AllLotsSearched_delegete(AllLotsSearched_proc);
+            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched__proc);
+            mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer, 
+                                                      CustomerType_enum.Customer, 
+                                                      LawType_enum._44_94_223,
+                                                      100,
+                                                      100000000,
+                                                      Convert.ToDateTime("2010.01.01"),
+                                                      DateTime.Now,
+                                                      lotSearched_delegate,
+                                                      allLotsSearched_delegete
+                                                      );
+            mvm.lsProcessor.Operate();
+        }
+
+        private void AllLotsSearched_proc(ResultType_enum ResultType_enum, string message) {
+            
+        }
+
+        private void LotSearched__proc(Lot lot, Order order, Customer customer) {
+            
         }
 
         private void WinnerLotsSearchStop() {
