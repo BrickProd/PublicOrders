@@ -146,7 +146,6 @@ namespace PublicOrders
 
             // Победители
             wc = new WinnersDbContext();
-            //CustomerCollection = new ObservableCollection<Customer>(wc.Customers);
         }
 		
 		

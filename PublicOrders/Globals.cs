@@ -57,6 +57,40 @@ namespace PublicOrders.Models
             return text;
         }
 
+        public static string CleanSpaces(string text)
+        {
+            while (true)
+            {
+                if (text.IndexOf("  ") > -1)
+                {
+                    text = text.Replace("  ", " ");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return text;
+        }
+
+        public static string CutLotName(string text)
+        {
+
+            Regex regex = new Regex("лот.*?\\d{1,}(.*)", RegexOptions.IgnoreCase);
+            MatchCollection matchColl = regex.Matches(text);
+            foreach (Match match in matchColl)
+            {
+                if (match.Groups.Count == 2)
+                {
+                    text = match.Groups[1].Value.Trim();
+                }
+                break;
+            }
+
+            return text;
+        }
+
         public static string DecodeInternetSymbs(string text)
         {
             text = text.Replace("&amp;", "&");

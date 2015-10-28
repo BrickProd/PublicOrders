@@ -336,6 +336,8 @@ namespace PublicOrders.Models
             get { return _paramValues ?? (_paramValues = new HashSet<ParamValue>()); } // Try HashSet<N>
             set { _paramValues = value; }
         }
+
+        
         public Property()
         {
 

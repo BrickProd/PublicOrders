@@ -21,7 +21,8 @@ namespace PublicOrders.Models
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<CustomerLevel> CustomerLevels { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<PriceType> PriceTypes { get; set; }
+        public DbSet<OrderPriceType> OrderPriceTypes { get; set; }
+        public DbSet<LotPriceType> LotPriceTypes { get; set; }
         public DbSet<OrderType> OrderTypes { get; set; }
         public DbSet<LawType> LawTypes { get; set; }
         public DbSet<Lot> Lots { get; set; }
@@ -185,6 +186,17 @@ namespace PublicOrders.Models
         [Key]
         public long OrderId { get; set; }
 
+        [Column(TypeName = "varchar"), MaxLength(400), Required]
+        [Index]
+        public string Name { get; set; }
+
+        [Index]
+        public long Price { get; set; }
+
+        [ForeignKey("OrderPriceType")]
+        public int OrderPriceTypeId { get; set; }
+        virtual public OrderPriceType OrderPriceType { get; set; }
+
         [Index]
         public long MaxLotPrice { get; set; }
 
@@ -236,16 +248,31 @@ namespace PublicOrders.Models
         }
     }
 
-    public class PriceType
+    public class OrderPriceType
     {
         [Key]
-        public int PriceTypeId { get; set; }
+        public int OrderPriceTypeId { get; set; }
 
         [Column(TypeName = "varchar"), MaxLength(50)]
         [Index]
         public string Name { get; set; }
 
-        public PriceType()
+        public OrderPriceType()
+        {
+
+        }
+    }
+
+    public class LotPriceType
+    {
+        [Key]
+        public int LotPriceTypeId { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(50)]
+        [Index]
+        public string Name { get; set; }
+
+        public LotPriceType()
         {
 
         }
@@ -300,14 +327,9 @@ namespace PublicOrders.Models
         [Index]
         public long DocumentPrice { get; set; }
 
-        [ForeignKey("PriceType"), Required]
-        public int PriceTypeId { get; set; }
-        virtual public PriceType PriceType { get; set; }
-
-        [ForeignKey("Winner")]
-        public long WinnerId { get; set; }
-        virtual public Winner Winner { get; set; }
-
+        [ForeignKey("LotPriceType"), Required]
+        public int LotPriceTypeId { get; set; }
+        virtual public LotPriceType LotPriceType { get; set; }
 
         [Column(TypeName = "varchar"), MaxLength(300), Required]
         [Index]
@@ -349,6 +371,10 @@ namespace PublicOrders.Models
         [Column(TypeName = "varchar"), MaxLength(50)]
         [Index]
         public string Phone { get; set; }
+
+        [ForeignKey("Lot")]
+        public long LotId { get; set; }
+        virtual public Lot Lot { get; set; }
 
         public Winner()
         {

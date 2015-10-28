@@ -92,17 +92,17 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private ObservableCollection<Lot> _winnerLots;
-        public ObservableCollection<Lot> WinnerLots
+        private ObservableCollection<Winner> _winners;
+        public ObservableCollection<Winner> Winners
         {
             get
             {
-                return _winnerLots;
+                return _winners;
             }
             set
             {
-                _winnerLots = value;
-                OnPropertyChanged("WinnerLots");
+                _winners = value;
+                OnPropertyChanged("Winners");
             }
         }
         #endregion
@@ -199,7 +199,7 @@ namespace PublicOrders.ViewModels
 
             SearchingProgress = 0;
             IsCustomersSearching = false;
-            MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show("Поиск заказчиков завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             WinnerLotsSearch();
         }
 
@@ -208,6 +208,7 @@ namespace PublicOrders.ViewModels
                 SelectedCustomer = Customers[0];
             }
 
+            if (Winners != null) Winners.Clear();
             if (SelectedCustomer == null) {
                 MessageBox.Show("Выберите заказчика!", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -239,12 +240,16 @@ namespace PublicOrders.ViewModels
             
         }
 
-        private void LotSearched__proc(Lot lot, Order order, Customer customer) {
-            
+        private void LotSearched__proc(Winner winner) {
+            if (winner.Name != "")
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Winners.Add(winner);
+                }));
         }
 
         private void WinnerLotsSearchStop() {
-
+            IsWinnerLotsSearching = false;
         }
 
         private void CreateReport()
