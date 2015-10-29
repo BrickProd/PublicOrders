@@ -126,7 +126,7 @@ namespace PublicOrders.Models
 
         [Column(TypeName = "nvarchar"), MaxLength(400)]
         [Index]
-        public string Сertification { get; set; }
+        public string Certification { get; set; }
 
         [ForeignKey("Rubric")]
         public int? RubricId { get; set; }

@@ -17,11 +17,11 @@ namespace PublicOrders.Processors
         Object missingObj = System.Reflection.Missing.Value;
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out int productMergeCount, out string message)
+        public ResultType_enum Learn(string docPath, out int productsAddedCount, out int productsRepeatCount, out int productsMergeCount, out string message)
         {
-            productAddedCount = 0;
-            productRepeatCount = 0;
-            productMergeCount = 0;
+            productsAddedCount = 0;
+            productsRepeatCount = 0;
+            productsMergeCount = 0;
             try
             {
                 isWork = true;
@@ -72,171 +72,137 @@ namespace PublicOrders.Processors
                     return ResultType_enum.Error;
                 }
 
-                // Заполняем продукты
-                Product product = null;
-                Property property = null;
-
-                bool isNewProduct = false;
-                string productName = "";
-
+                // Заполняем
                 var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-                var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "форма 2");
-                for (int i = 4; i <= tbl.Rows.Count; i++)
+
+                // Новый обход документа
+                Product product = null;
+                Form2Property form2Property = null;
+                bool isNewProduct = false;
+
+                Word.Cell cell = tbl.Cell(4, 1);
+                while (cell != null)
                 {
-                    // Название продукта
                     try
                     {
-                        /*tbl.Cell(i, 2).Select();
-                        Word.Selection sel = application.Selection;
-                        bool sss = sel.IsEndOfRowMark;
-                        int ss = sel.Rows.Count;*/
-                        //sel.MoveDown();
-                        Word.Cell ddd = tbl.Cell(i, 2).Next;
+                        string cellValue = cell.Range.Text.Trim();
 
-
-                        if ((Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == productName) ||
-                            (Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim()) == ""))
+                        switch (cell.ColumnIndex)
                         {
-                            isNewProduct = false;
-                        }
-                        else
-                        {
-                            isNewProduct = true;
-                            productName = Globals.CleanWordCell(tbl.Cell(i, 2).Range.Text.Trim());
-                        }
+                            case (2):
+                                // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
+                                if ((product != null) && (product.Name == Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)))))
+                                {
+                                    isNewProduct = false;
+                                }
+                                else {
+                                    isNewProduct = true;
 
+                                    // Сохранение продукта
+                                    if (product != null) {
+                                        // Проверка на повтор
+                                        // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
+                                        // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
+                                        // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification));
+                                        if (repeatProducts.Any())
+                                        {
+                                            // Изначально проверим на повтор
+                                            bool isRepeat = true;
+                                            foreach (Product repeatProduct in repeatProducts)
+                                            {
+                                                foreach (Form2Property repeatForm2Property in repeatProduct.Form2Properties) {
+                                                    Form2Property newForm2Property = product.Form2Properties.FirstOrDefault(m => (m.RequiredParam == repeatForm2Property.RequiredParam &&
+                                                                                                                                  m.RequiredValue == repeatForm2Property.RequiredValue &&
+                                                                                                                                  m.OfferValue == repeatForm2Property.OfferValue &&
+                                                                                                                                  m.Measure == repeatForm2Property.Measure));
+                                                    if (newForm2Property != null) {
+                                                        isRepeat = true;
+                                                    }
+                                                    if (!isRepeat) {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (isRepeat)
+                                            {
+                                                productsRepeatCount++;
+                                                continue;
+                                            }
+
+                                            // Слияние делается в том случае, если найден один повторный документ и нет значений по шпблону
+                                            if (repeatProducts.Count() == 1)
+                                            {
+                                                if ((repeatProducts.ElementAt(0).Form2Properties == null) ||
+                                                    (repeatProducts.ElementAt(0).Form2Properties.Count() == 0))
+                                                {
+                                                    productsMergeCount++;
+                                                    repeatProducts.ElementAt(0).Form2Properties = product.Form2Properties;
+                                                    product = repeatProducts.ElementAt(0);
+                                                    mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                                                    mvm.dc.SaveChanges();
+                                                    continue;
+                                                }
+                                            }
+                                        }
+
+
+                                        product.Rubric = r;
+                                        mvm.dc.Products.Add(product);
+                                        productsAddedCount++;
+
+                                        mvm.dc.SaveChanges();
+                                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                                        {
+                                            mvm.ProductCollection.Add(product);
+                                        }));
+                                    }
+                                }
+
+                                if (isNewProduct) {
+                                    product = new Product();
+                                    product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                }
+
+                                form2Property = new Form2Property();
+                                break;
+                            case (3):
+                                // Торговая марка
+                                if (product == null) break;
+                                product.TradeMark = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                break;
+                            case (4):
+                                // Требуемый параметр
+                                form2Property.RequiredParam = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (5):
+                                // Требуемое значение
+                                form2Property.RequiredValue = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (6):
+                                // Значение, предлагаемое участником
+                                form2Property.OfferValue = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (7):
+                                // Значение, предлагаемое участником
+                                form2Property.Measure = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (8):
+                                // Сертификация (--ПОСЛЕДНЕЕ ЗНАЧЕНИЕ--)
+                                if (product == null) break;
+                                product.Certification = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     catch (Exception ex)
                     {
-                        isNewProduct = false;
+                        break;
                     }
-
-                    if (isNewProduct)
+                    finally
                     {
-                        if (!isWork) break;
-                        product = new Product();
-                        product.Name = productName;
-                        try
-                        {
-                            product.TradeMark = Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim());
-                        }
-                        catch
-                        {
-                            product.TradeMark = "";
-                        }
-
-                        // Проверить на повтор
-                        Product repeatProduct = mvm.dc.Products.FirstOrDefault(m => (m.Name == product.Name && m.TradeMark == product.TradeMark));
-                        if (repeatProduct != null)
-                        {
-                            if (repeatProduct.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "форма 2") == null)
-                            {
-                                product = repeatProduct;
-                            }
-                            else
-                            {
-                                productRepeatCount++;
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            product.Rubric = r;
-                            mvm.dc.Products.Add(product);
-                            t.Products.Add(product);
-                            productAddedCount++;
-                            mvm.dc.SaveChanges();
-                            try
-                            {
-                                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                                {
-                                    mvm.ProductCollection.Add(product);
-                                }));
-                            }
-                            catch { }
-
-                        }
-
-
-
-                        product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "форма 2"));
-                        try
-                        {
-                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "форма 2").Products.Add(product);
-                            }));
-                        }
-                        catch { }
-
-
-
-                        //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
-
-                    }
-
-                    // Добавляем свойство
-                    property = new Property();
-                    product.Properties.Add(property);
-
-                    try
-                    {
-                        // Требуемый параметр
-                        ParamValue pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требуемый параметр" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
-
-                        // Требуемое значение
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требуемое значение" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
-
-                        // Значение, предлагаемое участником
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Значение, предлагаемое участником" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        try
-                        {
-                            pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
-                        }
-                        catch
-                        {
-                            pv.Value = "";
-                        }
-
-                        // Единица измерения
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
-
-                        // Сертификация
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "форма 2");
-                        pv.Property = property;
-                        try
-                        {
-                            pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
-                        }
-                        catch
-                        {
-                            pv.Value = "";
-                        }
-                    }
-                    catch (Exception ex) {
-                        string sss = "";
+                        cell = cell.Next;
                     }
                 }
 
@@ -259,7 +225,7 @@ namespace PublicOrders.Processors
             }
         }
 
-        public ResultType_enum Create(Document document, Word.Application application, out Word._Document doc, out string message)
+        public ResultType_enum Create(List<Product> products, Word.Application application, out Word._Document doc, out string message)
         {
             try
             {
@@ -321,12 +287,9 @@ namespace PublicOrders.Processors
 
                     // Подсчитываем количество строк у продуктов (потому что одно свойство продукта занимает одну строку)
                     int propertiesCount = 0;
-                    foreach (Product product in document.Products)
+                    foreach (Product product in products)
                     {
-                        var myTemplate = product.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "форма 2");
-                        IEnumerable<Property> productProperties = product.Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
-
-                        propertiesCount += productProperties.Count();
+                        propertiesCount += product.Form2Properties.Count();
                     }
 
                     Object defaultTableBehavior =
@@ -372,12 +335,6 @@ namespace PublicOrders.Processors
                     wordcellrange = doc.Range(ref begCell, ref endCell);
                     wordcellrange.Select();
                     application.Selection.Cells.Merge();
-
-                    /*begCell = wordtable.Cell(4, 6).Range.Start;
-                    endCell = wordtable.Cell(propertiesCount + 4, 6).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();*/
 
                     // Окраска строки с номерами
                     begCell = wordtable.Cell(3, 1).Range.Start;
@@ -428,21 +385,16 @@ namespace PublicOrders.Processors
 
 
                     // Заполняем продукты
-                    ParamValue paramValue = null;
                     int productIndexCompilator = 0;
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
-                        // Получаем свойства продукта на шаблон
-                        var myTemplate = document.Products.ElementAt(productIndexCompilator).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "форма 2");
-                        IEnumerable<Property> productProperties = document.Products.ElementAt(productIndexCompilator).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
-
                         if (propertyIndexCompilator == 0)
                         {
                             // Объединяем ячейки по продукту (т.к. свойство занимает строку)
                             begCell = wordtable.Cell(i + 4, 1).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 1).Range.End;
+                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 1).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -455,7 +407,7 @@ namespace PublicOrders.Processors
                             }
 
                             begCell = wordtable.Cell(i + 4, 2).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 2).Range.End;
+                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 2).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -468,7 +420,7 @@ namespace PublicOrders.Processors
                             }
 
                             begCell = wordtable.Cell(i + 4, 3).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 3).Range.End;
+                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 3).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -481,7 +433,7 @@ namespace PublicOrders.Processors
                             }
 
                             begCell = wordtable.Cell(i + 4, 8).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + productProperties.Count() - 1, 8).Range.End;
+                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 8).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -496,76 +448,34 @@ namespace PublicOrders.Processors
                             doc.Tables[1].Cell(i + 4, 1).Range.Text = Convert.ToString(productIndexCompilator + 1) + '.';
                             doc.Tables[1].Cell(i + 4, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                            doc.Tables[1].Cell(i + 4, 2).Range.Text = document.Products.ElementAt(productIndexCompilator).Name;
+                            doc.Tables[1].Cell(i + 4, 2).Range.Text = products.ElementAt(productIndexCompilator).Name;
                             doc.Tables[1].Cell(i + 4, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
-                            doc.Tables[1].Cell(i + 4, 3).Range.Text = document.Products.ElementAt(productIndexCompilator).TradeMark;
+                            doc.Tables[1].Cell(i + 4, 3).Range.Text = products.ElementAt(productIndexCompilator).TradeMark;
                             doc.Tables[1].Cell(i + 4, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
-                            // Сертификация
-                            paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Сертификация");
-                            if (paramValue != null)
-                            {
-                                doc.Tables[1].Cell(i + 4, 8).Range.Text = paramValue.Value;
-                            }
-                            else
-                            {
-                                doc.Tables[1].Cell(i + 4, 8).Range.Text = "";
-                            }
-
-                            doc.Tables[1].Cell(i + 4, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                            doc.Tables[1].Cell(i + 4, 8).Range.Text = products.ElementAt(productIndexCompilator).Certification;
+                            doc.Tables[1].Cell(i + 4, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
                         }
 
                         // Требуемый параметр
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Требуемый параметр");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 4, 4).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 4, 4).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 4, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 4).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).RequiredParam;
+                        doc.Tables[1].Cell(i + 4, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Требуемое значение
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Требуемое значение");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 4, 5).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 4, 5).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 5).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).RequiredValue;
+                        doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Значение, предлагаемое участником
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Значение, предлагаемое участником");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 4, 6).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 4, 6).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 6).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).OfferValue;
+                        doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Единица измерения
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Единица измерения");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 4, 7).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 4, 7).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 4, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 7).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).Measure;
+                        doc.Tables[1].Cell(i + 4, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         propertyIndexCompilator++;
-                        if (productProperties.Count() == propertyIndexCompilator)
+                        if (products[productIndexCompilator].Form2Properties.Count() == propertyIndexCompilator)
                         {
                             propertyIndexCompilator = 0;
                             productIndexCompilator++;

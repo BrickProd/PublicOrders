@@ -44,8 +44,8 @@
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="6" Style="{StaticResource SlideDownEButtonStyle}"
-				x:Name="CloseEditProductPanel" Command="{Binding SaveProductCommand}" Click="CloseEditProductPanel_Click" Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
+            <!--<Button Grid.Row="6" Style="{StaticResource SlideDownEButtonStyle}"
+				x:Name="CloseEditProductPanel" Command="{Binding SaveProductCommand}" Click="CloseEditProductPanel_Click" Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>-->
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Торговая марка" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Сертификация" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
@@ -161,7 +161,7 @@
 							Margin="10,45,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
-                                    <EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>
+                                    <!--<EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>-->
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>

@@ -9,7 +9,7 @@ using PublicOrders.Processors;
 
 namespace PublicOrders.Processors.Main
 {
-    public delegate void LoadProductsDone_delegete(ResultType_enum ResultType_enum, Template template, int productsAddedCount, int productsRepeatCount, string message);
+    public delegate void LoadProductsDone_delegete(ResultType_enum ResultType_enum, string templateStr, int productsAddedCount, int productsRepeatCount, string message);
     public class LoadProductsProcessor
     {
         private bool isWork = false;
@@ -19,13 +19,13 @@ namespace PublicOrders.Processors.Main
         private CommitteeProcessor committeeProcessor = null;
 
         private string documentPath = "";
-        private Template template;
+        private string templateStr;
         LoadProductsDone_delegete done_del = null;
 
-        public LoadProductsProcessor(string _documentPath, Template _template, LoadProductsDone_delegete _done_del)
+        public LoadProductsProcessor(string _documentPath, string _templateStr, LoadProductsDone_delegete _done_del)
         {
             documentPath = _documentPath;
-            template = _template;
+            templateStr = _templateStr;
             done_del = _done_del;
         }
 
@@ -38,29 +38,29 @@ namespace PublicOrders.Processors.Main
             ResultType_enum ResultType_enum;
             try
             {
-                switch (template.Name.Trim().ToLower())
+                switch (templateStr.Trim().ToLower())
                 {
                     case ("свобода"):
                         FreedomProcessor freedomLoadProcessor = new FreedomProcessor();
                         ResultType_enum = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
-                        done_del(ResultType_enum, template, productsAddedCount, productsRepeatCount, message);
+                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("форма 2"):
                         Form2Processor form2LoadProcessor = new Form2Processor();
                         ResultType_enum = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
-                        done_del(ResultType_enum, template, productsAddedCount, productsRepeatCount, message);
+                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("комитет"):
                         CommitteeProcessor committeeLoadProcessor = new CommitteeProcessor();
                         ResultType_enum = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
-                        done_del(ResultType_enum, template, productsAddedCount, productsRepeatCount, message);
+                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, message);
                         isWork = false;
                         return;
                     default:
                         isWork = false;
-                        done_del(ResultType_enum.Error, template, productsAddedCount, productsRepeatCount, "Данный движок не обучает шаблоны типа: <" + template.Name + ">");
+                        done_del(ResultType_enum.Error, templateStr, productsAddedCount, productsRepeatCount, "Данный движок не обучает шаблоны типа: <" + templateStr.Trim() + ">");
                         return;
                 }
                 isWork = false;
@@ -68,7 +68,7 @@ namespace PublicOrders.Processors.Main
             catch (Exception ex)
             {
                 isWork = false;
-                done_del(ResultType_enum.Error, template, productsAddedCount, productsRepeatCount, ex.Message + '\n' + ex.StackTrace);
+                done_del(ResultType_enum.Error, templateStr, productsAddedCount, productsRepeatCount, ex.Message + '\n' + ex.StackTrace);
             }
         }
 

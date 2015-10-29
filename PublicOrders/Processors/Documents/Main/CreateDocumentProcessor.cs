@@ -20,22 +20,23 @@ namespace PublicOrders.Processors.Main
         private Form2Processor form2Processor = null;
         private CommitteeProcessor committeeProcessor = null;
 
-        object falseValue = false;
-        object trueValue = true;
-        Object missingObj = System.Reflection.Missing.Value;
-        Object trueObj = true;
-        Object falseObj = false;
-        Object begin = Type.Missing;
-        Object end = Type.Missing;
-
-        private Document document = null;
-        private Template template;
+        private object falseValue = false;
+        private object trueValue = true;
+        private Object missingObj = System.Reflection.Missing.Value;
+        private Object trueObj = true;
+        private Object falseObj = false;
+        private Object begin = Type.Missing;
+        private Object end = Type.Missing;
+        private Instruction instruction = null;
+        private List<Product> products = null;
+        private string templateStr;
         CreateDocumentDone_delegete done_del = null;
 
-        public CreateDocumentProcessor(Document _document, Template _template, CreateDocumentDone_delegete _done_del)
+        public CreateDocumentProcessor(List<Product> _products, Instruction _instruction, string _templateStr, CreateDocumentDone_delegete _done_del)
         {
-            document = _document;
-            template = _template;
+            products = _products;
+            templateStr = _templateStr;
+            instruction = _instruction;
             done_del = _done_del;
         }
 
@@ -49,23 +50,23 @@ namespace PublicOrders.Processors.Main
                 //application.DisplayAlerts = Microsoft.Office.Interop.Word.WdAlertLevel.wdAlertsNone;
                 Word._Document doc = null;
 
-                switch (template.Name.ToLower().Trim())
+                switch (templateStr.ToLower().Trim())
                 {
                     case ("свобода"):
                         freedomProcessor = new FreedomProcessor();
-                        createResult = freedomProcessor.Create(document, application, out doc, out message);
+                        createResult = freedomProcessor.Create(products, application, out doc, out message);
                         break;
                     case ("форма 2"):
                         form2Processor = new Form2Processor();
-                        createResult = form2Processor.Create(document, application, out doc, out message);
+                        createResult = form2Processor.Create(products, application, out doc, out message);
                         break;
                     case ("комитет"):
                         committeeProcessor = new CommitteeProcessor();
-                        createResult = committeeProcessor.Create(document, application, out doc, out message);
+                        createResult = committeeProcessor.Create(products, application, out doc, out message);
                         break;
                     default:
                         doc = null;
-                        message = "Данный движок не обрабатывает шаблоны типа: <" + Convert.ToString(template.Name.Trim()) + ">";
+                        message = "Данный движок не обрабатывает шаблоны типа: <" + templateStr.Trim() + ">";
                         isWork = false;
                         done_del(ResultType_enum.Error, message);
                         return;
@@ -77,9 +78,9 @@ namespace PublicOrders.Processors.Main
                         // Добавление инструкции
                         // Получаем путь инструкции
                         string instText = "";
-                        if (document.Instruction != null)
+                        if (instruction != null)
                         {
-                            instText = document.Instruction.Text;
+                            instText = instruction.Text;
                         }
                         else {
                             instText = "";

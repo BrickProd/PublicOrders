@@ -138,7 +138,7 @@ namespace PublicOrders.ViewModels
 
         #endregion
 
-        private void LoadProductsDone_Proc(ResultType_enum ResultType_enum, Template template, int productsAddedCount, int productsRepeatCount, string message) {
+        private void LoadProductsDone_Proc(ResultType_enum ResultType_enum, string templateStr, int productsAddedCount, int productsRepeatCount, string message) {
             switch (ResultType_enum)
             {
                 case (ResultType_enum.Done):
@@ -149,7 +149,7 @@ namespace PublicOrders.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Новый товар по шаблону <" + template.Name + "> загружен!\nДобавлено: " +
+                        MessageBox.Show("Новый товар по шаблону <" + templateStr.Trim() + "> загружен!\nДобавлено: " +
                                            productsAddedCount + "\nПовторы: " + productsRepeatCount, "Информация",
                                            MessageBoxButton.OK, MessageBoxImage.Information);
                     }

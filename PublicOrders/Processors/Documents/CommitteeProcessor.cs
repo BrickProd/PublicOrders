@@ -18,11 +18,11 @@ namespace PublicOrders.Processors
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out int productMergeCount, out string message)
+        public ResultType_enum Learn(string docPath, out int productsAddedCount, out int productsRepeatCount, out int productsMergeCount, out string message)
         {
-            productAddedCount = 0;
-            productRepeatCount = 0;
-            productMergeCount = 0;
+            productsAddedCount = 0;
+            productsRepeatCount = 0;
+            productsMergeCount = 0;
             try
             {
                 isWork = true;
@@ -73,163 +73,152 @@ namespace PublicOrders.Processors
                     return ResultType_enum.Error;
                 }
 
-                // Заполняем продукты
-                Product product = null;
-                Property property = null;
-                bool isNewProduct = false;
-                string productName = "";
+                // Заполняем
                 var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-                var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет");
-                for (int i = 2; i <= tbl.Rows.Count; i++)
+
+                // Новый обход документа
+                Product product = null;
+                CommitteeProperty committeeProperty = null;
+                bool isNewProduct = false;
+
+                Word.Cell cell = tbl.Cell(2, 1);
+                while (cell != null)
                 {
-                    // Название продукта
                     try
                     {
-                        Microsoft.Office.Interop.Word.Cell cell = tbl.Cell(i, 2);
-                        if ((Globals.CleanWordCell(cell.Range.Text.Trim()) == productName) || (Globals.CleanWordCell(cell.Range.Text.Trim()) == ""))
-                        {
-                            isNewProduct = false;
-                        }
-                        else
-                        {
-                            isNewProduct = true;
-                            productName = Globals.CleanWordCell(cell.Range.Text.Trim());
-                            /*if (productName == "Задвижки") {
-                                string sss = "авыавыа";
-                            }*/
-                        }
+                        string cellValue = cell.Range.Text.Trim();
 
-                    }
-                    catch
-                    {
-                        isNewProduct = false;
-                    }
-
-                    if (isNewProduct)
-                    {
-                        if (!isWork) break;
-                        product = new Product();
-                        product.Name = productName;
-                        try
+                        switch (cell.ColumnIndex)
                         {
-                            product.TradeMark = Globals.CleanWordCell(tbl.Cell(i, 9).Range.Text.Trim());
-                        }
-                        catch
-                        {
-                            product.TradeMark = "";
-                        }
-
-                        // Проверить на повтор
-                        Product repeatProduct = mvm.dc.Products.FirstOrDefault(m => (m.Name == product.Name && m.TradeMark == product.TradeMark));
-                        if (repeatProduct != null)
-                        {
-                            if (repeatProduct.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет") == null)
-                            {
-                                product = repeatProduct;
-                            }
-                            else
-                            {
-                                productRepeatCount++;
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            product.Rubric = r;
-                            mvm.dc.Products.Add(product);
-                            t.Products.Add(product);
-                            productAddedCount++;
-                            mvm.dc.SaveChanges();
-                            try
-                            {
-                                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            case (2):
+                                // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
+                                if ((product != null) && (product.Name == Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)))))
                                 {
-                                    mvm.ProductCollection.Add(product);
-                                }));
-                            }
-                            catch { }
-                        }
+                                    isNewProduct = false;
+                                }
+                                else
+                                {
+                                    isNewProduct = true;
 
-                        //product.Templates.Add(mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "комитет"));
-                        try
-                        {
-                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "комитет").Products.Add(product);
-                            }));
+                                    // Сохранение продукта
+                                    if (product != null)
+                                    {
+                                        // Проверка на повтор
+                                        // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
+                                        // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
+                                        // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification));
+                                        if (repeatProducts.Any())
+                                        {
+                                            // Изначально проверим на повтор
+                                            bool isRepeat = true;
+                                            foreach (Product repeatProduct in repeatProducts)
+                                            {
+                                                foreach (CommitteeProperty repeatCommitteeProperty in repeatProduct.CommitteeProperties)
+                                                {
+                                                    CommitteeProperty newCommitteeProperty = product.CommitteeProperties.FirstOrDefault(m => (m.MaxValue == repeatCommitteeProperty.MaxValue &&
+                                                                                                                                  m.MinValue == repeatCommitteeProperty.MinValue &&
+                                                                                                                                  m.ParamName == repeatCommitteeProperty.ParamName &&
+                                                                                                                                  m.SpecificParam == repeatCommitteeProperty.SpecificParam &&
+                                                                                                                                  m.VariableParam == repeatCommitteeProperty.VariableParam &&
+                                                                                                                                  m.Measure == repeatCommitteeProperty.Measure));
+                                                    if (newCommitteeProperty != null)
+                                                    {
+                                                        isRepeat = true;
+                                                    }
+                                                    if (!isRepeat)
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (isRepeat)
+                                            {
+                                                productsRepeatCount++;
+                                                continue;
+                                            }
+
+                                            // Слияние делается в том случае, если найден один повторный документ и нет значений по шпблону
+                                            if (repeatProducts.Count() == 1)
+                                            {
+                                                if ((repeatProducts.ElementAt(0).Form2Properties == null) ||
+                                                    (repeatProducts.ElementAt(0).Form2Properties.Count() == 0))
+                                                {
+                                                    productsMergeCount++;
+                                                    repeatProducts.ElementAt(0).CommitteeProperties = product.CommitteeProperties;
+                                                    product = repeatProducts.ElementAt(0);
+                                                    mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                                                    mvm.dc.SaveChanges();
+                                                    continue;
+                                                }
+                                            }
+                                        }
+
+
+                                        product.Rubric = r;
+                                        mvm.dc.Products.Add(product);
+                                        productsAddedCount++;
+
+                                        mvm.dc.SaveChanges();
+                                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                                        {
+                                            mvm.ProductCollection.Add(product);
+                                        }));
+                                    }
+                                }
+
+                                if (isNewProduct)
+                                {
+                                    product = new Product();
+                                    product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                }
+
+                                committeeProperty = new CommitteeProperty();
+                                break;
+                            case (9):
+                                // Торговая марка
+                                if (product == null) break;
+                                product.TradeMark = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                break;
+                            case (4):
+                                // Минимальное значение
+                                committeeProperty.MinValue = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (5):
+                                // Максимальное значение
+                                committeeProperty.MaxValue = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (6):
+                                // Значение, которые не могут изменяться
+                                committeeProperty.VariableParam = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (7):
+                                // Конкретные показатели
+                                committeeProperty.SpecificParam = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (8):
+                                // Единица измерения
+                                committeeProperty.Measure = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            default:
+                                break;
                         }
-                        catch { }
                     }
-                    // Добавляем свойство
-                    property = new Property();
-                    product.Properties.Add(property);
-
-                    try
+                    catch (Exception ex)
                     {
-                        // Наименование показателя
-                        ParamValue pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Наименование показателя" && m.Template.Name.ToLower() == "комитет");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
-
-                        // Минимальное значение показателей
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Минимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 4).Range.Text.Trim()));
-
-                        // Максимальное значение показателей
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Максимальные значения показателей" && m.Template.Name.ToLower() == "комитет");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 5).Range.Text.Trim()));
-
-                        // Значения показателей, которые не могут изменяться
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Значения показателей, которые не могут изменяться" && m.Template.Name.ToLower() == "комитет");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 6).Range.Text.Trim()));
-
-                        // Конкретные показатели
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Конкретные показатели" && m.Template.Name.ToLower() == "комитет");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 7).Range.Text.Trim()));
-
-                        // Единица измерения
-                        pv = new ParamValue();
-                        property.ParamValues.Add(pv);
-
-                        pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Единица измерения" && m.Template.Name.ToLower() == "комитет");
-                        pv.Property = property;
-                        pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 8).Range.Text.Trim()));
-                    } catch (Exception ex) {
-                        string sss = "";
+                        break;
                     }
-
+                    finally
+                    {
+                        cell = cell.Next;
+                    }
                 }
 
                 // Закрываем приложение
                 application.Quit(ref missing, ref missing, ref missing);
                 application = null;
 
-                //mvm.dc.SaveChanges();
-                //mvm.TemplateCollection = new ObservableCollection<Template>(mvm.dc.Templates);
-
                 return ResultType_enum.Done;
-
-                // Заносим продукты в БД
-                //return dbEngineDocs.SetProducts(DocTemplate.Template_3, products, out productAddedCount, out productRepeatCount, out message);
             }
             catch (Exception ex)
             {
@@ -241,7 +230,7 @@ namespace PublicOrders.Processors
             }
         }
 
-        public ResultType_enum Create(Document document, Word.Application application, out Word._Document doc, out string message)
+        public ResultType_enum Create(List<Product> products, Word.Application application, out Word._Document doc, out string message)
         {
             try
             {
@@ -304,12 +293,9 @@ namespace PublicOrders.Processors
 
                     // Подсчитываем количество строк у продуктов (потому что одно свойство продукта занимает одну строку)
                     int propertiesCount = 0;
-                    foreach (Product product in document.Products)
+                    foreach (Product product in products)
                     {
-                        var myTemplate = product.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет");
-                        IEnumerable<Property> productProperties = product.Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
-
-                        propertiesCount += productProperties.Count();
+                        propertiesCount += product.CommitteeProperties.Count();
                     }
 
                     Object defaultTableBehavior =
@@ -346,16 +332,12 @@ namespace PublicOrders.Processors
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
-                        // Получаем свойства продукта на шаблон
-                        var myTemplate = document.Products.ElementAt(productIndexCompilator).Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "комитет");
-                        IEnumerable<Property> productProperties = document.Products.ElementAt(productIndexCompilator).Properties.SelectMany(m => m.ParamValues.Where(p => myTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
-
                         if (propertyIndexCompilator == 0)
                         {
                             // Объединяем ячейки по продукту
                             // Номер
                             object begCell = wordtable.Cell(i + 2, 1).Range.Start;
-                            object endCell = wordtable.Cell(i + 2 + productProperties.Count() - 1, 1).Range.End;
+                            object endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 1).Range.End;
                             Word.Range wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -369,7 +351,7 @@ namespace PublicOrders.Processors
 
                             // Название продукта
                             begCell = wordtable.Cell(i + 2, 2).Range.Start;
-                            endCell = wordtable.Cell(i + 2 + productProperties.Count() - 1, 2).Range.End;
+                            endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 2).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -383,7 +365,7 @@ namespace PublicOrders.Processors
 
                             // Товарный знак
                             begCell = wordtable.Cell(i + 2, 9).Range.Start;
-                            endCell = wordtable.Cell(i + 2 + productProperties.Count() - 1, 9).Range.End;
+                            endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 9).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
                             wordcellrange.Select();
                             try
@@ -398,88 +380,39 @@ namespace PublicOrders.Processors
                             doc.Tables[1].Cell(i + 2, 1).Range.Text = Convert.ToString(productIndexCompilator + 1) + '.';
                             doc.Tables[1].Cell(i + 2, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                            doc.Tables[1].Cell(i + 2, 2).Range.Text = document.Products.ElementAt(productIndexCompilator).Name;
+                            doc.Tables[1].Cell(i + 2, 2).Range.Text = products.ElementAt(productIndexCompilator).Name;
                             doc.Tables[1].Cell(i + 2, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
-                            doc.Tables[1].Cell(i + 2, 9).Range.Text = document.Products.ElementAt(productIndexCompilator).TradeMark;
+                            doc.Tables[1].Cell(i + 2, 9).Range.Text = products.ElementAt(productIndexCompilator).TradeMark;
                             doc.Tables[1].Cell(i + 2, 9).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
                         }
 
-                        ParamValue paramValue = null;
                         // Наименование показателя
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Наименование показателя");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 2, 3).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 2, 3).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 2, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 3).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).ParamName;
+                        doc.Tables[1].Cell(i + 4, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Минимальные значения показателей
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Минимальные значения показателей");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 2, 4).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 2, 4).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 2, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 4).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MinValue;
+                        doc.Tables[1].Cell(i + 4, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Максимальные значения показателей
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Максимальные значения показателей");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 2, 5).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 2, 5).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 2, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 5).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MaxValue;
+                        doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Значения показателей, которые не могут изменяться
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Значения показателей, которые не могут изменяться");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 2, 6).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 2, 6).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 2, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 6).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).VariableParam;
+                        doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Конкретные показатели
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Конкретные показатели");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 2, 7).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 2, 7).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 2, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 7).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).SpecificParam;
+                        doc.Tables[1].Cell(i + 4, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Единица измерения
-                        paramValue = productProperties.ElementAt(propertyIndexCompilator).ParamValues.FirstOrDefault(m => m.Param.Name == "Единица измерения");
-                        if (paramValue != null)
-                        {
-                            doc.Tables[1].Cell(i + 2, 8).Range.Text = paramValue.Value;
-                        }
-                        else
-                        {
-                            doc.Tables[1].Cell(i + 2, 8).Range.Text = "";
-                        }
-                        doc.Tables[1].Cell(i + 2, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        doc.Tables[1].Cell(i + 4, 8).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).Measure;
+                        doc.Tables[1].Cell(i + 4, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         propertyIndexCompilator++;
-                        if (productProperties.Count() == propertyIndexCompilator)
+                        if (products[productIndexCompilator].CommitteeProperties.Count() == propertyIndexCompilator)
                         {
                             propertyIndexCompilator = 0;
                             productIndexCompilator++;

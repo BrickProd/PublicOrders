@@ -76,20 +76,12 @@ namespace PublicOrders.ViewModels
 
         private void CreateDocument()
         {
-            // Добавление документа в БД с инструкцией
-            Document document = new Document();
-            document.Instruction = SelectedInstruction;
-
-            document.Products = SelectedTemplate.Products;
-
-            mvm.dc.Documents.Add(document);
-
             ButtonCreateDocEnabled = false;
             if ((mvm.cdProcessor != null) && (mvm.cdProcessor.isWorking())) {
                 mvm.cdProcessor.Stop();
             }
             CreateDocumentDone_delegete done_del = new CreateDocumentDone_delegete(CreateDocumentDone_Proc);
-            mvm.cdProcessor = new CreateDocumentProcessor(document, SelectedTemplate, done_del);
+            mvm.cdProcessor = new CreateDocumentProcessor(FilteredProducts.View.Cast<Product>().ToList(), SelectedInstruction, SelectedTemplate, done_del);
             mvm.cdProcessor.Operate();
         }
         #endregion

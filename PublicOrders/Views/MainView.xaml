@@ -41,6 +41,6 @@
                     <views:LoadProductsPanel></views:LoadProductsPanel>
                 </Grid>
             </TabItem >
-        <!--</TabControl>-->
+        </TabControl>
     </Grid>
 </UserControl>
