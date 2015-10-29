@@ -21,7 +21,6 @@ namespace PublicOrders.ViewModels
     public class LoadProductsViewModel : INotifyPropertyChanged
     {
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-        //DocumentDbContext dc = null;
 
         private string _docPath;
         public string DocPath
@@ -46,12 +45,13 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public ObservableCollection<Template> Templates { get; set; }
-        public Template SelectedTemplate { get; set; }
+        public ObservableCollection<string> Templates { get; set; }
+        public string SelectedTemplate { get; set; }
         
         #region КОМАНДЫ
         private DelegateCommand loadCommand;
         private DelegateCommand openFileCommand;
+
         public ICommand LoadCommand
         {
             get
@@ -171,7 +171,11 @@ namespace PublicOrders.ViewModels
         {
             this.ButtonLoadProdsEnabled = false;
 
-            if (mvm != null) Templates = mvm.TemplateCollection;
+            Templates = new ObservableCollection<string>(new List<string> {
+                        "Комитет",
+                        "Свобода",
+                        "Форма 2"
+                    });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

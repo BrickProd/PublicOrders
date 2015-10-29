@@ -12,112 +12,10 @@
 	d:DesignWidth="700" d:DesignHeight="600" Padding="0 20 0 20" >
     <UserControl.Resources>
         <local:MainViewModel x:Key="MainViewModelDataSource" />
-
-        <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">
-            <Setter Property="BorderThickness" Value="0"></Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Grid Name="Panel" Width="160">
-                            <!--<Path x:Name="CurrentTriangle" Width="32.667" Height="70" Stretch="Fill" Margin="0,0,0,0" Fill="White" HorizontalAlignment="Right" Data="F1 M 287.328,237.333L 319.344,255.818L 319.344,218.849L 287.328,237.333 Z " Visibility="Collapsed" />-->
-                            <!--<Path x:Name="CurrentArrow" Data="M130,2 L162.5,2 162.5,70.25 130,70.25 162,35.5" Fill="White" HorizontalAlignment="Right" Height="70" Margin="0 -0.5" Stretch="Fill" VerticalAlignment="Stretch" Width="32.5" Visibility="Collapsed"/>-->
-                            <Path x:Name="CurrentArrow" Data="M-51,39.5 L-30.515625,39.5 -30.515625,78.5 -51,78.5 -33.16647,58.5" Fill="White" HorizontalAlignment="Right" Height="70" Margin="0 -1" Stretch="Fill" VerticalAlignment="Stretch" Width="20" Visibility="Collapsed"/>
-
-                            <ContentPresenter x:Name="ContentSite"
-                                              TextBlock.FontSize="18"
-                                              TextBlock.FontWeight="Normal"
-                                              SnapsToDevicePixels="True"
-                                              KeyboardNavigation.TabNavigation="Local"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Left"
-                                        ContentSource="Header"
-                                        Margin="10,10,30,10">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="TextWrapping" Value="Wrap"></Setter>
-                                        <Setter Property="TextAlignment" Value="Left"></Setter>
-                                        <Style.Triggers>
-
-                                        </Style.Triggers>
-                                    </Style>
-                                </ContentPresenter.Resources>
-
-                            </ContentPresenter>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <!--<Setter TargetName="CurrentTriangle" Property="Visibility" Value="Visible" />-->
-                                <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Panel" Property="Background" Value="#007ACB" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="Panel" Property="Background" Value="Transparent" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="ContentSite" Property="TextBlock.Foreground" Value="White" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="ContentSite" Property="TextBlock.Foreground" Value="#686868" />
-                            </Trigger>
-                            <!--<Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Panel" Property="Background" Value="Black" />
-                                <Setter TargetName="Panel" Property="Opacity" Value="0.1" />
-                                <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
-                                <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="Black" />
-                            </Trigger>-->
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="True" />
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                </MultiTrigger.Conditions>
-                                <MultiTrigger.Setters>
-                                    <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="White" />
-                                </MultiTrigger.Setters>
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="False" />
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                </MultiTrigger.Conditions>
-                                <MultiTrigger.Setters>
-                                    <Setter TargetName="Panel" Property="Background" Value="#EEEEEE" />
-                                    <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
-                                </MultiTrigger.Setters>
-                            </MultiTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background" Value="Transparent"></Setter>
-            <Style.Triggers>
-                <EventTrigger RoutedEvent="Selector.Selected">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="Content.Opacity" From="0" To="1" Duration="0:0:0.5">
-                                <DoubleAnimation.EasingFunction>
-                                    <CubicEase EasingMode="EaseOut"></CubicEase>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-                    </BeginStoryboard>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ThicknessAnimation Storyboard.TargetProperty="Content.Margin" From="50 0 -50 0" To="0 0 0 0" Duration="0:0:0.4">
-                                <ThicknessAnimation.EasingFunction>
-                                    <CircleEase EasingMode="EaseOut"></CircleEase>
-                                </ThicknessAnimation.EasingFunction>
-                            </ThicknessAnimation>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" >
-        <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0 0 0 0">
+        <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0,2,0,0" BorderBrush="#FF007ACB">
             <TabItem Header="Поиск победителей" Style="{StaticResource PanelContentStyle}">
                 <Grid >
                     <views:WinnerSearchPanel Background="Transparent"></views:WinnerSearchPanel>
@@ -143,15 +41,6 @@
                     <views:LoadProductsPanel></views:LoadProductsPanel>
                 </Grid>
             </TabItem >
-        </TabControl>
-
-        <!--<TextBlock Text="{Binding ViewModelProperty}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<Button Content="Update Value" Height="41" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,125,0,0">
-			<i:Interaction.Triggers>
-				<i:EventTrigger EventName="Click">
-					<ic:CallMethodAction MethodName="ViewModelMethod" TargetObject="{Binding}"/>
-				</i:EventTrigger>
-			</i:Interaction.Triggers>
-		</Button>-->
+        <!--</TabControl>-->
     </Grid>
 </UserControl>

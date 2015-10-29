@@ -11,28 +11,28 @@
         <ViewModels:OrderFilterViewModel></ViewModels:OrderFilterViewModel>
     </UserControl.DataContext>
     <Grid>
-        <Border BorderBrush="DodgerBlue" BorderThickness="0 2 0 0" Margin="0">
-            <StackPanel MaxWidth="500" HorizontalAlignment="Left">
-                <GroupBox x:Name="groupBox" Header="Цена" Margin="10,10,10,0" Padding="5">
+        <Border BorderBrush="DodgerBlue" BorderThickness="0 0 0 0" Margin="0">
+            <StackPanel Width="500" HorizontalAlignment="Left">
+                <GroupBox x:Name="groupBox" Header="Цена" Margin="10,20,10,0" Padding="5">
                     <StackPanel Orientation="Horizontal">
                         <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MinPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
                         <TextBlock Text=" - "></TextBlock>
                         <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MaxPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="Город" Margin="10,10,10,0" Padding="5">
+                <GroupBox Header="Город" Margin="10,20,10,0" Padding="5">
                     <StackPanel>
                         <TextBox Margin="0" TextWrapping="Wrap" Text="{Binding CustomerCity}" />
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="Дата публикации" Margin="10,10,10,0" Padding="5">
+                <GroupBox Header="Дата публикации" Margin="10,20,10,0" Padding="5">
                     <StackPanel Orientation="Horizontal">
                         <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectedDate="{Binding MinPublicDate}"></DatePicker>
                         <TextBlock Text=" - "></TextBlock>
                         <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectedDate="{Binding MaxPublicDate}"></DatePicker>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="Федеральный закон" Margin="10,10,10,0" Padding="5">
+                <GroupBox Header="Федеральный закон" Margin="10,20,10,0" Padding="5">
                     <StackPanel >
                         <ComboBox SelectedItem="{Binding LawType}" SelectedValuePath="Content">
                             <ComboBox.Items>
@@ -43,7 +43,7 @@
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="Тип заказчика" Margin="10,10,10,0" Padding="5">
+                <GroupBox Header="Тип заказчика" Margin="10,20,10,0" Padding="5">
                     <StackPanel Orientation="Vertical">
                         <ComboBox SelectedItem="{Binding CustomerType}">
                             <ComboBox.Items>

@@ -22,6 +22,7 @@ namespace PublicOrders.ViewModels
     {
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
         private bool _buttonCreateDocEnabled;
+
         public bool ButtonCreateDocEnabled
         {
             get { return _buttonCreateDocEnabled; }
@@ -38,24 +39,18 @@ namespace PublicOrders.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        //public DocumentDbContext dc { get; set; }
-        public ObservableCollection<Document> Documents { get; set; }
-
-        public ObservableCollection<Template> Templates { get; set; }
+        public ObservableCollection<string> Templates { get; set; }
         public ObservableCollection<Product> Products { get; set; }
         public CollectionViewSource FilteredProducts { get; set; }
 
-        private Template _selectedTemplate = null;
-        public Template SelectedTemplate {
+        private string _selectedTemplate = null;
+        public string SelectedTemplate {
             get { return _selectedTemplate; }
             set {
                 _selectedTemplate = value;
                 OnPropertyChanged("SelectedTemplate");
                 this.FilteredProducts.View.Refresh();
             }
-        }
-
-        private void InitObjects() {
         }
 
         public ObservableCollection<Instruction> Instructions { get; set; }
@@ -118,7 +113,11 @@ namespace PublicOrders.ViewModels
 
             if (mvm != null)
             {
-                Templates = mvm.TemplateCollection;
+                Templates = new ObservableCollection<string>(new List<string> {
+                        "Комитет",
+                        "Свобода",
+                        "Форма 2"
+                }); ;
                 Products = mvm.ProductCollection;
             }
             Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
@@ -132,7 +131,20 @@ namespace PublicOrders.ViewModels
             Product p = e.Item as Product;
             if (p != null)
             {
-                e.Accepted = (p.Templates.Contains(this.SelectedTemplate));
+                switch (SelectedTemplate)
+                {
+                    case "Комитет": e.Accepted = (p.CommitteeProperties.Any());
+                        break;
+                    case "Свобода":
+                        e.Accepted = (p.FreedomProperties.Any());
+                        break;
+                    case "Форма 2":
+                        e.Accepted = (p.Form2Properties.Any());
+                        break;
+                    default:
+                        e.Accepted = false;
+                        break;
+                }
             }
         }
     }

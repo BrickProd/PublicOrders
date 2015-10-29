@@ -9,7 +9,324 @@
 	StartupUri="MainWindow.xaml">
 	<Application.Resources>
 		<!-- Resources scoped at the Application level should be defined here. -->
-
         <main:MainViewModel x:Key="MainViewModel" d:IsDataSource="True"></main:MainViewModel>
+        
+        <!--СТИЛИ-->
+        <!--кнопки-->
+        <Style TargetType="Button" x:Key="OKButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Grid Margin="10 0">
+                                    <Ellipse Name="ButtonEllipse" Fill="Transparent" Stroke="#FF007ACB" Height="25" Width="25"  StrokeThickness="2"/>
+                                    <Path Name="CheckPath" Data="M7.0491511,14.391343 L11.556472,19.111688 19.218636,9.8933579"  Stretch="Fill" Stroke="#FF007ACB" Margin="5.6,6.24,5.127,6.205" StrokeThickness="3"/>
+                                </Grid>
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"></ContentPresenter>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="#FF007ACB" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="Transparent" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray"></Setter>
+                                <Setter TargetName="ButtonEllipse" Property="Stroke" Value="Gray"></Setter>
+                                <Setter TargetName="CheckPath" Property="Stroke" Value="Gray"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <Style TargetType="{x:Type Button}" x:Key="SlideDownEButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#FF007ACB"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Background="Transparent">
+                            <StackPanel>
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0"/>
+                                <ed:BlockArrow Name="ArrowDown" Height="60" Margin="0 10" Orientation="Down" Grid.Row="5" Fill="#FF007ACB" Stroke="#FF007ACB" StrokeThickness="0" VerticalAlignment="Top" Width="15"/>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ThicknessAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Margin" To="0 15" Duration="0:0:0.2" >
+                                                <ThicknessAnimation.EasingFunction>
+                                                    <BackEase></BackEase>
+                                                </ThicknessAnimation.EasingFunction>
+                                            </ThicknessAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Height" To="70" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BackEase></BackEase>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ThicknessAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Margin" To="0 10" Duration="0:0:0.2">
+                                                <ThicknessAnimation.EasingFunction>
+                                                    <BackEase></BackEase>
+                                                </ThicknessAnimation.EasingFunction>
+                                            </ThicknessAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Height" To="60" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BackEase></BackEase>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--табконтролы-->
+        <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="BorderThickness" Value="0"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid Name="Panel" Width="160">
+                            <!--<Path x:Name="CurrentTriangle" Width="32.667" Height="70" Stretch="Fill" Margin="0,0,0,0" Fill="White" HorizontalAlignment="Right" Data="F1 M 287.328,237.333L 319.344,255.818L 319.344,218.849L 287.328,237.333 Z " Visibility="Collapsed" />-->
+                            <!--<Path x:Name="CurrentArrow" Data="M130,2 L162.5,2 162.5,70.25 130,70.25 162,35.5" Fill="White" HorizontalAlignment="Right" Height="70" Margin="0 -0.5" Stretch="Fill" VerticalAlignment="Stretch" Width="32.5" Visibility="Collapsed"/>-->
+                            <Path x:Name="CurrentArrow" Data="M-51,39.5 L-30.515625,39.5 -30.515625,78.5 -51,78.5 -33.16647,58.5" Fill="White" HorizontalAlignment="Right" Height="70" Margin="0 -1" Stretch="Fill" VerticalAlignment="Stretch" Width="20" Visibility="Collapsed"/>
+
+                            <ContentPresenter x:Name="ContentSite"
+                                              TextBlock.FontSize="18"
+                                              TextBlock.FontWeight="Normal"
+                                              SnapsToDevicePixels="True"
+                                              KeyboardNavigation.TabNavigation="Local"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        ContentSource="Header"
+                                        Margin="10,10,30,10">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="TextWrapping" Value="Wrap"></Setter>
+                                        <Setter Property="TextAlignment" Value="Left"></Setter>
+                                        <Style.Triggers>
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentPresenter.Resources>
+
+                            </ContentPresenter>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <!--<Setter TargetName="CurrentTriangle" Property="Visibility" Value="Visible" />-->
+                                <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Panel" Property="Background" Value="#FF007ACB" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="Panel" Property="Background" Value="Transparent" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ContentSite" Property="TextBlock.Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="ContentSite" Property="TextBlock.Foreground" Value="#686868" />
+                            </Trigger>
+                            <!--<Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Panel" Property="Background" Value="Black" />
+                                <Setter TargetName="Panel" Property="Opacity" Value="0.1" />
+                                <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="Black" />
+                            </Trigger>-->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True" />
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter TargetName="ContentSite" Property="TextBox.Foreground" Value="White" />
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter TargetName="Panel" Property="Background" Value="#EEEEEE" />
+                                    <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Selector.Selected">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Content.Opacity" From="0" To="1" Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseOut"></CubicEase>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ThicknessAnimation Storyboard.TargetProperty="Content.Margin" From="50 0 -50 0" To="0 0 0 0" Duration="0:0:0.4">
+                                <ThicknessAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseOut"></CircleEase>
+                                </ThicknessAnimation.EasingFunction>
+                            </ThicknessAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+
+        <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border x:Name="Panel" Width="160" BorderThickness="0 0 0 3" Background="Transparent">
+                            <ContentPresenter x:Name="ContentSite"
+        						TextBlock.FontSize="18"
+        						TextBlock.FontWeight="Normal"
+        						SnapsToDevicePixels="True"
+        						KeyboardNavigation.TabNavigation="Local"
+        						VerticalAlignment="Center"
+        						HorizontalAlignment="Center"
+        						ContentSource="Header"
+        						Margin="10,10,10,10">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Panel" Property="BorderBrush" Value="#007ACB" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Panel" Property="BorderBrush" Value="#EEEEEE" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True" />
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Panel" Property="BorderBrush" Value="#007ACB" />
+                            </MultiTrigger>
+                            <!--<MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter TargetName="Panel" Property="BorderBrush" Value="#EEEEEE" />
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>-->
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Selector.Selected">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Content.Opacity" From="0" To="1" Duration="0:0:0.2">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        
+        
+        
+        <!--списки-->
+        <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Item" BorderBrush="Transparent" Padding="10">
+                            <ContentPresenter Margin="10 0 10 0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"  Value="True">
+                                <Setter TargetName="Item" Property="Background" Value="#EEEEEE"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Item" Property="Background" Value="#007ACB"/>
+                                <Setter TargetName="Item" Property="TextBlock.Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#eeeeee"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        
     </Application.Resources>
 </Application>

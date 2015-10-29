@@ -10,20 +10,6 @@ namespace PublicOrders
     {
         #region Документы
         public DocumentDbContext dc { get; set; }
-        private ObservableCollection<Template> _templates;
-        public ObservableCollection<Template> TemplateCollection
-        {
-            get
-            {
-                return _templates;
-            }
-            set
-            {
-                _templates = value;
-                OnPropertyChanged("Templates");
-            }
-
-        }
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> ProductCollection
         {
@@ -141,7 +127,6 @@ namespace PublicOrders
 		{
             // Документы
             dc = new DocumentDbContext();
-            TemplateCollection = new ObservableCollection<Template>(dc.Templates);
             ProductCollection = new ObservableCollection<Product>(dc.Products);
 
             // Победители

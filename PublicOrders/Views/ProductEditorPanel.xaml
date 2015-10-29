@@ -4,129 +4,214 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:local="clr-namespace:PublicOrders.Views"
-             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.ProductEditorPanel"
+             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" x:Class="PublicOrders.Views.ProductEditorPanel"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" Padding="20 0 20 0">
+    <UserControl.Resources>
+
+        <DataTemplate x:Key="ListBoxItemTemplate">
+            <TextBlock Text="{Binding Name}" FontSize="20" TextTrimming="WordEllipsis"/>
+        </DataTemplate>
+
+    </UserControl.Resources>
     <UserControl.DataContext>
         <ViewModels:ProductEditorViewModel/>
     </UserControl.DataContext>
-    <UserControl.Resources>
-        <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Border Name="Panel" Width="160" BorderThickness="0 0 0 3" Background="Transparent">
-                            <ContentPresenter x:Name="ContentSite"
-                                              TextBlock.FontSize="18"
-                                              TextBlock.FontWeight="Normal"
-                                              SnapsToDevicePixels="True"
-                                              KeyboardNavigation.TabNavigation="Local"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        ContentSource="Header"
-                                        Margin="10,10,10,10">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="TextWrapping" Value="Wrap"></Setter>
-                                        <Setter Property="TextAlignment" Value="Center"></Setter>
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Panel" Property="BorderBrush" Value="#007ACB" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Panel" Property="BorderBrush" Value="#EEEEEE" />
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="True" />
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                </MultiTrigger.Conditions>
-                                <MultiTrigger.Setters>
-                                    <Setter TargetName="Panel" Property="BorderBrush" Value="#007ACB" />
-                                </MultiTrigger.Setters>
-                            </MultiTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background" Value="Transparent"></Setter>
-            <Style.Triggers>
-                <EventTrigger RoutedEvent="Selector.Selected">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="Content.Opacity" From="0" To="1" Duration="0:0:0.2">
-                                <DoubleAnimation.EasingFunction>
-                                    <CubicEase EasingMode="EaseOut"></CubicEase>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Style.Triggers>
-        </Style>
-
-
-
-        <DataTemplate x:Key="ListBoxItemTemplate">
-            <TextBlock Text="{Binding Name}" FontSize="20" TextTrimming="WordEllipsis"></TextBlock>
-        </DataTemplate>
-        <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
-            <Setter Property="AllowDrop" Value="True"></Setter>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Background" Value="Transparent"></Setter>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border Name="Item" BorderBrush="Transparent" Padding="5">
-                            <ContentPresenter Margin="20 0 5 0"></ContentPresenter>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"  Value="True">
-                                <Setter TargetName="Item" Property="Background" Value="#EEEEEE"></Setter>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Item" Property="Background" Value="#007ACB"></Setter>
-                                <Setter TargetName="Item" Property="TextBlock.Foreground" Value="White"></Setter>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
     <Grid>
-        <Border BorderThickness="0 2 0 0" BorderBrush="DodgerBlue" Padding="10 10 50 10">
-            <TabControl BorderThickness="0" TabStripPlacement="Top">
+        <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="ProductEditPanel" Visibility="Collapsed" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <Trigger Property="Opacity" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="255*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="6" Style="{StaticResource SlideDownEButtonStyle}"
+				x:Name="CloseEditProductPanel" Command="{Binding SaveProductCommand}" Click="CloseEditProductPanel_Click" Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
+            <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Торговая марка" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Сертификация" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Рубрика" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Шаблоны" Grid.Column="0" Grid.Row="5" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBox Grid.Row="1" Text="{Binding SelectedProduct.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <TextBox Grid.Row="2" Text="{Binding SelectedProduct.TradeMark}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <TextBox Grid.Row="2" Text="{Binding SelectedProduct.Certification}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <ComboBox Grid.Row="3" ItemsSource="{Binding Rubrics}" SelectedItem="{Binding SelectedProduct.Rubric, Mode=TwoWay}" DisplayMemberPath="Name" SelectedValuePath="Rubric" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="3">
+                <TabItem Header="Комитет" Style="{StaticResource PanelContentStyle}">
+                    <Grid>
+                        <!--<DataGrid Margin="0"  AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>-->
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Свобода" Style="{StaticResource PanelContentStyle}">
+                    <Grid>
+                        <!--<DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.Properties}" AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}" />
+                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}" />
+                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}" />
+                            </DataGrid.Columns>
+                        </DataGrid>-->
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Форма 2" Style="{StaticResource PanelContentStyle}">
+                    <!--<Grid>
+                        <DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.Form2Properties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam.Value}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue.Value}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberValue.Value}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure.Value}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Width="*" Header="Сведения о сертификации" Binding="{Binding Certification.Value}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style >
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>-->
+                </TabItem>
+            </TabControl>
+
+        </Grid>
+        <Border BorderThickness="0 0 0 0" Padding="10 10 50 10">
+            <TabControl BorderThickness="0" TabStripPlacement="Top" x:Name="EditTabControl">
                 <!--ПАНЕЛЬ ТОВАРОВ-->
                 <TabItem Header="Товары" Style="{StaticResource PanelContentStyle}">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="300*"/>
-                            <ColumnDefinition Width="295*"/>
-                            <ColumnDefinition Width="101*"/>
-                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="textBox" HorizontalAlignment="Stretch" Height="30" Margin="10,10,10,0" FontSize="18" TextWrapping="NoWrap"
+                                 Text="{Binding ProductFilterStr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 VerticalAlignment="Top" Width="Auto" BorderBrush="Gray" BorderThickness="0 0 0 1"/>
+                        <ListView x:Name="ProductsListView"
+							ItemsSource="{Binding Products.View}"
+							SelectedItem="{Binding SelectedProduct}"
+							Margin="10,45,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+                                    <EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <!--<TextBlock FontSize="14" Text="{Binding Komitet}" Grid.Column="0" VerticalAlignment="Center" Foreground="#002D4B" FontWeight="Bold"/>
+                                        <TextBlock FontSize="14" Text="{Binding Svoboda}" Grid.Column="1" VerticalAlignment="Center" Foreground="#17364B" FontWeight="Bold"/>
+                                        <TextBlock FontSize="14" Text="{Binding Form2}" Grid.Column="2" VerticalAlignment="Center" Foreground="#005B98" FontWeight="Bold"/>-->
+                                        <StackPanel Grid.Column="4">
+                                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" FontSize="16"/>
+                                            <TextBlock TextWrapping="Wrap" Text="{Binding TradeMark}" FontSize="12" FontStyle="Italic"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander IsExpanded="True">
+                                                            <Expander.Header>
+                                                                <Border>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding Name}" FontSize="22" FontStretch="Expanded" Margin="20 5 0 5"/>
+                                                                    </StackPanel>
+                                                                </Border>
 
-                        <ListBox x:Name="productsList" Margin="5,45,5,10" ItemsSource="{Binding SelectedRubric.Products}" BorderThickness="1 0 1 0"
-                                 Grid.Column="0" PreviewMouseLeftButtonDown="productsList_PreviewMouseLeftButtonDown"
-                             ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                             ItemTemplate="{StaticResource ListBoxItemTemplate}"
-                             BorderBrush="LightGray" d:LayoutOverrides="Width"
-                             SelectionMode="Multiple"/>
-                        <ListBox Margin="5,45,5,10" ItemsSource="{Binding Rubrics}" BorderThickness="1 0 1 0"
-                                 Grid.Column="1" SelectedItem="{Binding SelectedRubric, Mode=TwoWay}"
-                             ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                             ItemTemplate="{StaticResource ListBoxItemTemplate}"
-                                 Drop="ListBox_Drop"
-                             BorderBrush="LightGray" d:LayoutOverrides="Width"/>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter/>
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+                        </ListView>
+
                     </Grid>
-
-
                 </TabItem>
 
 
@@ -134,24 +219,24 @@
                 <TabItem Header="Рубрики" Style="{StaticResource PanelContentStyle}">
                     <Grid Margin="0,-0.666,0,0.666">
                         <Button x:Name="AddNewRubricBtn" Content="+" FontWeight="Bold" HorizontalAlignment="Left"
-                                Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="30"
-                                Background="Transparent" BorderBrush="Transparent"
-                                FontSize="16"
-                                Click="AddNewRubricBtn_Click"/>
+							Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="30"
+							Background="Transparent" BorderBrush="Transparent"
+							FontSize="16"
+							Click="AddNewRubricBtn_Click"/>
                         <Rectangle Fill="White" HorizontalAlignment="Left" Height="8.123" Margin="10,43,0,0" Stroke="White"
-                                   VerticalAlignment="Top" Width="32.75" Panel.ZIndex="13"
-                                   Visibility="{Binding ElementName=AddNewRubricPanel, Path=Visibility}"/>
+							VerticalAlignment="Top" Width="32.75" Panel.ZIndex="13"
+							Visibility="{Binding Visibility, ElementName=AddNewRubricPanel}"/>
                         <Path Data="M63.500631,44.62421 L52.75,31.124124 43.25067,44.540878" Fill="White" HorizontalAlignment="Left" Height="14.5" Panel.ZIndex="11"
-                              Margin="14.917,34.123,0,0" Stretch="Fill" Stroke="White" VerticalAlignment="Top" Width="21.25"
-                              Visibility="{Binding ElementName=AddNewRubricPanel, Path=Visibility}">
+							Margin="14.917,34.123,0,0" Stretch="Fill" Stroke="White" VerticalAlignment="Top" Width="21.25"
+							Visibility="{Binding Visibility, ElementName=AddNewRubricPanel}">
                             <Path.Effect>
                                 <DropShadowEffect Color="#FF040404" Direction="0" BlurRadius="3" ShadowDepth="0"/>
                             </Path.Effect>
                         </Path>
                         <Border x:Name="AddNewRubricPanel" Height="120" Margin="5,43,0,0" VerticalAlignment="Top" Background="White"
-                                Padding="10" Width="400" Panel.ZIndex="1" HorizontalAlignment="Left"
-                                Visibility="Collapsed"
-                                SnapsToDevicePixels="True">
+							Padding="10" Width="400" Panel.ZIndex="1" HorizontalAlignment="Left"
+							Visibility="Collapsed"
+							SnapsToDevicePixels="True">
                             <Border.Effect>
                                 <DropShadowEffect Color="#FF040404" Direction="0" BlurRadius="3" ShadowDepth="0"/>
                             </Border.Effect>
@@ -162,7 +247,7 @@
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button x:Name="OkNewRubricBtn" Margin="0" Background="Transparent" BorderBrush="Transparent" FontSize="18" Content="Добавить" Command="{Binding AddRubricCommand}" Click="OkNewRubricBtn_Click">
                                             <Button.Style>
-                                                <Style TargetType="Button">
+                                                <Style TargetType="{x:Type Button}">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Text, ElementName=NewRubricName}" Value="">
                                                             <Setter Property="Visibility" Value="Hidden"/>
@@ -177,11 +262,9 @@
                             </Grid>
                         </Border>
                         <ListBox x:Name="rubricsListBox" Margin="0,45,0,10" ItemsSource="{Binding Rubrics}" Width="400" BorderThickness="1 0 1 0"
-                             ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                             ItemTemplate="{StaticResource ListBoxItemTemplate}"
-                             BorderBrush="LightGray" HorizontalAlignment="Left"/>
-
-
+							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+							ItemTemplate="{StaticResource ListBoxItemTemplate}"
+							BorderBrush="LightGray" HorizontalAlignment="Left"/>
                     </Grid>
 
 
@@ -197,7 +280,7 @@
                 <TabItem Header="Инструкции" Style="{StaticResource PanelContentStyle}">
                     <DataGrid x:Name="instructionGrid" Margin="10,30.96,168,10" ItemsSource="{Binding Instructions}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
