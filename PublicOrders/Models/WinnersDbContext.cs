@@ -130,12 +130,12 @@ namespace PublicOrders.Models
             set { _сustomerTypes = value; }
         }
 
-        /*private ICollection<Order> _orders;
+        private ICollection<Order> _orders;
         public virtual ICollection<Order> Orders
         {
             get { return _orders ?? (_orders = new HashSet<Order>()); } // Try HashSet<N>
             set { _orders = value; }
-        }*/
+        }
 
         public Customer()
         {
@@ -174,6 +174,13 @@ namespace PublicOrders.Models
         [Column(TypeName = "varchar"), MaxLength(50)]
         [Index]
         public string CustomerLevelCode { get; set; }
+
+        private ICollection<Customer> _customers;
+        public virtual ICollection<Customer> Customers
+        {
+            get { return _customers ?? (_customers = new HashSet<Customer>()); } // Try HashSet<N>
+            set { _customers = value; }
+        }
 
         public CustomerLevel()
         {
@@ -226,6 +233,12 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
+        private ICollection<Lot> _lots;
+        public virtual ICollection<Lot> Lots
+        {
+            get { return _lots ?? (_lots = new HashSet<Lot>()); } // Try HashSet<N>
+            set { _lots = value; }
+        }
         // Транзакционные таблицы
         /*private ICollection<Customer> _customers;
         public virtual ICollection<Customer> Customers
@@ -341,13 +354,12 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
-        // Транзакционные таблицы
-        /*private ICollection<Order> _orders;
-        public virtual ICollection<Order> Orders
+        private ICollection<Winner> _winners;
+        public virtual ICollection<Winner> Winners
         {
-            get { return _orders ?? (_orders = new HashSet<Order>()); } // Try HashSet<N>
-            set { _orders = value; }
-        }*/
+            get { return _winners ?? (_winners = new HashSet<Winner>()); } // Try HashSet<N>
+            set { _winners = value; }
+        }
 
         public Lot()
         {
