@@ -258,6 +258,9 @@ namespace PublicOrders.Models
         public int? RubricId { get; set; }
         virtual public Rubric Rubric { get; set; }
 
+        [Index]
+        public DateTime ModifDateTime { get; set; }
+
         private ICollection<Template> _templates;
         public virtual ICollection<Template> Templates
         {
@@ -278,6 +281,8 @@ namespace PublicOrders.Models
             get { return _properties ?? (_properties = new HashSet<Property>()); } // Try HashSet<N>
             set { _properties = value; }
         }
+
+
 
         //[NotMapped]
         //public List<ParamValue> ParamValue

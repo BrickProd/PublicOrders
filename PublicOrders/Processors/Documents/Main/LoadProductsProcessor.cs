@@ -34,6 +34,7 @@ namespace PublicOrders.Processors.Main
             string message = "";
             int productsAddedCount = 0;
             int productsRepeatCount = 0;
+            int productsMergeCount = 0;
             ResultType_enum ResultType_enum;
             try
             {
@@ -41,19 +42,19 @@ namespace PublicOrders.Processors.Main
                 {
                     case ("свобода"):
                         FreedomProcessor freedomLoadProcessor = new FreedomProcessor();
-                        ResultType_enum = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
+                        ResultType_enum = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
                         done_del(ResultType_enum, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("форма 2"):
                         Form2Processor form2LoadProcessor = new Form2Processor();
-                        ResultType_enum = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
+                        ResultType_enum = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
                         done_del(ResultType_enum, template, productsAddedCount, productsRepeatCount, message);
                         return;
                     case ("комитет"):
                         CommitteeProcessor committeeLoadProcessor = new CommitteeProcessor();
-                        ResultType_enum = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out message);
+                        ResultType_enum = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         done_del(ResultType_enum, template, productsAddedCount, productsRepeatCount, message);
                         isWork = false;
                         return;

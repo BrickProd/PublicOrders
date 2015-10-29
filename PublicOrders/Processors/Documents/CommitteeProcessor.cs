@@ -18,10 +18,11 @@ namespace PublicOrders.Processors
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out string message)
+        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out int productMergeCount, out string message)
         {
             productAddedCount = 0;
             productRepeatCount = 0;
+            productMergeCount = 0;
             try
             {
                 isWork = true;

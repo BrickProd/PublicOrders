@@ -18,10 +18,11 @@ namespace PublicOrders.Processors
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out string message)
+        public ResultType_enum Learn(string docPath, out int productAddedCount, out int productRepeatCount, out int productMergeCount, out string message)
         {
             productAddedCount = 0;
             productRepeatCount = 0;
+            productMergeCount = 0;
             try
             {
                 isWork = true;
@@ -77,7 +78,138 @@ namespace PublicOrders.Processors
                 // Заполняем продукты
                 var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
                 var t = mvm.dc.Templates.FirstOrDefault(m => m.Name.ToLower() == "свобода");
-                for (int i = 4; i <= tbl.Rows.Count; i++)
+
+                // Новый обход документа
+                Product product = null;
+                Property property = null;
+                Word.Cell cell = tbl.Cell(4, 1);
+                while (cell != null) {
+                    try
+                    {
+                        string cellValue = cell.Range.Text.Trim();
+
+                        switch (cell.ColumnIndex) {
+                            case (2):
+                                // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
+                                product = new Product();
+                                product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                property = new Property();
+                                break;
+                            case (5):
+                                // Торговая марка
+                                if (product == null) break;
+                                product.TradeMark = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                break;
+                            case (3):
+                                // Требования заказчика
+                                ParamValue pv = new ParamValue();
+                                property.ParamValues.Add(pv);
+
+                                pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требования заказчика" && m.Template.Name.ToLower() == "свобода");
+                                pv.Property = property;
+                                pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (4):
+                                // Требования участника
+                                pv = new ParamValue();
+                                property.ParamValues.Add(pv);
+
+                                pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Требования участника" && m.Template.Name.ToLower() == "свобода");
+                                pv.Property = property;
+                                pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
+                            case (6):
+                                // Сертификация (--ПОСЛЕДНЕЕ ЗНАЧЕНИЕ--)
+                                pv = new ParamValue();
+                                property.ParamValues.Add(pv);
+
+                                pv.Param = mvm.dc.Params.FirstOrDefault(m => m.Name == "Сертификация" && m.Template.Name.ToLower() == "свобода");
+                                pv.Property = property;
+                                pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+
+                                // Добавляем к продукту значения, шаблон, рубрику 
+                                if ((property.ParamValues.ElementAt(0).Value != "") && 
+                                    ((property.ParamValues.ElementAt(1).Value != "")) && 
+                                    ((property.ParamValues.ElementAt(2).Value != "")))
+                                {
+                                    product.Properties.Add(property);
+                                }
+
+                                // Проверка на повтор
+                                // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
+                                // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
+                                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                                IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark));
+                                if (repeatProducts.Count() > 0) {
+                                    // Изначально проверим на повтор
+                                    foreach (Product repeatProduct in repeatProducts)
+                                    {
+                                        // Шаблон
+                                        var repeatTemplate = product.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "свобода");
+                                        if (repeatTemplate == null) continue;
+
+                                        // Свойства продукта по шаблону
+                                        IEnumerable<Property> repeatProperties = product.Properties.SelectMany(m => m.ParamValues.Where(p => repeatTemplate.Param.Contains(p.Param))).Select(f => f.Property).Distinct();
+                                        if (repeatProperties.Count() != 3) continue;
+
+                                        foreach (Property repeatProperty in repeatProperties) {
+
+                                        }
+
+                                    }
+
+                                    if (repeatProducts.Count() > 1)
+                                    {
+
+                                    }
+                                }
+
+
+
+                                /*if (repeatProduct != null)
+                                {
+                                    if (repeatProduct.Templates.FirstOrDefault(m => m.Name.Trim().ToLower() == "свобода") == null)
+                                    {
+                                        product = repeatProduct;
+                                    }
+                                    else
+                                    {
+                                        productRepeatCount++;
+                                        continue;
+                                    }
+                                }*/
+
+                                product.Rubric = r;
+                                mvm.dc.Products.Add(product);
+                                productAddedCount++;
+                                t.Products.Add(product);
+
+                                mvm.dc.SaveChanges();
+                                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    mvm.TemplateCollection.FirstOrDefault(m => m.Name.ToLower() == "свобода").Products.Add(product);
+                                }));
+
+                                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    mvm.ProductCollection.Add(product);
+                                }));
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        break;
+                    }
+                    finally {
+                        cell = cell.Next;
+                    }
+                }
+
+                /*for (int i = 4; i <= tbl.Rows.Count; i++)
                 {
                     if (!isWork) break;
                     Product product = new Product();
@@ -124,7 +256,7 @@ namespace PublicOrders.Processors
                         pv.Property = property;
                         pv.Value = Globals.ConvertTextExtent(Globals.CleanWordCell(tbl.Cell(i, 3).Range.Text.Trim()));
 
-                        // Требования заказчика
+                        // Требования участника
                         pv = new ParamValue();
                         property.ParamValues.Add(pv);
 
@@ -179,7 +311,7 @@ namespace PublicOrders.Processors
 
                     
 
-                }
+                }*/
 
 
 
