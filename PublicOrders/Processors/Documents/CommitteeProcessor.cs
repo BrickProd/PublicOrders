@@ -103,11 +103,12 @@ namespace PublicOrders.Processors
                                     // Сохранение продукта
                                     if (product != null)
                                     {
+                                        product.ModifiedDateTime = DateTime.Now;
                                         // Проверка на повтор
                                         // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
                                         // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
                                         // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
-                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification));
+                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification)).ToList();
                                         if (repeatProducts.Any())
                                         {
                                             // Изначально проверим на повтор
@@ -157,13 +158,14 @@ namespace PublicOrders.Processors
 
                                         product.Rubric = r;
                                         mvm.dc.Products.Add(product);
-                                        productsAddedCount++;
 
                                         mvm.dc.SaveChanges();
                                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                                         {
                                             mvm.ProductCollection.Add(product);
                                         }));
+
+                                        productsAddedCount++;
                                     }
                                 }
 
@@ -179,6 +181,16 @@ namespace PublicOrders.Processors
                                 // Торговая марка
                                 if (product == null) break;
                                 product.TradeMark = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+
+                                if ((committeeProperty.MaxValue != "") ||
+                                    (committeeProperty.MinValue != "") ||
+                                    (committeeProperty.ParamName != "") ||
+                                    (committeeProperty.SpecificParam != "") ||
+                                    (committeeProperty.VariableParam != "") ||
+                                    (committeeProperty.Measure != ""))
+                                {
+                                    product.CommitteeProperties.Add(committeeProperty);
+                                }
                                 break;
                             case (4):
                                 // Минимальное значение

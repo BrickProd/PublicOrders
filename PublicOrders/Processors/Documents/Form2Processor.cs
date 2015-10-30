@@ -100,11 +100,12 @@ namespace PublicOrders.Processors
 
                                     // Сохранение продукта
                                     if (product != null) {
+                                        product.ModifiedDateTime = DateTime.Now;
                                         // Проверка на повтор
                                         // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
                                         // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
                                         // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
-                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification));
+                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification)).ToList();
                                         if (repeatProducts.Any())
                                         {
                                             // Изначально проверим на повтор
@@ -149,13 +150,14 @@ namespace PublicOrders.Processors
 
                                         product.Rubric = r;
                                         mvm.dc.Products.Add(product);
-                                        productsAddedCount++;
 
                                         mvm.dc.SaveChanges();
                                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                                         {
                                             mvm.ProductCollection.Add(product);
                                         }));
+
+                                        productsAddedCount++;
                                     }
                                 }
 
@@ -184,13 +186,26 @@ namespace PublicOrders.Processors
                                 form2Property.OfferValue = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
                                 break;
                             case (7):
-                                // Значение, предлагаемое участником
+                                // Единица измерения
                                 form2Property.Measure = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+
+                                if ((form2Property.OfferValue != "") ||
+                                (form2Property.RequiredParam != "") ||
+                                (form2Property.RequiredValue != "") ||
+                                (form2Property.Measure != ""))
+                                {
+                                    product.Form2Properties.Add(form2Property);
+                                }
+
                                 break;
                             case (8):
                                 // Сертификация (--ПОСЛЕДНЕЕ ЗНАЧЕНИЕ--)
                                 if (product == null) break;
-                                product.Certification = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                if ((product.Certification == null) || (product.Certification.Trim() == ""))
+                                    product.Certification = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+
+
+
                                 break;
                             default:
                                 break;
