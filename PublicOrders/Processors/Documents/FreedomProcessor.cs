@@ -18,6 +18,98 @@ namespace PublicOrders.Processors
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
+
+        private void SaveProduct(Product product, Rubric rubric, ref int productsAddedCount, ref int productsRepeatCount, ref int productsMergeCount)
+        {
+            if (product != null)
+            {
+                product.ModifiedDateTime = DateTime.Now;
+                // Проверка на повтор
+                // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
+                // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
+                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                bool isRepeat = false;
+                IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&& 
+                                                                                 (m.Certification == product.Certification || m.Certification == null || m.Certification == "")*/)).ToList();
+                if (repeatProducts.Any())
+                {
+                    // Изначально проверим на повтор
+                    foreach (Product repeatProduct in repeatProducts)
+                    {
+                        isRepeat = true;
+                        if (repeatProduct.FreedomProperties.Count() > 0)
+                        {
+                            foreach (FreedomProperty repeatFreedomProperty in repeatProduct.FreedomProperties)
+                            {
+                                FreedomProperty newFreedomProperty = product.FreedomProperties.FirstOrDefault(m => (m.CustomerParam == repeatFreedomProperty.CustomerParam &&
+                                                                                                              m.MemberParam == repeatFreedomProperty.MemberParam));
+                                if (newFreedomProperty != null)
+                                {
+                                    isRepeat = true;
+                                }
+                                else
+                                {
+                                    isRepeat = false;
+                                }
+                                if (!isRepeat)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            isRepeat = false;
+                        }
+                    }
+                }
+                if (isRepeat)
+                {
+                    productsRepeatCount++;
+                }
+                else
+                {
+                    // Слияние делается в том случае, если найден один повторный документ и нет значений по шпблону
+                    if ((repeatProducts.Count() == 1) && ((repeatProducts.ElementAt(0).FreedomProperties == null) ||
+                            (repeatProducts.ElementAt(0).FreedomProperties.Count() == 0)))
+                    {
+                        productsMergeCount++;
+                        repeatProducts.ElementAt(0).FreedomProperties = product.FreedomProperties;
+                        //repeatProducts.ElementAt(0).Certification = product.Certification;
+                        mvm.dc.Entry(repeatProducts.ElementAt(0)).State = System.Data.Entity.EntityState.Modified;
+                        mvm.dc.SaveChanges();
+                    }
+
+                    else
+                    {
+                        product.Rubric = rubric;
+                        mvm.dc.Products.Add(product);
+
+                        mvm.dc.SaveChanges();
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            mvm.ProductCollection.Add(product);
+                        }));
+
+                        productsAddedCount++;
+                    }
+                }
+            }
+        }
+
+        private void SaveProperty(Product product, FreedomProperty freedomProperty)
+        {
+            if (freedomProperty != null)
+            {
+                if ((freedomProperty.CustomerParam != "") ||
+                    (freedomProperty.MemberParam != ""))
+                {
+                    product.FreedomProperties.Add(freedomProperty);
+                }
+
+            }
+        }
+
         public ResultType_enum Learn(string docPath, out int productsAddedCount, out int productsRepeatCount, out int productsMergeCount, out string message)
         {
             productsAddedCount = 0;
@@ -81,17 +173,33 @@ namespace PublicOrders.Processors
                 Product product = null;
                 FreedomProperty freedomProperty = null;
                 Word.Cell cell = tbl.Cell(4, 1);
+                int rowIndex = 4;
                 while (cell != null) {
                     try
                     {
                         string cellValue = cell.Range.Text.Trim();
+                        if (rowIndex != cell.RowIndex)
+                        {
+                            SaveProperty(product, freedomProperty);
+                            rowIndex = cell.RowIndex;
+                            freedomProperty = new FreedomProperty();
+                        }
+                        else
+                        {
+                            if (freedomProperty == null) freedomProperty = new FreedomProperty();
+                        }
 
                         switch (cell.ColumnIndex) {
                             case (2):
                                 // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
+                                if (product != null)
+                                {
+                                    SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+                                }
+
                                 product = new Product();
                                 product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
-                                freedomProperty = new FreedomProperty();
+
                                 break;
                             case (5):
                                 // Торговая марка
@@ -108,65 +216,7 @@ namespace PublicOrders.Processors
                                 break;
                             case (6):
                                 // Сертификация (--ПОСЛЕДНЕЕ ЗНАЧЕНИЕ--)
-                                if (product == null) break;
                                 product.Certification = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
-
-                                if ((freedomProperty.MemberParam.Trim() != "") ||
-                                    (freedomProperty.CustomerParam.Trim() != ""))
-                                        product.FreedomProperties.Add(freedomProperty);
-                                product.ModifiedDateTime = DateTime.Now;
-
-                                // Проверка на повтор
-                                // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
-                                // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
-                                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
-                                IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification)).ToList();
-                                if (repeatProducts.Any()) {
-                                    // Изначально проверим на повтор
-                                    bool isRepeat = false;
-                                    foreach (Product repeatProduct in repeatProducts)
-                                    {
-                                        var freedomProperties = repeatProduct.FreedomProperties;
-                                        if (freedomProperties.Count() != 1) continue;
-                                        if ((freedomProperties.ElementAt(0).CustomerParam == product.FreedomProperties.ElementAt(0).CustomerParam) &&
-                                            (freedomProperties.ElementAt(0).MemberParam == product.FreedomProperties.ElementAt(0).MemberParam)) {
-                                            isRepeat = true;
-                                            break;
-                                        }
-
-                                    }
-                                    if (isRepeat) {
-                                        productsRepeatCount++;
-                                        continue;
-                                    }
-
-                                    // Слияние делается в том случае, если найден один повторный документ и нет значений по шпблону
-                                    if (repeatProducts.Count() == 1)
-                                    {
-                                        if ((repeatProducts.ElementAt(0).FreedomProperties == null) ||
-                                            (repeatProducts.ElementAt(0).FreedomProperties.Count() == 0))
-                                        {
-                                            productsMergeCount++;
-                                            repeatProducts.ElementAt(0).FreedomProperties = product.FreedomProperties;
-                                            product = repeatProducts.ElementAt(0);
-                                            mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                                            mvm.dc.SaveChanges();
-                                            continue;
-                                        }
-                                    }
-                                }
-
-
-                                product.Rubric = r;
-                                mvm.dc.Products.Add(product);
-
-                                mvm.dc.SaveChanges();
-                                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                                {
-                                    mvm.ProductCollection.Add(product);
-                                }));
-
-                                productsAddedCount++;
                                 break;
                             default:
                                 break;
@@ -180,6 +230,8 @@ namespace PublicOrders.Processors
                         cell = cell.Next;
                     }
                 }
+                SaveProperty(product, freedomProperty);
+                SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
 
                 // Закрываем приложение
                 application.Quit(ref missing, ref missing, ref missing);
