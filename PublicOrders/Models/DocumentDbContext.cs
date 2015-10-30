@@ -136,11 +136,6 @@ namespace PublicOrders.Models
         public DateTime ModifiedDateTime { get; set; }
 
 
-
-
-
-
-
         private ICollection<CommitteeProperty> _committeeProperties;
         public virtual ICollection<CommitteeProperty> CommitteeProperties
         {
@@ -160,6 +155,30 @@ namespace PublicOrders.Models
         {
             get { return _freedomProperties ?? (_freedomProperties = new HashSet<FreedomProperty>()); } // Try HashSet<N>
             set { _freedomProperties = value; }
+        }
+
+        public string Komitet
+        {
+            get
+            {
+                return CommitteeProperties.Any() ? "К" : "";
+            }
+        }
+
+        public string Form2
+        {
+            get
+            {
+                return Form2Properties.Any() ? "Ф" : "";
+            }
+        }
+
+        public string Svoboda
+        {
+            get
+            {
+                return FreedomProperties.Any() ? "С" : "";
+            }
         }
 
 

@@ -18,6 +18,8 @@
         <ViewModels:ProductEditorViewModel/>
     </UserControl.DataContext>
     <Grid>
+        
+        <!--РЕДАКТОР ПРОДУКТА-->
         <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="ProductEditPanel" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="170"/>
@@ -42,8 +44,9 @@
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <!--<Button Grid.Row="6" Style="{StaticResource SlideDownEButtonStyle}"
-				x:Name="CloseEditProductPanel" Command="{Binding SaveProductCommand}" Click="CloseEditProductPanel_Click" Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>-->
+            <Button Grid.Row="6" Style="{StaticResource SlideDownEButtonStyle}"
+				x:Name="CloseEditProductPanel" Command="{Binding SaveProductCommand}" Click="CloseEditProductPanel_Click"
+                    Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Торговая марка" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Сертификация" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
@@ -56,22 +59,26 @@
             <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="3">
                 <TabItem Header="Комитет" Style="{StaticResource PanelContentStyle}">
                     <Grid>
-                        <!--<DataGrid Margin="0"  AutoGenerateColumns="False">
+                        <DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.CommitteeProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}"/>
+                                <DataGridTextColumn Width="*" Header="Наименование показателя" Binding="{Binding ParamName}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
+                                <DataGridTextColumn Width="*" Header="Минимальные значения показателей" Binding="{Binding MinValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
+                                <DataGridTextColumn Width="*" Header="Максимальные значения показателей" Binding="{Binding MaxValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значения показателей, которые не могут изменяться" Binding="{Binding VariableParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
+                                <DataGridTextColumn Width="*" Header="Конкретные показатели используемого товара" Binding="{Binding SpecificParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
+                                <DataGridTextColumn Width="*" Header="Единица измерения" Binding="{Binding Measure}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
                             </DataGrid.Columns>
-                        </DataGrid>-->
+                        </DataGrid>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Свобода" Style="{StaticResource PanelContentStyle}">
                     <Grid>
-                        <!--<DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.Properties}" AutoGenerateColumns="False">
+                        <DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.FreedomProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}" />
-                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}" />
-                                <DataGridTextColumn Header="{Binding Param.Name}" Binding="{Binding Value}" />
+                                <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding CustomerParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
                             </DataGrid.Columns>
-                        </DataGrid>-->
+                        </DataGrid>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Форма 2" Style="{StaticResource PanelContentStyle}">
@@ -131,8 +138,9 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-
         </Grid>
+        
+        <!--ОСНОВНАЯ ПАНЕЛЬ-->
         <Border BorderThickness="0 0 0 0" Padding="10 10 50 10">
             <TabControl BorderThickness="0" TabStripPlacement="Top" x:Name="EditTabControl" >
                 <!--ПАНЕЛЬ ТОВАРОВ-->
@@ -160,9 +168,9 @@
                                             <ColumnDefinition Width="20"/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <!--<TextBlock FontSize="14" Text="{Binding Komitet}" Grid.Column="0" VerticalAlignment="Center" Foreground="#002D4B" FontWeight="Bold"/>
+                                        <TextBlock FontSize="14" Text="{Binding Komitet}" Grid.Column="0" VerticalAlignment="Center" Foreground="#002D4B" FontWeight="Bold"/>
                                         <TextBlock FontSize="14" Text="{Binding Svoboda}" Grid.Column="1" VerticalAlignment="Center" Foreground="#17364B" FontWeight="Bold"/>
-                                        <TextBlock FontSize="14" Text="{Binding Form2}" Grid.Column="2" VerticalAlignment="Center" Foreground="#005B98" FontWeight="Bold"/>-->
+                                        <TextBlock FontSize="14" Text="{Binding Form2}" Grid.Column="2" VerticalAlignment="Center" Foreground="#005B98" FontWeight="Bold"/>
                                         <StackPanel Grid.Column="4">
                                             <TextBlock TextWrapping="Wrap" Text="{Binding Name}" FontSize="16"/>
                                             <TextBlock TextWrapping="Wrap" Text="{Binding TradeMark}" FontSize="12" FontStyle="Italic"/>
@@ -184,7 +192,6 @@
                                                                         <TextBlock Text="{Binding Name}" FontSize="22" FontStretch="Expanded" Margin="20 5 0 5"/>
                                                                     </StackPanel>
                                                                 </Border>
-
                                                             </Expander.Header>
                                                             <ItemsPresenter/>
                                                         </Expander>
@@ -196,7 +203,6 @@
                                 </GroupStyle>
                             </ListView.GroupStyle>
                         </ListView>
-
                     </Grid>
                 </TabItem>
 
@@ -252,13 +258,6 @@
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
 							BorderBrush="LightGray" HorizontalAlignment="Left"/>
                     </Grid>
-
-
-                    <!--<DataGrid x:Name="rubricGrid" Margin="10,30.96,210,10" ItemsSource="{Binding Rubrics}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"></DataGridTextColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>-->
                 </TabItem>
 
 

@@ -37,16 +37,16 @@
                                 <Trigger.EnterActions>
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="#FF007ACB" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
-                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="#FF007ACB" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.EnterActions>
                                 <Trigger.ExitActions>
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="Transparent" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
-                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.15" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="Transparent" Duration="0:0:0.2" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.2" AutoReverse="False"></ColorAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.ExitActions>
@@ -326,5 +326,19 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
+        
+        <!--таблицы-->
+        <!--редактируемые ячейки-->
+        <Style TargetType="DataGridCell" x:Key="WrapCell">
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+        </Style>
+
+
+
+
+        <BlurEffect x:Key="BlurEffect" >
+        </BlurEffect>
+        
     </Application.Resources>
 </Application>

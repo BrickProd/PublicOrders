@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -60,6 +61,62 @@ namespace PublicOrders.Views
             object data = e.Data.GetData(typeof(string));
             //((IList)dragSource.ItemsSource).Remove(data);
             //parent.Items.Add(data);
+        }
+
+        //открыть редактирование продукта 
+        private void MouseDoubleClickHandler(object sender, MouseButtonEventArgs e)
+        {
+            ThicknessAnimation anim = new ThicknessAnimation
+            {
+                From = new Thickness(0, 50, 0, -50),
+                To = new Thickness(0, 0, 0, 0),
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+
+
+            DoubleAnimation anim2 = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+            this.ProductEditPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
+            this.ProductEditPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+
+            this.ProductEditPanel.Visibility = Visibility.Visible;
+            this.EditTabControl.IsEnabled = false;
+        }
+
+        //закрыть редактирование продукта 
+        private void CloseEditProductPanel_Click(object sender, RoutedEventArgs e)
+        {
+            ThicknessAnimation anim = new ThicknessAnimation
+            {
+                From = new Thickness(0, 0, 0, 0),
+                To = new Thickness(0, 50, 0, -50),
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+
+            this.EditTabControl.IsEnabled = true;
+
+            DoubleAnimation anim2 = new DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+            anim2.Completed += (o, args) =>
+            {
+                ProductEditPanel.Visibility = Visibility.Collapsed;
+            };
+
+            this.ProductEditPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
+            this.ProductEditPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+
         }
 
         #region GetDataFromListBox(ListBox,Point)

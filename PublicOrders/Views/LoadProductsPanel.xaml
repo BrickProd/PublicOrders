@@ -14,7 +14,19 @@
         
     </UserControl.Resources>
     <Grid >
-        <Grid x:Name="LoadProductsBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" Visibility="Collapsed">
+        
+        <!--ПАНЕЛЬ ЗАГРУЗКИ-->
+        <Grid x:Name="LoadProductsBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" Visibility="{Binding BusyVisibility}">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Setter TargetName="LoadProdutBoarder" Property="Effect" Value="{StaticResource BlurEffect}"></Setter>
+                            <Setter TargetName="LoadProdutBoarder" Property="IsEnabled" Value="False"></Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <TextBlock Text="Загрузка продуктов..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" Foreground="#FF007ACB">
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
@@ -28,9 +40,12 @@
                             </EventTrigger>
                         </Style.Triggers>
                     </Style>
-                </TextBlock.Style></TextBlock>
+                </TextBlock.Style>
+            </TextBlock>
         </Grid>
-        <Border BorderThickness="0" Margin="0">
+
+
+        <Border x:Name="LoadProdutBoarder" BorderThickness="0" Margin="0" Effect="{StaticResource BlurEffect}">
             <StackPanel Margin="10,10,50,10" Width="500" HorizontalAlignment="Left">
                 <Grid Margin="0 10">
                     <StackPanel>
