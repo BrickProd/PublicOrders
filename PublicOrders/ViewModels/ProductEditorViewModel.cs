@@ -94,6 +94,8 @@ namespace PublicOrders.ViewModels
         private DelegateCommand addRubricCommand;
         private DelegateCommand saveProductCommand;
 
+        private DelegateCommand addForm2PropertyCommand;
+
 
         public ICommand AddProductCommand
         {
@@ -129,6 +131,18 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        public ICommand AddForm2PropertyCommand
+        {
+            get
+            {
+                if (addForm2PropertyCommand == null)
+                {
+                    addForm2PropertyCommand = new DelegateCommand(AddForm2Property);
+                }
+                return addForm2PropertyCommand;
+            }
+        }
+
         #endregion
 
         public ProductEditorViewModel()
@@ -137,7 +151,7 @@ namespace PublicOrders.ViewModels
             {
                 Products = new CollectionViewSource();
                 Products.Source = this.mvm.ProductCollection;
-                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric"));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
@@ -203,6 +217,11 @@ namespace PublicOrders.ViewModels
 
             this.Products.View.Refresh();
 
+        }
+
+        private void AddForm2Property()
+        {
+            this.SelectedProduct.Form2Properties.Add(new Form2Property());
         }
         #endregion
 

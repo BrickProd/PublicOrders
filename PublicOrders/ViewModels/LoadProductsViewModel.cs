@@ -23,7 +23,6 @@ namespace PublicOrders.ViewModels
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
         private string _docPath;
-        private bool _buttonLoadProdsEnabled;
         private bool _isLoadInProcess;
 
         public string DocPath
@@ -33,16 +32,6 @@ namespace PublicOrders.ViewModels
             {
                 _docPath = value;
                 OnPropertyChanged("DocPath");
-                this.ButtonLoadProdsEnabled = this.DocPath != "";
-            }
-        }
-        public bool ButtonLoadProdsEnabled
-        {
-            get { return _buttonLoadProdsEnabled; }
-            set
-            {
-                _buttonLoadProdsEnabled = value;
-                OnPropertyChanged("ButtonLoadProdsEnabled");
             }
         }
         public bool IsLoadInProcess
@@ -52,13 +41,6 @@ namespace PublicOrders.ViewModels
             {
                 _isLoadInProcess = value;
                 OnPropertyChanged("IsLoadInProcess");
-            }
-        }
-        public Visibility BusyVisibility
-        {
-            get
-            {
-                return IsLoadInProcess ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -105,7 +87,6 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            ButtonLoadProdsEnabled = false;
             IsLoadInProcess = true;
 
             if ((mvm.lpProcessor != null) && (mvm.lpProcessor.isWorking()))
@@ -181,15 +162,13 @@ namespace PublicOrders.ViewModels
                 default:
                     return;
             }
-
-            ButtonLoadProdsEnabled = true;
             this.IsLoadInProcess = false;
         }
 
         public LoadProductsViewModel()
         {
-            this.ButtonLoadProdsEnabled = false;
             this.IsLoadInProcess = false;
+            this.DocPath = "";
 
             Templates = new ObservableCollection<string>(new List<string> {
                         "Комитет",

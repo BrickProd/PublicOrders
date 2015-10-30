@@ -1,6 +1,7 @@
 ﻿using PublicOrders.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -136,24 +137,24 @@ namespace PublicOrders.Models
         public DateTime ModifiedDateTime { get; set; }
 
 
-        private ICollection<CommitteeProperty> _committeeProperties;
-        public virtual ICollection<CommitteeProperty> CommitteeProperties
+        private ObservableCollection<CommitteeProperty> _committeeProperties;
+        public virtual ObservableCollection<CommitteeProperty> CommitteeProperties
         {
-            get { return _committeeProperties ?? (_committeeProperties = new HashSet<CommitteeProperty>()); } // Try HashSet<N>
+            get { return _committeeProperties ?? (_committeeProperties = new ObservableCollection<CommitteeProperty>(new HashSet<CommitteeProperty>())); } // Try HashSet<N>
             set { _committeeProperties = value; }
         }
 
-        private ICollection<Form2Property> _form2Properties;
-        public virtual ICollection<Form2Property> Form2Properties
+        private ObservableCollection<Form2Property> _form2Properties;
+        public virtual ObservableCollection<Form2Property> Form2Properties
         {
-            get { return _form2Properties ?? (_form2Properties = new HashSet<Form2Property>()); } // Try HashSet<N>
+            get { return _form2Properties ?? (_form2Properties = new ObservableCollection<Form2Property>(new HashSet<Form2Property>())); } // Try HashSet<N>
             set { _form2Properties = value; }
         }
 
-        private ICollection<FreedomProperty> _freedomProperties;
-        public virtual ICollection<FreedomProperty> FreedomProperties
+        private ObservableCollection<FreedomProperty> _freedomProperties;
+        public virtual ObservableCollection<FreedomProperty> FreedomProperties
         {
-            get { return _freedomProperties ?? (_freedomProperties = new HashSet<FreedomProperty>()); } // Try HashSet<N>
+            get { return _freedomProperties ?? (_freedomProperties = new ObservableCollection<FreedomProperty>(new  HashSet<FreedomProperty>())); } // Try HashSet<N>
             set { _freedomProperties = value; }
         }
 

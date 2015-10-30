@@ -46,7 +46,7 @@
                                     <BeginStoryboard>
                                         <Storyboard>
                                             <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="Transparent" Duration="0:0:0.2" AutoReverse="False"></ColorAnimation>
-                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.2" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.0" AutoReverse="False"></ColorAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.ExitActions>
@@ -62,64 +62,7 @@
             </Setter>
         </Style>
 
-
-
-        <Style TargetType="{x:Type Button}" x:Key="SlideDownEButtonStyle">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Foreground" Value="#FF007ACB"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid Background="Transparent">
-                            <StackPanel>
-                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0"/>
-                                <!--<ed:BlockArrow Name="ArrowDown" Height="60" Margin="0 10" Orientation="Down" Grid.Row="5" Fill="#FF007ACB" Stroke="#FF007ACB" StrokeThickness="0" VerticalAlignment="Top" Width="15"/>-->
-                            </StackPanel>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ThicknessAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Margin" To="0 15" Duration="0:0:0.2" >
-                                                <ThicknessAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </ThicknessAnimation.EasingFunction>
-                                            </ThicknessAnimation>
-                                            <DoubleAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Height" To="70" Duration="0:0:0.2">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ThicknessAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Margin" To="0 10" Duration="0:0:0.2">
-                                                <ThicknessAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </ThicknessAnimation.EasingFunction>
-                                            </ThicknessAnimation>
-                                            <DoubleAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Height" To="60" Duration="0:0:0.2">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
 
         <!--табконтролы-->
         <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">
@@ -330,7 +273,7 @@
         
         <!--таблицы-->
         <!--редактируемые ячейки-->
-        <Style TargetType="DataGridCell" x:Key="WrapCell">
+        <Style TargetType="TextBlock" x:Key="WrapCell">
             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
         </Style>
 

@@ -21,6 +21,7 @@ namespace PublicOrders.ViewModels
     public class CreateDocumentViewModel : INotifyPropertyChanged
     {
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
         private bool _buttonCreateDocEnabled;
 
         public bool ButtonCreateDocEnabled
@@ -29,19 +30,19 @@ namespace PublicOrders.ViewModels
             set
             {
                 _buttonCreateDocEnabled = value;
+
                 OnPropertyChanged("ButtonCreateDocEnabled");
             }
         }
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        
 
         public ObservableCollection<string> Templates { get; set; }
         public ObservableCollection<Product> Products { get; set; }
         public CollectionViewSource FilteredProducts { get; set; }
+        public ObservableCollection<Product> ProductsForDocument { get; set; }
+        public Product SelectedProduct { get; set; }
+
 
         private string _selectedTemplate = null;
         public string SelectedTemplate {
@@ -58,8 +59,8 @@ namespace PublicOrders.ViewModels
 
         #region КОМАНДЫ
         private DelegateCommand createDocumentCommand;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private DelegateCommand chooseProductCommand;
+        private DelegateCommand unchooseProductCommand;
 
         public ICommand CreateDocumentCommand
         {
@@ -70,6 +71,28 @@ namespace PublicOrders.ViewModels
                     createDocumentCommand = new DelegateCommand(CreateDocument);
                 }
                 return createDocumentCommand;
+            }
+        }
+        public ICommand ChooseProductCommand
+        {
+            get
+            {
+                if (chooseProductCommand == null)
+                {
+                    chooseProductCommand = new DelegateCommand(ChooseProduct);
+                }
+                return chooseProductCommand;
+            }
+        }
+        public ICommand UnchooseProductCommand
+        {
+            get
+            {
+                if (unchooseProductCommand == null)
+                {
+                    unchooseProductCommand = new DelegateCommand(UnchooseProduct);
+                }
+                return unchooseProductCommand;
             }
         }
 
@@ -84,7 +107,25 @@ namespace PublicOrders.ViewModels
             mvm.cdProcessor = new CreateDocumentProcessor(FilteredProducts.View.Cast<Product>().ToList(), SelectedInstruction, SelectedTemplate, done_del);
             mvm.cdProcessor.Operate();
         }
+        private void UnchooseProduct()
+        {
+            ProductsForDocument.Remove(SelectedProduct);
+            this.FilteredProducts.View.Refresh();
+        }
+        private void ChooseProduct()
+        {
+            ProductsForDocument.Add(SelectedProduct);
+            this.FilteredProducts.View.Refresh();
+        }
         #endregion
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private void CreateDocumentDone_Proc(ResultType_enum ResultType_enum, string message) {
             switch (ResultType_enum) {
@@ -112,6 +153,8 @@ namespace PublicOrders.ViewModels
                 }); ;
                 Products = mvm.ProductCollection;
             }
+            ProductsForDocument = new ObservableCollection<Product>();
+
             Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
             FilteredProducts = new CollectionViewSource();
             FilteredProducts.Source = this.Products;
@@ -121,17 +164,18 @@ namespace PublicOrders.ViewModels
         private void ProductFilter(object sender, FilterEventArgs e)
         {
             Product p = e.Item as Product;
+            var isChosen = this.ProductsForDocument.Contains(p);
             if (p != null)
             {
                 switch (SelectedTemplate)
                 {
-                    case "Комитет": e.Accepted = (p.CommitteeProperties.Any());
+                    case "Комитет": e.Accepted = (p.CommitteeProperties.Any() && !isChosen);
                         break;
                     case "Свобода":
-                        e.Accepted = (p.FreedomProperties.Any());
+                        e.Accepted = (p.FreedomProperties.Any() && !isChosen);
                         break;
                     case "Форма 2":
-                        e.Accepted = (p.Form2Properties.Any());
+                        e.Accepted = (p.Form2Properties.Any() && !isChosen);
                         break;
                     default:
                         e.Accepted = false;

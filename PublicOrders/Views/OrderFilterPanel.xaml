@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="500" Padding="20 0 20 0" FontSize="18">
+             d:DesignHeight="500" d:DesignWidth="700" Padding="20 0 20 0" FontSize="18">
     <UserControl.DataContext>
         <ViewModels:OrderFilterViewModel></ViewModels:OrderFilterViewModel>
     </UserControl.DataContext>
@@ -15,9 +15,9 @@
             <StackPanel Width="500" HorizontalAlignment="Left">
                 <GroupBox x:Name="groupBox" Header="Цена" Margin="10,20,10,0" Padding="5">
                     <StackPanel Orientation="Horizontal">
-                        <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MinPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+                        <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MinPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="220"/>
                         <TextBlock Text=" - "></TextBlock>
-                        <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MaxPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+                        <TextBox Margin="0 0 0 0" TextWrapping="Wrap" Text="{Binding MaxPrice}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="220"/>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Город" Margin="10,20,10,0" Padding="5">
@@ -27,9 +27,9 @@
                 </GroupBox>
                 <GroupBox Header="Дата публикации" Margin="10,20,10,0" Padding="5">
                     <StackPanel Orientation="Horizontal">
-                        <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectedDate="{Binding MinPublicDate}"></DatePicker>
+                        <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="220" SelectedDate="{Binding MinPublicDate}"></DatePicker>
                         <TextBlock Text=" - "></TextBlock>
-                        <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectedDate="{Binding MaxPublicDate}"></DatePicker>
+                        <DatePicker Margin="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="220" SelectedDate="{Binding MaxPublicDate}"></DatePicker>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Федеральный закон" Margin="10,20,10,0" Padding="5">
