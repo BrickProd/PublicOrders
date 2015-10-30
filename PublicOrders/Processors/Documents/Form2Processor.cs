@@ -17,6 +17,99 @@ namespace PublicOrders.Processors
         Object missingObj = System.Reflection.Missing.Value;
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
+        private void SaveProduct(Product product, Rubric rubric, ref int productsAddedCount, ref int productsRepeatCount, ref int productsMergeCount) {
+            if (product != null)
+            {
+                product.ModifiedDateTime = DateTime.Now;
+                // Проверка на повтор
+                // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
+                // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
+                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                bool isRepeat = false;
+                IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&&
+                                                                                 (m.Certification == product.Certification || m.Certification == null || m.Certification == "")*/)).ToList();
+                if (repeatProducts.Any())
+                {
+                    // Изначально проверим на повтор
+                    foreach (Product repeatProduct in repeatProducts)
+                    {
+                        isRepeat = true;
+                        if (repeatProduct.Form2Properties.Count() > 0)
+                        {
+                            foreach (Form2Property repeatForm2Property in repeatProduct.Form2Properties)
+                            {
+                                Form2Property newForm2Property = product.Form2Properties.FirstOrDefault(m => (m.RequiredParam == repeatForm2Property.RequiredParam &&
+                                                                                                              m.RequiredValue == repeatForm2Property.RequiredValue &&
+                                                                                                              m.OfferValue == repeatForm2Property.OfferValue &&
+                                                                                                              m.Measure == repeatForm2Property.Measure));
+                                if (newForm2Property != null)
+                                {
+                                    isRepeat = true;
+                                }
+                                else
+                                {
+                                    isRepeat = false;
+                                }
+                                if (!isRepeat)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            isRepeat = false;
+                        }
+                    }
+                }
+                if (isRepeat)
+                {
+                    productsRepeatCount++;
+                }
+                else
+                {
+                    // Слияние делается в том случае, если найден один повторный документ и нет значений по шпблону
+                    if ((repeatProducts.Count() == 1) && ((repeatProducts.ElementAt(0).Form2Properties == null) ||
+                            (repeatProducts.ElementAt(0).Form2Properties.Count() == 0)))
+                    {
+
+                        repeatProducts.ElementAt(0).Form2Properties = product.Form2Properties;
+                        //repeatProducts.ElementAt(0).Certification = product.Certification;
+                        mvm.dc.Entry(repeatProducts.ElementAt(0)).State = System.Data.Entity.EntityState.Modified;
+                        mvm.dc.SaveChanges();
+                        productsMergeCount++;
+                    }
+
+                    else
+                    {
+                        product.Rubric = rubric;
+                        mvm.dc.Products.Add(product);
+
+                        mvm.dc.SaveChanges();
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            mvm.ProductCollection.Add(product);
+                        }));
+
+                        productsAddedCount++;
+                    }
+                }
+            }
+        }
+
+        private void SaveProperty(Product product, Form2Property form2Property ) {
+            if (form2Property != null)
+            {
+                if ((form2Property.OfferValue != "") ||
+                    (form2Property.RequiredParam != "") ||
+                    (form2Property.RequiredValue != "") ||
+                    (form2Property.Measure != ""))
+                {
+                    product.Form2Properties.Add(form2Property);
+                }
+
+            }
+        }
+
         public ResultType_enum Learn(string docPath, out int productsAddedCount, out int productsRepeatCount, out int productsMergeCount, out string message)
         {
             productsAddedCount = 0;
@@ -78,93 +171,38 @@ namespace PublicOrders.Processors
                 // Новый обход документа
                 Product product = null;
                 Form2Property form2Property = null;
-                bool isNewProduct = false;
 
                 Word.Cell cell = tbl.Cell(4, 1);
+                int rowIndex = 4;
                 while (cell != null)
                 {
                     try
                     {
                         string cellValue = cell.Range.Text.Trim();
+                        if (rowIndex != cell.RowIndex)
+                        {
+                            SaveProperty(product, form2Property);
+
+                            rowIndex = cell.RowIndex;
+                            form2Property = new Form2Property();
+                        }
+                        else {
+                            if (form2Property == null) form2Property = new Form2Property();
+                        }
+
 
                         switch (cell.ColumnIndex)
                         {
                             case (2):
                                 // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
-                                if ((product != null) && (product.Name == Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)))))
+                                if (product != null)
                                 {
-                                    isNewProduct = false;
-                                }
-                                else {
-                                    isNewProduct = true;
-
-                                    // Сохранение продукта
-                                    if (product != null) {
-                                        // Проверка на повтор
-                                        // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
-                                        // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
-                                        // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
-                                        IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark && m.Certification == product.Certification));
-                                        if (repeatProducts.Any())
-                                        {
-                                            // Изначально проверим на повтор
-                                            bool isRepeat = true;
-                                            foreach (Product repeatProduct in repeatProducts)
-                                            {
-                                                foreach (Form2Property repeatForm2Property in repeatProduct.Form2Properties) {
-                                                    Form2Property newForm2Property = product.Form2Properties.FirstOrDefault(m => (m.RequiredParam == repeatForm2Property.RequiredParam &&
-                                                                                                                                  m.RequiredValue == repeatForm2Property.RequiredValue &&
-                                                                                                                                  m.OfferValue == repeatForm2Property.OfferValue &&
-                                                                                                                                  m.Measure == repeatForm2Property.Measure));
-                                                    if (newForm2Property != null) {
-                                                        isRepeat = true;
-                                                    }
-                                                    if (!isRepeat) {
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            if (isRepeat)
-                                            {
-                                                productsRepeatCount++;
-                                                continue;
-                                            }
-
-                                            // Слияние делается в том случае, если найден один повторный документ и нет значений по шпблону
-                                            if (repeatProducts.Count() == 1)
-                                            {
-                                                if ((repeatProducts.ElementAt(0).Form2Properties == null) ||
-                                                    (repeatProducts.ElementAt(0).Form2Properties.Count() == 0))
-                                                {
-                                                    productsMergeCount++;
-                                                    repeatProducts.ElementAt(0).Form2Properties = product.Form2Properties;
-                                                    product = repeatProducts.ElementAt(0);
-                                                    mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                                                    mvm.dc.SaveChanges();
-                                                    continue;
-                                                }
-                                            }
-                                        }
-
-
-                                        product.Rubric = r;
-                                        mvm.dc.Products.Add(product);
-                                        productsAddedCount++;
-
-                                        mvm.dc.SaveChanges();
-                                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                                        {
-                                            mvm.ProductCollection.Add(product);
-                                        }));
-                                    }
+                                    SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
                                 }
 
-                                if (isNewProduct) {
-                                    product = new Product();
-                                    product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
-                                }
+                                product = new Product();
+                                product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
 
-                                form2Property = new Form2Property();
                                 break;
                             case (3):
                                 // Торговая марка
@@ -184,13 +222,17 @@ namespace PublicOrders.Processors
                                 form2Property.OfferValue = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
                                 break;
                             case (7):
-                                // Значение, предлагаемое участником
+                                // Единица измерения
                                 form2Property.Measure = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
                                 break;
                             case (8):
                                 // Сертификация (--ПОСЛЕДНЕЕ ЗНАЧЕНИЕ--)
                                 if (product == null) break;
-                                product.Certification = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                if ((product.Certification == null) || (product.Certification.Trim() == ""))
+                                    product.Certification = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+
+
+
                                 break;
                             default:
                                 break;
@@ -205,6 +247,9 @@ namespace PublicOrders.Processors
                         cell = cell.Next;
                     }
                 }
+                SaveProperty(product, form2Property);
+                SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+
 
                 // Закрываем приложение
                 application.Quit(ref missing, ref missing, ref missing);

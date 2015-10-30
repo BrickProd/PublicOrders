@@ -9,7 +9,7 @@ using PublicOrders.Processors;
 
 namespace PublicOrders.Processors.Main
 {
-    public delegate void LoadProductsDone_delegete(ResultType_enum ResultType_enum, string templateStr, int productsAddedCount, int productsRepeatCount, string message);
+    public delegate void LoadProductsDone_delegete(ResultType_enum ResultType_enum, string templateStr, int productsAddedCount, int productsRepeatCount, int productsMergeCount, string message);
     public class LoadProductsProcessor
     {
         private bool isWork = false;
@@ -44,23 +44,23 @@ namespace PublicOrders.Processors.Main
                         FreedomProcessor freedomLoadProcessor = new FreedomProcessor();
                         ResultType_enum = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
-                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, message);
+                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, message);
                         return;
                     case ("форма 2"):
                         Form2Processor form2LoadProcessor = new Form2Processor();
                         ResultType_enum = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
-                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, message);
+                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, message);
                         return;
                     case ("комитет"):
                         CommitteeProcessor committeeLoadProcessor = new CommitteeProcessor();
                         ResultType_enum = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
-                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, message);
+                        done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, message);
                         isWork = false;
                         return;
                     default:
                         isWork = false;
-                        done_del(ResultType_enum.Error, templateStr, productsAddedCount, productsRepeatCount, "Данный движок не обучает шаблоны типа: <" + templateStr.Trim() + ">");
+                        done_del(ResultType_enum.Error, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, "Данный движок не обучает шаблоны типа: <" + templateStr.Trim() + ">");
                         return;
                 }
                 isWork = false;
@@ -68,7 +68,7 @@ namespace PublicOrders.Processors.Main
             catch (Exception ex)
             {
                 isWork = false;
-                done_del(ResultType_enum.Error, templateStr, productsAddedCount, productsRepeatCount, ex.Message + '\n' + ex.StackTrace);
+                done_del(ResultType_enum.Error, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, ex.Message + '\n' + ex.StackTrace);
             }
         }
 

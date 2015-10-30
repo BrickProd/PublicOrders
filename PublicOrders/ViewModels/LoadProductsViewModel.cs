@@ -137,11 +137,11 @@ namespace PublicOrders.ViewModels
 
         #endregion
 
-        private void LoadProductsDone_Proc(ResultType_enum ResultType_enum, string templateStr, int productsAddedCount, int productsRepeatCount, string message) {
+        private void LoadProductsDone_Proc(ResultType_enum ResultType_enum, string templateStr, int productsAddedCount, int productsRepeatCount, int productsMergeCount, string message) {
             switch (ResultType_enum)
             {
                 case (ResultType_enum.Done):
-                    if (productsAddedCount == 0)
+                    if ((productsAddedCount == 0) && (productsMergeCount == 0))
                     {
                         MessageBox.Show("В документе не найдено товара для загрузки!", "Предупреждение",
                            MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -149,7 +149,8 @@ namespace PublicOrders.ViewModels
                     else
                     {
                         MessageBox.Show("Новый товар по шаблону <" + templateStr.Trim() + "> загружен!\nДобавлено: " +
-                                           productsAddedCount + "\nПовторы: " + productsRepeatCount, "Информация",
+                                           productsAddedCount + ";\nСлитие: " + productsMergeCount + ";\nПовторы: " +
+                                           productsRepeatCount + ".", "Информация",
                                            MessageBoxButton.OK, MessageBoxImage.Information);
                     }
 

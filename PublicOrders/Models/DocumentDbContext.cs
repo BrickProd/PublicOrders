@@ -94,7 +94,7 @@ namespace PublicOrders.Models
         [Index]
         public string Name { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string Text { get; set; }
 
         public Instruction()
@@ -208,25 +208,25 @@ namespace PublicOrders.Models
         public int CommitteePropertyId { get; set; }
 
         [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         virtual public Product Product { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string ParamName { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string MinValue { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string MaxValue { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string VariableParam { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string SpecificParam { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string Measure { get; set; }
 
         public CommitteeProperty()
@@ -241,20 +241,20 @@ namespace PublicOrders.Models
         public int Form2PropertyId { get; set; }
 
         [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         virtual public Product Product { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string RequiredParam { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string RequiredValue{ get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string OfferValue { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string Measure { get; set; }
 
         public Form2Property()
@@ -269,13 +269,13 @@ namespace PublicOrders.Models
         public int FreedomPropertyId { get; set; }
 
         [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         virtual public Product Product { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string CustomerParam{ get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "ntext")]
         public string MemberParam { get; set; }
 
         public FreedomProperty()
