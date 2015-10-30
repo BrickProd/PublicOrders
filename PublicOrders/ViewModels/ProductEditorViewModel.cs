@@ -12,19 +12,36 @@ using PublicOrders.Commands;
 using PublicOrders.Models;
 using System.Data.Entity;
 using System.Windows;
+using System.Windows.Data;
 
 namespace PublicOrders.ViewModels
 {
     public class ProductEditorViewModel : INotifyPropertyChanged
     {
-        private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+        public MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        public ObservableCollection<Product> Products
+        private CollectionViewSource _products;
+        public CollectionViewSource Products
         {
-            get;
-            set;
+            get { return _products; }
+            set
+            {
+                _products = value;
+                OnPropertyChanged("Products");
+            }
         }
 
+        private string _productFilterStr;
+        public string ProductFilterStr
+        {
+            get { return _productFilterStr; }
+            set
+            {
+                _productFilterStr = value;
+                this.Products.View.Refresh();
+                OnPropertyChanged("ProductFilterStr");
+            }
+        }
 
         private Product _selectedProduct;
         public Product SelectedProduct
@@ -41,7 +58,6 @@ namespace PublicOrders.ViewModels
 
         }
 
-
         private DelegateCommand updateProductCommand;
         public ICommand UpdateProductCommand
         {
@@ -54,7 +70,9 @@ namespace PublicOrders.ViewModels
                 return updateProductCommand;
             }
         }
-        private void UpdateProduct() {
+
+        private void UpdateProduct()
+        {
             //string sss = "";
             mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
             //dc.Entry(SelectedProduct).State = EntityState.Modified;
@@ -62,25 +80,21 @@ namespace PublicOrders.ViewModels
         }
 
         public ObservableCollection<Rubric> Rubrics { get; set; }
-
-        private Rubric _selectedRubric;
-        public Rubric SelectedRubric
-        {
-            get { return _selectedRubric; }
-            set
-            {
-                _selectedRubric = value;
-                OnPropertyChanged("SelectedRubric");
-            }
-        }
-
         public string NewRubricName { get; set; }
 
 
         public ObservableCollection<Instruction> Instructions { get; set; }
 
+
+
+
+
         #region КОМАНДЫ
         private DelegateCommand addProductCommand;
+        private DelegateCommand addRubricCommand;
+        private DelegateCommand saveProductCommand;
+
+
         public ICommand AddProductCommand
         {
             get
@@ -92,16 +106,6 @@ namespace PublicOrders.ViewModels
                 return addProductCommand;
             }
         }
-        private void AddProduct()
-        {
-            //Products.Add(new Product());
-            //dc.Products.Add(new Product());
-        }
-
-
-        private DelegateCommand addRubricCommand;
-       
-
         public ICommand AddRubricCommand
         {
             get
@@ -113,27 +117,94 @@ namespace PublicOrders.ViewModels
                 return addRubricCommand;
             }
         }
-        private void AddRubric()
+        public ICommand SaveProductCommand
         {
-            var newRubric = new Rubric {Name = NewRubricName};
-
-            //mvm.dc.Entry(newRubric);
-            //mvm.dc.SaveChanges();
-
-            this.Rubrics.Add(newRubric);
+            get
+            {
+                if (saveProductCommand == null)
+                {
+                    saveProductCommand = new DelegateCommand(SaveProduct);
+                }
+                return saveProductCommand;
+            }
         }
+
         #endregion
 
         public ProductEditorViewModel()
         {
             if (mvm != null)
             {
-                Products = mvm.ProductCollection;
+                Products = new CollectionViewSource();
+                Products.Source = this.mvm.ProductCollection;
+                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+                Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                Products.Filter += ProductFilter;
+                Products.View.Refresh();
+
                 Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics);
                 Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
             }
         }
 
+
+
+
+
+        //Фильтр
+        public void ProductFilter(object sender, FilterEventArgs args)
+        {
+            if (string.IsNullOrEmpty(this.ProductFilterStr))
+            {
+                args.Accepted = true;
+            }
+            else
+            {
+                Product p = args.Item as Product;
+                if (p.Name.ToLower().Contains(this.ProductFilterStr.ToLower()))
+                {
+                    args.Accepted = true;
+                }
+                else
+                {
+                    args.Accepted = false;
+                }
+            }
+        }
+
+
+        #region МЕТОДЫ
+        private void AddProduct()
+        {
+            //Products.Add(new Product());
+            //dc.Products.Add(new Product());
+        }
+        private void AddRubric()
+        {
+            var newRubric = new Rubric { Name = NewRubricName };
+
+            //mvm.dc.Entry(newRubric);
+            //mvm.dc.SaveChanges();
+
+            this.Rubrics.Add(newRubric);
+        }
+        private void SaveProduct()
+        {
+            var task = new Task(new Action(() =>
+            {
+                if (SelectedProduct != null)
+                {
+
+                    mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
+                    mvm.dc.SaveChanges();
+                }
+            }));
+            task.Start();
+
+            this.Products.View.Refresh();
+
+        }
+        #endregion
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

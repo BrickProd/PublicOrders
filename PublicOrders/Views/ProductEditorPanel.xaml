@@ -10,11 +10,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" Padding="20 0 20 0">
     <UserControl.Resources>
-
         <DataTemplate x:Key="ListBoxItemTemplate">
             <TextBlock Text="{Binding Name}" FontSize="20" TextTrimming="WordEllipsis"/>
         </DataTemplate>
-
     </UserControl.Resources>
     <UserControl.DataContext>
         <ViewModels:ProductEditorViewModel/>
@@ -77,10 +75,10 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Форма 2" Style="{StaticResource PanelContentStyle}">
-                    <!--<Grid>
+                    <Grid>
                         <DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.Form2Properties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam.Value}">
+                                <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style>
                                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
@@ -92,7 +90,7 @@
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue.Value}">
+                                <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style>
                                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
@@ -104,7 +102,7 @@
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberValue.Value}">
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding OfferValue}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style>
                                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
@@ -116,7 +114,7 @@
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure.Value}">
+                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style>
                                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
@@ -124,33 +122,21 @@
                                     </DataGridTextColumn.ElementStyle>
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style>
-                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                        </Style>
-                                    </DataGridTextColumn.EditingElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Width="*" Header="Сведения о сертификации" Binding="{Binding Certification.Value}">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style>
-                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                    <DataGridTextColumn.EditingElementStyle>
-                                        <Style >
                                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
-                    </Grid>-->
+                    </Grid>
                 </TabItem>
             </TabControl>
 
         </Grid>
         <Border BorderThickness="0 0 0 0" Padding="10 10 50 10">
-            <TabControl BorderThickness="0" TabStripPlacement="Top" x:Name="EditTabControl">
+            <TabControl BorderThickness="0" TabStripPlacement="Top" x:Name="EditTabControl" >
                 <!--ПАНЕЛЬ ТОВАРОВ-->
-                <TabItem Header="Товары" Style="{StaticResource PanelContentStyle}">
+                <TabItem Header="Товары" Style="{StaticResource PanelContentStyleMini}">
                     <Grid>
                         <TextBox x:Name="textBox" HorizontalAlignment="Stretch" Height="30" Margin="10,10,10,0" FontSize="18" TextWrapping="NoWrap"
                                  Text="{Binding ProductFilterStr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -216,7 +202,7 @@
 
 
                 <!--ПАНЕЛЬ РУБРИК-->
-                <TabItem Header="Рубрики" Style="{StaticResource PanelContentStyle}">
+                <TabItem Header="Рубрики" Style="{StaticResource PanelContentStyleMini}">
                     <Grid Margin="0,-0.666,0,0.666">
                         <Button x:Name="AddNewRubricBtn" Content="+" FontWeight="Bold" HorizontalAlignment="Left"
 							Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="30"
@@ -277,7 +263,7 @@
 
 
                 <!--ПАНЕЛЬ ИНСТРУКЦИЙ-->
-                <TabItem Header="Инструкции" Style="{StaticResource PanelContentStyle}">
+                <TabItem Header="Инструкции" Style="{StaticResource PanelContentStyleMini}">
                     <DataGrid x:Name="instructionGrid" Margin="10,30.96,168,10" ItemsSource="{Binding Instructions}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
