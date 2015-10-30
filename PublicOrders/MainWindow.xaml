@@ -10,7 +10,21 @@
     <Window.Resources>
 
     </Window.Resources>
-    <Grid x:Name="LayoutRoot" Background="White" Margin="0,26,0,0">
-        <local:MainView Margin="0,11.505,0,0" Grid.Row="1" />
+    <Grid x:Name="LayoutRoot" Background="White" Margin="0,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35*"/>
+            <RowDefinition Height="626*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20 10">
+            <Border BorderThickness="0.5 0 0 0" BorderBrush="LightGray" VerticalAlignment="Center">
+                <TextBlock x:Name="TempInfo" Text="" FontSize="14" Margin="20 0" FontWeight="Bold" Foreground="Gray" />
+            </Border>
+            <Border BorderThickness="0.5 0 0 0" BorderBrush="LightGray" VerticalAlignment="Center">
+                <TextBlock x:Name="BaxInfo" Text="" FontSize="14" Margin="20 0" FontWeight="Bold" Foreground="Gray"/>
+            </Border>
+            
+        </StackPanel>
+
+        <local:MainView Margin="0,0,0,0" Grid.Row="1"/>
     </Grid>
 </Window>
