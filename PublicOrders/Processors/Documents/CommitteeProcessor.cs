@@ -79,7 +79,7 @@ namespace PublicOrders.Processors
 
                         repeatProducts.ElementAt(0).CommitteeProperties = product.CommitteeProperties;
                         //repeatProducts.ElementAt(0).Certification = product.Certification;
-                        mvm.dc.Entry(repeatProducts.ElementAt(0)).State = System.Data.Entity.EntityState.Deleted;
+                        mvm.dc.Entry(repeatProducts.ElementAt(0)).State = System.Data.Entity.EntityState.Modified;
                         mvm.dc.SaveChanges();
                         productsMergeCount++;
                     }
@@ -211,6 +211,10 @@ namespace PublicOrders.Processors
                                 product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
 
                                 break;
+                            case (3):
+                                // Значение параметра
+                                committeeProperty.ParamName = Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue));
+                                break;
                             case (9):
                                 // Торговая марка
                                 if (product == null) break;
@@ -333,6 +337,7 @@ namespace PublicOrders.Processors
                     int propertiesCount = 0;
                     foreach (Product product in products)
                     {
+                        if (product.CommitteeProperties == null) continue;
                         propertiesCount += product.CommitteeProperties.Count();
                     }
 
@@ -370,6 +375,8 @@ namespace PublicOrders.Processors
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
+                        if ((products[i].CommitteeProperties == null) || (products[i].CommitteeProperties.Count == 0)) continue;
+
                         if (propertyIndexCompilator == 0)
                         {
                             // Объединяем ячейки по продукту
@@ -426,28 +433,28 @@ namespace PublicOrders.Processors
                         }
 
                         // Наименование показателя
-                        doc.Tables[1].Cell(i + 4, 3).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).ParamName;
-                        doc.Tables[1].Cell(i + 4, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        doc.Tables[1].Cell(i + 2, 3).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).ParamName;
+                        doc.Tables[1].Cell(i + 2, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Минимальные значения показателей
-                        doc.Tables[1].Cell(i + 4, 4).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MinValue;
-                        doc.Tables[1].Cell(i + 4, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        doc.Tables[1].Cell(i + 2, 4).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MinValue;
+                        doc.Tables[1].Cell(i + 2, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Максимальные значения показателей
-                        doc.Tables[1].Cell(i + 4, 5).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MaxValue;
-                        doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        doc.Tables[1].Cell(i + 2, 5).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MaxValue;
+                        doc.Tables[1].Cell(i + 2, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Значения показателей, которые не могут изменяться
-                        doc.Tables[1].Cell(i + 4, 6).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).VariableParam;
-                        doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        doc.Tables[1].Cell(i + 2, 6).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).VariableParam;
+                        doc.Tables[1].Cell(i + 2, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Конкретные показатели
-                        doc.Tables[1].Cell(i + 4, 7).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).SpecificParam;
-                        doc.Tables[1].Cell(i + 4, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        doc.Tables[1].Cell(i + 2, 7).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).SpecificParam;
+                        doc.Tables[1].Cell(i + 2, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         // Единица измерения
-                        doc.Tables[1].Cell(i + 4, 8).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).Measure;
-                        doc.Tables[1].Cell(i + 4, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                        doc.Tables[1].Cell(i + 2, 8).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).Measure;
+                        doc.Tables[1].Cell(i + 2, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
                         propertyIndexCompilator++;
                         if (products[productIndexCompilator].CommitteeProperties.Count() == propertyIndexCompilator)

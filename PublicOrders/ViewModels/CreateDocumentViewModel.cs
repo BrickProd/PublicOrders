@@ -51,6 +51,8 @@ namespace PublicOrders.ViewModels
                 _selectedTemplate = value;
                 OnPropertyChanged("SelectedTemplate");
                 this.FilteredProducts.View.Refresh();
+
+                //ProductsForDocument.Clear();
             }
         }
 
@@ -99,12 +101,17 @@ namespace PublicOrders.ViewModels
 
         private void CreateDocument()
         {
+            if (ProductsForDocument.Count == 0) {
+                MessageBox.Show("Веберите продукты!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             ButtonCreateDocEnabled = false;
             if ((mvm.cdProcessor != null) && (mvm.cdProcessor.isWorking())) {
                 mvm.cdProcessor.Stop();
             }
             CreateDocumentDone_delegete done_del = new CreateDocumentDone_delegete(CreateDocumentDone_Proc);
-            mvm.cdProcessor = new CreateDocumentProcessor(FilteredProducts.View.Cast<Product>().ToList(), SelectedInstruction, SelectedTemplate, done_del);
+            mvm.cdProcessor = new CreateDocumentProcessor(/*FilteredProducts.View.Cast<Product>().ToList()*/ProductsForDocument.ToList(), SelectedInstruction, SelectedTemplate, done_del);
             mvm.cdProcessor.Operate();
         }
         private void UnchooseProduct()

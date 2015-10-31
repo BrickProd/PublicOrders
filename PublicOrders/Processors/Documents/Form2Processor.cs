@@ -334,6 +334,7 @@ namespace PublicOrders.Processors
                     int propertiesCount = 0;
                     foreach (Product product in products)
                     {
+                        if (product.Form2Properties == null) continue;
                         propertiesCount += product.Form2Properties.Count();
                     }
 
@@ -435,6 +436,8 @@ namespace PublicOrders.Processors
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
+                        if ((products[i].Form2Properties == null) || (products[i].Form2Properties.Count == 0)) continue;
+
                         if (propertyIndexCompilator == 0)
                         {
                             // Объединяем ячейки по продукту (т.к. свойство занимает строку)

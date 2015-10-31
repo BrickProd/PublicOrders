@@ -313,6 +313,13 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Range.Text = "ТРЕБОВАНИЯ К ТОВАРАМ, ИСПОЛЬЗУЕМЫМ ПРИ ВЫПОЛНЕНИИ РАБОТ";
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
+                    // Инициализируем количество заполняемых продуктов
+                    int linesCount = 0;
+                    foreach (Product product in products ) {
+                        if ((product.FreedomProperties == null) || (product.FreedomProperties.Count != 1)) continue;
+                        linesCount++;
+                    }
+
 
                     //Добавляем таблицу (но перед этим узнаем сколько продуктов)
                     string productsMessage = "";
@@ -321,7 +328,7 @@ namespace PublicOrders.Processors
                      Word.WdDefaultTableBehavior.wdWord9TableBehavior;
                     Object autoFitBehavior =
                      Word.WdAutoFitBehavior.wdAutoFitWindow;
-                    Word.Table wordtable = doc.Tables.Add(doc.Paragraphs[5].Range, 3 + products.Count, 6,
+                    Word.Table wordtable = doc.Tables.Add(doc.Paragraphs[5].Range, 3 + linesCount, 6,
                       ref defaultTableBehavior, ref autoFitBehavior);
 
                     // Объединение ячеек
@@ -393,6 +400,8 @@ namespace PublicOrders.Processors
                     for (int i = 0; i < products.Count; i++)
                     {
                         if (!isWork) break;
+                        if ((products[i].FreedomProperties == null) || (products[i].FreedomProperties.Count != 1)) continue;
+
                         doc.Tables[1].Cell(i + 4, 1).Range.Text = Convert.ToString(i + 1) + '.';
                         doc.Tables[1].Cell(i + 4, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
@@ -402,12 +411,6 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 5).Range.Text = products.ElementAt(i).TradeMark;
                         doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
 
-                       // В данном шаблоне одно свойство(строка) у продукта
-                        if (products[0].FreedomProperties.Count() != 1)
-                        {
-                            message = "Ошибка при составлении шаблона";
-                            return ResultType_enum.Error;
-                        }
                         FreedomProperty freedomProperty = products[i].FreedomProperties.ElementAt(0);
 
                         // Требования заказчика

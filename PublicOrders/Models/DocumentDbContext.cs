@@ -207,8 +207,8 @@ namespace PublicOrders.Models
         [Key]
         public int CommitteePropertyId { get; set; }
 
-        [ForeignKey("Product")]
-        public int? ProductId { get; set; }
+        [ForeignKey("Product"), Required]
+        public int ProductId { get; set; }
         virtual public Product Product { get; set; }
 
         [Column(TypeName = "ntext")]
@@ -240,8 +240,8 @@ namespace PublicOrders.Models
         [Key]
         public int Form2PropertyId { get; set; }
 
-        [ForeignKey("Product")]
-        public int? ProductId { get; set; }
+        [ForeignKey("Product"), Required]
+        public int ProductId { get; set; }
         virtual public Product Product { get; set; }
 
 
@@ -268,8 +268,8 @@ namespace PublicOrders.Models
         [Key]
         public int FreedomPropertyId { get; set; }
 
-        [ForeignKey("Product")]
-        public int? ProductId { get; set; }
+        [ForeignKey("Product"), Required]
+        public int ProductId { get; set; }
         virtual public Product Product { get; set; }
 
         [Column(TypeName = "ntext")]
