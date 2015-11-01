@@ -13,6 +13,7 @@ using System.Windows;
 using PublicOrders.Processors;
 using PublicOrders.Models;
 using PublicOrders.Processors.Main;
+using PublicOrders.Processors.Documents.Main;
 
 namespace PublicOrders.ViewModels
 {
@@ -65,6 +66,17 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private bool _reportCreating;
+        public bool ReportCreating
+        {
+            get { return _reportCreating; }
+            set
+            {
+                _reportCreating = value;
+                OnPropertyChanged("ReportCreating");
+            }
+        }
+
         private int _searchingProgress;
         public int SearchingProgress
         {
@@ -110,9 +122,11 @@ namespace PublicOrders.ViewModels
         #region Команды
         private DelegateCommand customersSearchCommand;
         private DelegateCommand customersSearchStopCommand;
+        private DelegateCommand winnerLotsSearchPausePlayCommand;
         private DelegateCommand winnerLotsSearchCommand;
         private DelegateCommand winnerLotsSearchStopCommand;
         private DelegateCommand createReportCommand;
+        private DelegateCommand createReportStopCommand;
         public ICommand CustomersSearchCommand
         {
             get
@@ -150,6 +164,18 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        public ICommand WinnerLotsSearchPausePlayCommand
+        {
+            get
+            {
+                if (winnerLotsSearchPausePlayCommand == null)
+                {
+                    winnerLotsSearchPausePlayCommand = new DelegateCommand(WinnerLotsSearchPausePlay);
+                }
+                return winnerLotsSearchPausePlayCommand;
+            }
+        }
+
         public ICommand CreateReportCommand
         {
             get
@@ -159,6 +185,18 @@ namespace PublicOrders.ViewModels
                     createReportCommand = new DelegateCommand(CreateReport);
                 }
                 return createReportCommand;
+            }
+        }
+
+        public ICommand CreateReportStopCommand
+        {
+            get
+            {
+                if (createReportStopCommand == null)
+                {
+                    createReportStopCommand = new DelegateCommand(CreateReportStop);
+                }
+                return createReportStopCommand;
             }
         }
         #endregion
@@ -248,6 +286,7 @@ namespace PublicOrders.ViewModels
         }
 
         private void AllLotsSearched_proc(ResultType_enum ResultType_enum, string message) {
+            IsWinnerLotsSearching = false;
             MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -260,14 +299,39 @@ namespace PublicOrders.ViewModels
         }
 
         private void WinnerLotsSearchStop() {
-            IsWinnerLotsSearching = false;
+            mvm.lsProcessor.Stop();
+        }
+
+        private void WinnerLotsSearchPausePlay()
+        {
+            mvm.lsProcessor.PausePlay();
         }
 
         private void CreateReport()
         {
-            //метод
+            ReportCreating = true;
+            if ((mvm.cwProcessor != null) && (mvm.cwProcessor.isWorking()))
+            {
+                mvm.cwProcessor.Stop();
+            }
+
+            CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = new CreateWinnersDocumentDone_delegete(CreateWinnersDocumentDone_proc);
+            mvm.cwProcessor = new CreateWinnersDocProcessor (Winners.ToList(), createWinnersDocumentDone_delegete);
+            mvm.lsProcessor.Operate();
+        }
+
+        private void CreateReportStop()
+        {
+            mvm.cwProcessor.Stop();
+        }
+
+        private void CreateWinnersDocumentDone_proc(ResultType_enum resultCreate, string message) {
+            ReportCreating = false;
+            MessageBox.Show("Документ создан!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         #endregion
+
+
 
         public WinnerSearchViewModel()
         {

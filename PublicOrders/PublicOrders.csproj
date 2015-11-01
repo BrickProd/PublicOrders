@@ -85,6 +85,7 @@
     <Compile Include="Processors\Documents\CommitteeProcessor.cs" />
     <Compile Include="Processors\Documents\Form2Processor.cs" />
     <Compile Include="Processors\Documents\FreedomProcessor.cs" />
+    <Compile Include="Processors\Documents\Main\CreateWinnersDocProcessor.cs" />
     <Compile Include="Processors\Documents\Main\LoadProductsProcessor.cs" />
     <Compile Include="Processors\Internet\Main\CustomersSearchProcessor.cs" />
     <Compile Include="Processors\Internet\Main\InternetRequestEngine.cs" />

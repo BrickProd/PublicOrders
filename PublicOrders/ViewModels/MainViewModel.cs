@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using PublicOrders.Models;
 using PublicOrders.Processors.Main;
+using PublicOrders.Processors.Documents.Main;
 
 namespace PublicOrders
 {
@@ -35,7 +36,7 @@ namespace PublicOrders
         // Документы
         public CreateDocumentProcessor cdProcessor = null;
         public LoadProductsProcessor lpProcessor = null;
-
+        public CreateWinnersDocProcessor cwProcessor = null;
         // Победители
         public CustomersSearchProcessor csProcessor = null;
         public LotsSearchProcessor lsProcessor = null;

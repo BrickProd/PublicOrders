@@ -87,9 +87,11 @@ namespace PublicOrders.ViewModels
         {
             get
             {
-                if (LawTypes.First(m => m.value == Properties.Settings.Default.LawType) != null)
+                // Не работает, пока не проверял что и чего
+                /*if (LawTypes.First(m => m.value == Properties.Settings.Default.LawType) != null)
                     return LawTypes.First(m => m.value == Properties.Settings.Default.LawType);
-                else return null;
+                else return null;*/
+                return null;
             }
             set
             {
@@ -109,9 +111,10 @@ namespace PublicOrders.ViewModels
         {
             get
             {
-                if (CustomerTypes.First(m => m.value == Properties.Settings.Default.CustomerType) != null)
+                /*if (CustomerTypes.First(m => m.value == Properties.Settings.Default.CustomerType) != null)
                     return CustomerTypes.First(m => m.value == Properties.Settings.Default.CustomerType);
-                else return null;
+                else return null;*/
+                return null;
             }
             set
             {

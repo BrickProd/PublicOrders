@@ -25,6 +25,7 @@ namespace PublicOrders.Processors.Main
         private InternetRequestEngine internetRequestEngine = null;
 
         private bool isWork = false;
+        private bool isPause = false;
 
         private Customer customer = null;
         private CustomerType_enum customerType_enum;
@@ -90,7 +91,7 @@ namespace PublicOrders.Processors.Main
                 {
                     case (CustomerType_enum.Customer):*/
                         text = @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
-                        text += @"sortBy=UPDATE_DATE&recordsPerPage=_50&pageNo=1&placeOfSearch=" + lawTypeStr + "&";
+                        text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&";
                         text += @"searchType=ORDERS&morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
                         text += @"deliveryAddress=&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&okdpWithSubElements=false&orderStages=PC&";
                         text += @"headAgencyWithSubElements=false&smallBusinessSubject=I&rnpData=I&executionRequirement=I&penalSystemAdvantage=I&disabilityOrganizationsAdvantage=I&";
@@ -150,7 +151,11 @@ namespace PublicOrders.Processors.Main
                 Order order = null;
                 foreach (HtmlAgilityPack.HtmlNode nodeOrder in orderCollection)
                 {
+                    while (isPause) {
+                        Thread.Sleep(300);
+                    }
                     if (!isWork) break;
+
                     #region Заполнение заказа
                     string orderMessage = "";
                     order = new Order();
@@ -481,9 +486,21 @@ namespace PublicOrders.Processors.Main
             return isWork;
         }
 
+        public void PausePlay()
+        {
+            if (isPause)
+            {
+                isPause = false;
+            }
+            else {
+                isPause = true;
+            }
+        }
+
         public void Stop()
         {
             isWork = false;
+            isPause = false;
         }
     }
 }

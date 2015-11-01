@@ -44,6 +44,7 @@ namespace PublicOrders.Processors.Main
         {
             try
             {
+                isWork = true;
                 string message = "";
                 Word.Application application = new Word.Application();
                 ResultType_enum createResult = ResultType_enum.Done;
@@ -116,7 +117,6 @@ namespace PublicOrders.Processors.Main
         public void Operate()
         {
             if (isWork) return;
-            isWork = true;
             Thread operate_thread = new Thread(Operate_thread);
             operate_thread.Start();
         }
