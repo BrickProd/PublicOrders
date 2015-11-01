@@ -6,12 +6,56 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.CreateDocumentPanel"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="500" Padding="20 0 20 0">
+             d:DesignHeight="700" d:DesignWidth="800" Padding="20 0 20 0">
     <UserControl.DataContext>
         <ViewModels:CreateDocumentViewModel/>
     </UserControl.DataContext>
     <Grid>
-        <Grid.ColumnDefinitions>
+
+        <!--ПАНЕЛЬ ЗАГРУЗКИ-->
+        <Grid x:Name="CreateDocumentBusy" Margin="0" Panel.ZIndex="100" Background="Transparent">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCreateInProcess}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsCreateInProcess}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <TextBlock Text="Создание документа..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Foreground="#FF007ACB">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3" AutoReverse="True" RepeatBehavior="Forever"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+
+        <Border>
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Visibility, ElementName=CreateDocumentBusy}" Value="Visible">
+                            <Setter Property="Effect" Value="{StaticResource BlurEffect}"/>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
@@ -20,11 +64,11 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="100*"/>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <ComboBox x:Name="comboBox" FontSize="18" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedIndex="0" Grid.ColumnSpan="2"/>
         <ComboBox x:Name="comboBox1" FontSize="18" Margin="5" Grid.Row="3" ItemsSource="{Binding Instructions}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name" Grid.ColumnSpan="2"/>
-        <Button x:Name="button" FontSize="18" Content="Создать" HorizontalAlignment="Right" Margin="0,5,5,5" Grid.Row="4" Width="100" Command="{Binding CreateDocumentCommand}" Grid.Column="1"/>
+        <Button x:Name="button" FontSize="18" Content="Создать" HorizontalAlignment="Center" Grid.Row="4" Width="150" Command="{Binding CreateDocumentCommand}" Style="{StaticResource OKButtonStyle}" Grid.ColumnSpan="2"/>
         <!--<DataGrid x:Name="dataGridSource" Margin="5,10,225,10" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn ></DataGridCheckBoxColumn>
@@ -40,7 +84,7 @@
             </DataGrid.Columns>
         </DataGrid>-->
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Выбрать документ - стрелка вправо" VerticalAlignment="Top"/>
-        <ListView Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" BorderThickness="1" Grid.Column="0" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}">
+        <ListView Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" BorderThickness="1" Grid.Column="0" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.InputBindings>
                 <KeyBinding Key="Right" Command="{Binding ChooseProductCommand}"></KeyBinding>
             </ListBox.InputBindings>
@@ -51,7 +95,7 @@
             </ListBox.ItemTemplate>
         </ListView>
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Развыбрать документ - стрелка влево" VerticalAlignment="Top" Grid.Column="1"/>
-        <ListView  Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocument}" BorderThickness="1" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}">
+        <ListView  Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocument}" BorderThickness="1" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.InputBindings>
                 <KeyBinding Key="Left" Command="{Binding UnchooseProductCommand}"></KeyBinding>
             </ListBox.InputBindings>
@@ -62,6 +106,9 @@
             </ListBox.ItemTemplate>
         </ListView>
         <!--<Button x:Name="button1" Content=">" HorizontalAlignment="Right" Height="19.209" Margin="0,117.68,-5,0" Grid.Row="2" VerticalAlignment="Top" Width="10" Command="{Binding ChooseProductCommand}"/>-->
+
+            </Grid>
+        </Border>
         
     </Grid>
 </UserControl>

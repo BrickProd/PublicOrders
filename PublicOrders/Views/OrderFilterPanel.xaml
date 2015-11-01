@@ -34,22 +34,15 @@
                 </GroupBox>
                 <GroupBox Header="Федеральный закон" Margin="10,20,10,0" Padding="5">
                     <StackPanel >
-                        <ComboBox SelectedItem="{Binding LawType}" SelectedValuePath="Content">
-                            <ComboBox.Items>
-                                <ComboBoxItem Content="№44(№94), №223" Tag="№44(№94), №223"></ComboBoxItem>
-                                <ComboBoxItem Content="№44(№94)" Tag="№44(№94)"></ComboBoxItem>
-                                <ComboBoxItem Content="№223" Tag="№223"></ComboBoxItem>
-                            </ComboBox.Items>
+                        <ComboBox SelectedItem="{Binding LawType}" ItemsSource="{Binding LawTypes}" DisplayMemberPath="name" SelectedValuePath="value">
+                           
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Тип заказчика" Margin="10,20,10,0" Padding="5">
                     <StackPanel Orientation="Vertical">
-                        <ComboBox SelectedItem="{Binding CustomerType}">
-                            <ComboBox.Items>
-                                <ComboBoxItem Content="Заказчик"></ComboBoxItem>
-                                <ComboBoxItem Content="Организация, размещающая заказ"></ComboBoxItem>
-                            </ComboBox.Items>
+                        <ComboBox SelectedItem="{Binding CustomerType}" ItemsSource="{Binding CustomerTypes}" DisplayMemberPath="name" SelectedValuePath="value">
+
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>
