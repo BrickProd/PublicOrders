@@ -84,13 +84,13 @@
             </DataGrid.Columns>
         </DataGrid>-->
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Выбрать документ - стрелка вправо" VerticalAlignment="Top"/>
-        <ListView Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" BorderThickness="1" Grid.Column="0" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
+        <ListView Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" BorderThickness="1" Grid.Column="0" FontSize="16" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.InputBindings>
                 <KeyBinding Key="Right" Command="{Binding ChooseProductCommand}"></KeyBinding>
             </ListBox.InputBindings>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}"></TextBlock>
+                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListView>
