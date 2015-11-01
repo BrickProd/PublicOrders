@@ -236,7 +236,7 @@ namespace PublicOrders.ViewModels
             LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched__proc);
             mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer, 
                                                       CustomerType_enum.Customer, 
-                                                      LawType_enum._223,
+                                                      LawType_enum._44_94_223,
                                                       100,
                                                       100000000,
                                                       Convert.ToDateTime("2010.01.01"),
@@ -248,7 +248,7 @@ namespace PublicOrders.ViewModels
         }
 
         private void AllLotsSearched_proc(ResultType_enum ResultType_enum, string message) {
-            
+            MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LotSearched__proc(Winner winner) {

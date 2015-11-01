@@ -204,8 +204,8 @@ namespace PublicOrders.Models
         public int? OrderPriceTypeId { get; set; }
         virtual public OrderPriceType OrderPriceType { get; set; }
 
-        [Index]
-        public long MaxLotPrice { get; set; }
+        /*[Index]
+        public long MaxLotPrice { get; set; }*/
 
         [ForeignKey("LawType"), Required]
         public int LawTypeId { get; set; }

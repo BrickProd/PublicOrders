@@ -32,8 +32,11 @@ namespace PublicOrders
         #endregion
 
         #region Процессоры
+        // Документы
         public CreateDocumentProcessor cdProcessor = null;
         public LoadProductsProcessor lpProcessor = null;
+
+        // Победители
         public CustomersSearchProcessor csProcessor = null;
         public LotsSearchProcessor lsProcessor = null;
         #endregion

@@ -65,6 +65,7 @@ namespace PublicOrders.Processors.Main
         {
             try
             {
+                isWork = true;
                 #region Запрос в интернет на получение заказов заказчика
                 orders = new ObservableCollection<Order>();
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
@@ -83,7 +84,7 @@ namespace PublicOrders.Processors.Main
                         break;
                 }
 
-                lawTypeStr = "FZ_94"; // !!! и 50 записей
+                //lawTypeStr = "FZ_94"; // !!! и 50 записей
 
                 /*switch (customerType_enum)
                 {
@@ -149,6 +150,7 @@ namespace PublicOrders.Processors.Main
                 Order order = null;
                 foreach (HtmlAgilityPack.HtmlNode nodeOrder in orderCollection)
                 {
+                    if (!isWork) break;
                     #region Заполнение заказа
                     string orderMessage = "";
                     order = new Order();
@@ -206,6 +208,7 @@ namespace PublicOrders.Processors.Main
             }
             catch (Exception ex)
             {
+                isWork = false;
                 orders = null;
                 allLotsSearched_delegete(ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
                 return;

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Text.RegularExpressions;
 
 namespace PublicOrders.Processors.Internet
 {
@@ -234,15 +235,15 @@ namespace PublicOrders.Processors.Internet
 
                             _44lot.Price = _44lotPrice;
                             // LotPriceType
-                            LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _44lotPriceTypeName.ToLower());
-                            if (lotPriceType == null)
+                            LotPriceType _44lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _44lotPriceTypeName.ToLower());
+                            if (_44lotPriceType == null)
                             {
-                                lotPriceType = new LotPriceType();
-                                lotPriceType.Name = _44lotPriceTypeName;
-                                mvm.wc.LotPriceTypes.Add(lotPriceType);
+                                _44lotPriceType = new LotPriceType();
+                                _44lotPriceType.Name = _44lotPriceTypeName;
+                                mvm.wc.LotPriceTypes.Add(_44lotPriceType);
                                 mvm.wc.SaveChanges();
                             }
-                            _44lot.LotPriceType = lotPriceType;
+                            _44lot.LotPriceType = _44lotPriceType;
                             _44lot.OrderHref = _44lotOrderHref;
                             _44lot.DocumentPrice = _44lotDocumentPrice;
                             _44lot.CreateDateTime = DateTime.Now;
@@ -264,15 +265,17 @@ namespace PublicOrders.Processors.Internet
 
                             if (winnerName != "")
                             {
-                                mvm.wc.Lots.Add(_44lot);
-                                mvm.wc.SaveChanges();
+
+                                //mvm.wc.SaveChanges();
 
                                 Winner winner = new Winner();
                                 winner.Name = winnerName;
                                 winner.Phone = winnerPhone;
-                                winner.Email = winnerEmail;
+                                if (winnerEmail.Trim() != "")
+                                    winner.Email = winnerEmail;
                                 winner.Lot = _44lot;
 
+                                mvm.wc.Lots.Add(_44lot);
                                 mvm.wc.Winners.Add(winner);
                                 mvm.wc.SaveChanges();
 
@@ -285,7 +288,19 @@ namespace PublicOrders.Processors.Internet
                     #endregion
                     #region 94 Закон
                     case ("94"):
-                        doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/pgz/public/action/orders/info/contract_info/show?source=epz&notificationId=" + order.HrefId;
+                        // Если в заказе больше одного лота (<order.Price == 0>), то не заполняем (в будущем предусмотреть и такую ситуацию)
+                        if ((order.Price == null) || (order.Price == 0)) break;
+                        // Параметры лота
+                        string _94lotName = order.Name;
+                        long _94lotPrice = order.Price;
+                        string _94lotPriceTypeName = order.OrderPriceType.Name;
+                    
+                        string _94lotOrderHref = @"http://zakupki.gov.ru/pgz/public/action/orders/info/common_info/show?source=epz&notificationId=" + order.HrefId;
+                        long _94lotDocumentPrice = 0;
+                        string _94lotDocumentDateTime = "";
+
+                        doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/pgz/public/action/orders/info/contract_info/show?source=epz&notificationId=" + order.HrefId);
+                        checkMessage = "";
                         resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
                         if (resultTypeCheck != ResultType_enum.Done)
                         {
@@ -293,10 +308,123 @@ namespace PublicOrders.Processors.Internet
                             return resultTypeCheck;
                         }
 
+                        Regex regex = new Regex("html\\?reestrNumber=(\\d*)");
+                        Match match = regex.Match(doc.DocumentNode.OuterHtml);
+                        Group gr = match.Groups[1];
 
+
+                        doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/epz/contract/contractCard/common-info.html?reestrNumber=" + match.Groups[1].Value);
+                        checkMessage = "";
+                        resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+                        if (resultTypeCheck != ResultType_enum.Done)
+                        {
+                            winnerMessage = checkMessage;
+                            return resultTypeCheck;
+                        }
+
+                        // Ищем информацию о поставщиках
+                        text = "//div[@class=\"cardWrapper\"]";
+                        text += "/div[@class=\"wrapper\"]";
+                        text += "/div[@class=\"mainBox\"]";
+                        text += "/div[@class=\"noticeTabBox\"]";
+                        text += "/div[@class=\"noticeTabBoxWrapper\"]";
+                        text += "/table[@class=\"cTdCenter\"]";
+                        text += "/tbody";
+                        text += "/tr";
+                        text += "/td";
+
+                        HtmlAgilityPack.HtmlNodeCollection winnerColl = doc.DocumentNode.SelectNodes(text);
+                        if ((winnerColl == null) || (winnerColl.Count != 10)) return ResultType_enum.NotSearch;
+
+                        Winner _94winner = new Winner();
+                        try {
+                            // Название победителя
+                            _94winner.Name = winnerColl[1].InnerText.Trim();
+
+                            // Телефон, email
+                            string telMailStr = winnerColl[6].InnerText.Trim();
+                            if (telMailStr.IndexOf("\n") > -1)
+                            {
+                                string[] telMailMas = winnerColl[6].InnerText.Trim().Split('\n');
+                                _94winner.Phone = telMailMas[0].Trim();
+                                _94winner.Email = telMailMas[1].Trim();
+                            }
+                            else
+                            {
+                                _94winner.Phone = telMailStr.Trim();
+                            }
+                        } catch {
+
+                        }
+
+                        if ((_94winner.Name == null) || (_94winner.Name == "")) {
+                            return ResultType_enum.NotSearch;
+                        }
+
+                        // Дозаполняем лот и загружаем в БД
+                        text = "//div[@class=\"cardWrapper\"]";
+                        text += "/div[@class=\"wrapper\"]";
+                        text += "/div[@class=\"mainBox\"]";
+                        //text += "/div[@class=\"contentTabs noticeTabs\"]";
+                        text += "/div[@class=\"noticeTabBox\"]";
+                        text += "/div[@class=\"noticeTabBoxWrapper\"]";
+
+                        HtmlAgilityPack.HtmlNodeCollection lotInfoColl = doc.DocumentNode.SelectNodes(text);
+                        if ((lotInfoColl == null) || (lotInfoColl.Count != 5)) return ResultType_enum.NotSearch;
+
+                        HtmlAgilityPack.HtmlNodeCollection tdColl = lotInfoColl[3].SelectNodes(".//table/tr/td");
+                        // Дата заключения контракта
+                        _94lotDocumentDateTime = tdColl[1].InnerText.Trim();
+                        if (_94lotDocumentDateTime.IndexOf('(') > -1)
+                        {
+                            _94lotDocumentDateTime = _94lotDocumentDateTime.Substring(0, _94lotDocumentDateTime.IndexOf('(')).Trim();
+                        }
+                        else
+                        {
+                            _94lotDocumentDateTime = _94lotDocumentDateTime.Trim();
+                        }
+
+                        // Цена контракта
+                        string _94lotDocumentPriceStr = tdColl[5].InnerText.Trim();
+                        if (_94lotDocumentPriceStr.IndexOf(',') > -1) {
+                            _94lotDocumentPriceStr = _94lotDocumentPriceStr.Substring(0, _94lotDocumentPriceStr.IndexOf(','));
+                        }
+
+                        _94lotDocumentPrice = Convert.ToInt64(_94lotDocumentPriceStr.Replace(" ", ""));
+
+                        if ((_94lotName == "") || (_94lotPrice == 0) ||
+                            (_94lotDocumentPrice == 0) || (_94lotDocumentDateTime == ""))
+                        return ResultType_enum.NotSearch;
+
+                        Lot _94lot = new Lot();
+                        _94winner.Lot = _94lot;
+                        _94lot.Name = _94lotName;
+                        _94lot.Price = _94lotPrice;
+                        // lotPriceType
+                        LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _94lotPriceTypeName.ToLower());
+                        if (lotPriceType == null)
+                        {
+                            lotPriceType = new LotPriceType();
+                            lotPriceType.Name = _94lotPriceTypeName;
+                            mvm.wc.LotPriceTypes.Add(lotPriceType);
+                            mvm.wc.SaveChanges();
+                        }
+                        _94lot.LotPriceType = lotPriceType;
+                        _94lot.Order = order;
+                        _94lot.OrderHref = _94lotOrderHref;
+                        _94lot.CreateDateTime = DateTime.Now;
+                        _94lot.DocumentDateTime = Convert.ToDateTime(_94lotDocumentDateTime);
+                        _94lot.DocumentPrice = _94lotDocumentPrice;
+
+                        mvm.wc.Lots.Add(_94lot);
+                        mvm.wc.Winners.Add(_94winner);
+                        mvm.wc.SaveChanges();
+
+
+                        isWinner = true;
+                        lotSearched_delegate(_94winner);
                         break;
                     #endregion
-
                     #region 223 Закон
                     case ("223"):
                         doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/223/purchase/public/purchase/info/protocols.html?noticeId=" + order.HrefId + @"&amp;epz=true");
