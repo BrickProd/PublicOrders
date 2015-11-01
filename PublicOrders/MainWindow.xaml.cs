@@ -49,7 +49,7 @@ namespace PublicOrders
 
                 xmlConditions.Load(string.Format("http://www.cbr.ru/scripts/XML_daily.asp"));
                 var bax = xmlConditions.SelectSingleNode("/ValCurs/Valute [@ID='R01235']/Value").InnerText;
-                this.BaxInfo.Text = "$ = "+ bax.Substring(0, bax.Length-2);
+                this.BaxInfo.Text = "$ "+ bax.Substring(0, bax.Length-2);
 
             }
             catch (Exception ex)
