@@ -35,7 +35,19 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        
+        private bool _isCreateInProcess;
+
+        public bool IsCreateInProcess
+        {
+            get { return _isCreateInProcess; }
+            set
+            {
+                _isCreateInProcess = value;
+                OnPropertyChanged("IsCreateInProcess");
+            }
+        }
+
+
 
         public ObservableCollection<string> Templates { get; set; }
         public ObservableCollection<Product> Products { get; set; }
@@ -105,7 +117,7 @@ namespace PublicOrders.ViewModels
                 MessageBox.Show("Веберите продукты!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-
+            IsCreateInProcess = true;
             ButtonCreateDocEnabled = false;
             if ((mvm.cdProcessor != null) && (mvm.cdProcessor.isWorking())) {
                 mvm.cdProcessor.Stop();
@@ -145,11 +157,13 @@ namespace PublicOrders.ViewModels
             }
 
             ButtonCreateDocEnabled = true;
+            IsCreateInProcess = false;
         }
 
         public CreateDocumentViewModel()
         {
             this.ButtonCreateDocEnabled = false;
+            this.IsCreateInProcess = false;
 
             if (mvm != null)
             {

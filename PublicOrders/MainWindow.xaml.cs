@@ -38,7 +38,7 @@ namespace PublicOrders
             {
                 xmlConditions.Load(string.Format("http://informer.gismeteo.ru/xml/27612.xml"));
                 this.TempInfo.Text = xmlConditions.SelectSingleNode("/MMWEATHER/REPORT/TOWN/FORECAST/TEMPERATURE").Attributes["min"].InnerText + "˚";
-                this.TempInfo.ToolTip = string.Format("Сейчас в Москве температура {0}˚...{1}˚, ветер {2}-{3} м/с",
+                this.TempInfo.ToolTip = string.Format("Сейчас в Москве температура {0}˚... {1}˚, ветер {2}-{3} м/с",
                     xmlConditions.SelectSingleNode("/MMWEATHER/REPORT/TOWN/FORECAST/TEMPERATURE").Attributes["min"].InnerText,
                     xmlConditions.SelectSingleNode("/MMWEATHER/REPORT/TOWN/FORECAST/TEMPERATURE").Attributes["max"].InnerText,
                     xmlConditions.SelectSingleNode("/MMWEATHER/REPORT/TOWN/FORECAST/WIND").Attributes["min"].InnerText,
@@ -48,7 +48,8 @@ namespace PublicOrders
 
 
                 xmlConditions.Load(string.Format("http://www.cbr.ru/scripts/XML_daily.asp"));
-                this.BaxInfo.Text = "$ = "+ xmlConditions.SelectSingleNode("/ValCurs/Valute [@ID='R01235']/Value").InnerText + " руб.";
+                var bax = xmlConditions.SelectSingleNode("/ValCurs/Valute [@ID='R01235']/Value").InnerText;
+                this.BaxInfo.Text = "$ = "+ bax.Substring(0, bax.Length-2);
 
             }
             catch (Exception ex)

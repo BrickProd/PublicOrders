@@ -256,17 +256,18 @@
                                 <Setter TargetName="Item" Property="Background" Value="#007ACB"/>
                                 <Setter TargetName="Item" Property="TextBlock.Foreground" Value="White"/>
                             </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                <Setter Property="Background" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="#eeeeee"/>
+                            </Trigger>  
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                    <Setter Property="Background" Value="White"/>
-                </Trigger>
-                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                    <Setter Property="Background" Value="#eeeeee"/>
-                </Trigger>
+                
             </Style.Triggers>
         </Style>
         

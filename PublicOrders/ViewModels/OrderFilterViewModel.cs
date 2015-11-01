@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Configuration;
+using System.Collections.ObjectModel;
 
 namespace PublicOrders.ViewModels
 {
@@ -75,36 +76,65 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public string LawType
+        public class LT
+        {
+            public string name { get; set; }
+            public string value { get; set; }
+            public LT() { }
+        }
+
+        public LT LawType
         {
             get
             {
-                return Properties.Settings.Default.LawType;
+                if (LawTypes.First(m => m.value == Properties.Settings.Default.LawType) != null)
+                    return LawTypes.First(m => m.value == Properties.Settings.Default.LawType);
+                else return null;
             }
             set
             {
-                Properties.Settings.Default.LawType = value;
+                //var a = value;
+                Properties.Settings.Default.LawType = value.value;
                 Properties.Settings.Default.Save();
             }
         }
 
-        public string CustomerType
+        public class CT
+        {
+            public string name { get; set; }
+            public string value { get; set; }
+            public CT() { }
+        }
+        public CT CustomerType
         {
             get
             {
-                return Properties.Settings.Default.CustomerType;
+                if (CustomerTypes.First(m => m.value == Properties.Settings.Default.CustomerType) != null)
+                    return CustomerTypes.First(m => m.value == Properties.Settings.Default.CustomerType);
+                else return null;
             }
             set
             {
-                Properties.Settings.Default.CustomerType = value;
+                Properties.Settings.Default.CustomerType = value.value;
                 Properties.Settings.Default.Save();
             }
         }
 
+        public ObservableCollection<LT> LawTypes { get; set; }
+        public ObservableCollection<CT> CustomerTypes { get; set; }
 
         public OrderFilterViewModel()
         {
+            LawTypes = new ObservableCollection<LT>( new List<LT> {
+                new LT (){ name = "№44(№94), №223", value="_44_94_223"  },
+                new LT (){ name = "№44(№94)", value="_44_94"  },
+                new LT (){ name = "№223", value="_223"  }
+            });
 
+            CustomerTypes = new ObservableCollection<CT>(new List<CT> {
+                new CT (){ name = "Заказчик", value="Customer"  },
+                new CT (){ name = "Организация, размещающая заказ", value="Organization"  }
+            });
         }
     }
 }
