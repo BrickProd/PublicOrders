@@ -208,7 +208,18 @@ namespace PublicOrders.ViewModels
                 SelectedCustomer = Customers[0];
             }
 
-            if (Winners != null) Winners.Clear();
+            if (Winners != null)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Winners.Clear();
+                }));
+            }
+            else {
+                Winners = new ObservableCollection<Winner>();
+            }
+
+
             if (SelectedCustomer == null) {
                 MessageBox.Show("Выберите заказчика!", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -225,7 +236,7 @@ namespace PublicOrders.ViewModels
             LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched__proc);
             mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer, 
                                                       CustomerType_enum.Customer, 
-                                                      LawType_enum._44_94_223,
+                                                      LawType_enum._223,
                                                       100,
                                                       100000000,
                                                       Convert.ToDateTime("2010.01.01"),

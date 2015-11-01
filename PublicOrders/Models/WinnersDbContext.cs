@@ -201,7 +201,7 @@ namespace PublicOrders.Models
         public long Price { get; set; }
 
         [ForeignKey("OrderPriceType")]
-        public int OrderPriceTypeId { get; set; }
+        public int? OrderPriceTypeId { get; set; }
         virtual public OrderPriceType OrderPriceType { get; set; }
 
         [Index]

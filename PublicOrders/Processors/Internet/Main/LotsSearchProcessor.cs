@@ -73,31 +73,33 @@ namespace PublicOrders.Processors.Main
                 switch (lawType_enum)
                 {
                     case (LawType_enum._44_94_223):
-                        lawTypeStr = "FZ_44%2CFZ_223";
+                        lawTypeStr = "FZ_44%2CFZ_223%2CFZ_94";
                         break;
                     case (LawType_enum._44_94):
-                        lawTypeStr = "FZ_44%2CFZ_223"; //!!!
+                        lawTypeStr = "FZ_44%2CFZ_94";
                         break;
                     case (LawType_enum._223):
-                        lawTypeStr = "FZ_44%2CFZ_223"; //!!!
+                        lawTypeStr = "FZ_223";
                         break;
                 }
 
-                switch (customerType_enum)
+                lawTypeStr = "FZ_94"; // !!! и 50 записей
+
+                /*switch (customerType_enum)
                 {
-                    case (CustomerType_enum.Customer):
+                    case (CustomerType_enum.Customer):*/
                         text = @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
-                        text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&";
+                        text += @"sortBy=UPDATE_DATE&recordsPerPage=_50&pageNo=1&placeOfSearch=" + lawTypeStr + "&";
                         text += @"searchType=ORDERS&morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
                         text += @"deliveryAddress=&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&okdpWithSubElements=false&orderStages=PC&";
                         text += @"headAgencyWithSubElements=false&smallBusinessSubject=I&rnpData=I&executionRequirement=I&penalSystemAdvantage=I&disabilityOrganizationsAdvantage=I&";
                         text += @"russianGoodsPreferences=I&orderPriceCurrencyId=-1&okvedWithSubElements=false&jointPurchase=false&byRepresentativeCreated=false&";
                         text += @"selectedMatchingWordPlace223=NOTICE_AND_DOCS&matchingWordPlace94=NOTIFICATIONS&matchingWordPlace44=NOTIFICATIONS&searchAttachedFile=false&";
                         text += @"changeParameters=true&showLotsInfo=false&customer.code=&customer.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customer.fz223id=" + Convert.ToString(customer.Law_223_ID) + "&";
-                        text += @"customer.title=" + /*HttpUtility.UrlEncode(*/customer.Name/*);*/;
+                        text += @"customer.title=" + customer.Name + "&customer.inn=" + customer.Vatin + "&";
                         text += @"extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
 
-                        break;
+                        /*break;
                     case (CustomerType_enum.Organization):
                         // Запрос на организации
                         text += @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
@@ -109,13 +111,13 @@ namespace PublicOrders.Processors.Main
                         text += @"russianGoodsPreferences=I&orderPriceCurrencyId=-1&okvedWithSubElements=false&jointPurchase=false&";
                         text += @"byRepresentativeCreated=false&selectedMatchingWordPlace223=NOTICE_AND_DOCS&matchingWordPlace94=NOTIFICATIONS&";
                         text += @"matchingWordPlace44=NOTIFICATIONS&searchAttachedFile=false&changeParameters=true&showLotsInfo=false&";
-                        text += @"agency.code=&agency.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&agency.title=" + /*HttpUtility.UrlEncode(*/customer.Name/*)*/ + "&";
+                        text += @"agency.code=&agency.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&agency.title=" + customer.Name + "&";
                         text += @"agency.inn=&extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
                         break;
                     default:
                         allLotsSearched_delegete(ResultType_enum.Error, "Неизвестный тип заказчика <" + customerType_enum.ToString() + ">");
                         return;
-                }
+                }*/
 
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
@@ -165,7 +167,7 @@ namespace PublicOrders.Processors.Main
                     }
 
                     // Проверить на повтор и записать в БД
-                    Order repeatOrder = mvm.wc.Orders.FirstOrDefault(m => (m.Number == order.Number));
+                    Order repeatOrder = mvm.wc.Orders.ToList().FirstOrDefault(m => (m.Number == order.Number));
                     if (repeatOrder == null)
                     {
                         order.CreateDateTime = DateTime.Now;
@@ -181,13 +183,13 @@ namespace PublicOrders.Processors.Main
                     #endregion
 
                     #region Поиск победителей по заказу
-                    IEnumerable<Lot> lots = mvm.wc.Lots.Where(p => p.Order.Number.Trim().ToLower() == order.Number.Trim().ToLower());
+                    var lots = mvm.wc.Lots.Where(p => p.Order.Number.Trim().ToLower() == order.Number.Trim().ToLower()).ToList();
                     // В БД уже есть лоты на заказ (лот заполняется вместе с его победителем, поэтому выводим эти лоты)
                     if (lots.Count() > 0)
                     {
-                        Winner winner = null;
-                        foreach (Lot lot in lots ) {
-                            winner = mvm.wc.Winners.FirstOrDefault(m => m.Lot == lot);
+                        //var winner = null;
+                        foreach (var lot in lots ) {
+                            var winner = mvm.wc.Winners.ToList().FirstOrDefault(m => m.Lot == lot);
                             if ((winner != null) && (winner.Name.Trim() != ""))
                                 lotSearched_delegate(winner);
                         }
@@ -330,7 +332,7 @@ namespace PublicOrders.Processors.Main
                         //href = @"http://zakupki.gov.ru/epz/order/notice/ea44/view/supplier-results.html?regNumber=" + this.number;
                         order.HrefId = order.Number;
                         break;
-                    case ("223"):
+                    case ("94"):
                         text = ".//table";
                         text += "/tr";
                         text += "/td[@class=\"descriptTenderTd\"]";
@@ -339,6 +341,23 @@ namespace PublicOrders.Processors.Main
                         text += "/a";
 
                         HtmlAgilityPack.HtmlNode hrefNode = orderNode.SelectSingleNode(text);
+                        if (hrefNode.Attributes.Contains("href"))
+                        {
+                            // Поиск ID для ссылки protocols.html?noticeId
+                            order.HrefId = hrefNode.Attributes["href"].Value.Trim();
+                            order.HrefId = order.HrefId.Substring(order.HrefId.IndexOf("?source=epz&notificationId=") + 27, order.HrefId.Length - (order.HrefId.IndexOf("?source=epz&notificationId=") + 27));
+                            //order.HrefId = order.HrefId.Substring(order.HrefId.IndexOf(".html?noticeId") + 15, order.HrefId.IndexOf("&epz=true") - (order.HrefId.IndexOf(".html?noticeId") + 15));
+                        }
+                        break;
+                    case ("223"):
+                        text = ".//table";
+                        text += "/tr";
+                        text += "/td[@class=\"descriptTenderTd\"]";
+                        text += "/dl";
+                        text += "/dt";
+                        text += "/a";
+
+                        hrefNode = orderNode.SelectSingleNode(text);
                         if (hrefNode.Attributes.Contains("href"))
                         {
                             // Поиск ID для ссылки protocols.html?noticeId

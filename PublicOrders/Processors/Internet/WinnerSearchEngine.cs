@@ -283,6 +283,20 @@ namespace PublicOrders.Processors.Internet
 
                         break;
                     #endregion
+                    #region 94 Закон
+                    case ("94"):
+                        doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/pgz/public/action/orders/info/contract_info/show?source=epz&notificationId=" + order.HrefId;
+                        resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+                        if (resultTypeCheck != ResultType_enum.Done)
+                        {
+                            winnerMessage = checkMessage;
+                            return resultTypeCheck;
+                        }
+
+
+                        break;
+                    #endregion
+
                     #region 223 Закон
                     case ("223"):
                         doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/223/purchase/public/purchase/info/protocols.html?noticeId=" + order.HrefId + @"&amp;epz=true");
@@ -342,12 +356,13 @@ namespace PublicOrders.Processors.Internet
                             {
                                 string winnerChoiceMessage = "";
                                 // Доделать
-                                _223winnerChoice.Work(order, internetRequestEngine, winnerProtocolNode, lotSearched_delegate, out winnerChoiceMessage, out isWinner);
+                                //_223winnerChoice.Work(order, internetRequestEngine, winnerProtocolNode, lotSearched_delegate, out winnerChoiceMessage, out isWinner);
                             }
                             #endregion
                         }
 
                         break;
+
                     #endregion
                     default:
                         return ResultType_enum.Done; // !!! Необходимо добавить 94 закон

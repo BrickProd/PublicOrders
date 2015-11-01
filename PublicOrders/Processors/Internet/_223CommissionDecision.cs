@@ -33,6 +33,9 @@ namespace PublicOrders.Processors.Internet
                 string protocolID = protocolHref.Substring(protocolHref.IndexOf("protocolInfoId=") + 15,
                     protocolHref.IndexOf("&purchaseId=") - (protocolHref.IndexOf("protocolInfoId=") + 15));
 
+                doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/223/purchase/public/purchase/protocol/ip/application/list.html?noticeInfoId=&protocolInfoId=3299829&mode=view");
+
+
                 text = @"http://zakupki.gov.ru/223/purchase/public/purchase/protocol/ip/application/comission-decision.html?noticeInfoId=&protocolInfoId=" + protocolID + "&mode=view";
                 //text = @"http://zakupki.gov.ru/223/purchase/public/purchase/protocol/ip/application/comission-decision.html?noticeInfoId=716491&protocolInfoId=692914&mode=view";
                 doc = internetRequestEngine.GetHtmlDoc(text);
@@ -109,11 +112,11 @@ namespace PublicOrders.Processors.Internet
                                     string _223lotPriceStr = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim());
                                     if (_223lotPriceStr.IndexOf(',') > -1)
                                     {
-                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
+                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')).Replace(" ", ""));
                                     }
                                     else
                                     {
-                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr);
+                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Replace(" ", ""));
                                     }
                                     //_223lotPrice = Convert.ToInt64(Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim()));
                                     _223lotPriceTypeName = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(priceTypePriceLot.IndexOf(' '), priceTypePriceLot.Length - priceTypePriceLot.IndexOf(' ')).Trim());
@@ -273,26 +276,24 @@ namespace PublicOrders.Processors.Internet
                 bool allHasName = true;
                 foreach (Lot lot in lotsTemp)
                 {
-                    if (lot.Name == "")
+                    if ((lot.Name == null) || (lot.Name == ""))
                     {
                         allHasName = false;
                         break;
                     }
                 }
 
-                // Если нет победителей, то не заполняем имена лотов
                 bool hasWinners = false;
                 foreach (Winner winner in winnersTemp)
                 {
-                    if (winner.Name != "")
-                    {
+                    if ((winner.Name != null) && (winner.Name != "")) {
                         hasWinners = true;
                         break;
                     }
                 }
 
                 // Заполняем имена лотов
-                /*if ((!allHasName) && (hasWinners))
+                if ((!allHasName) && (hasWinners))
                 {
                     if (lotsTemp.Count > 0)
                     {
@@ -390,7 +391,7 @@ namespace PublicOrders.Processors.Internet
                                 if (customersColl != null)
                                 {
                                     // Перебираем участников и ищем победителя
-                                    bool itsWinner = false;
+                                    Winner mainWinner = null;
                                     foreach (HtmlAgilityPack.HtmlNode customerNode in customersColl)
                                     {
                                         if (customerNode.Attributes.Count > 0) continue;
@@ -408,10 +409,14 @@ namespace PublicOrders.Processors.Internet
                                                     {
                                                         nameTmp = nameTmp.Substring(0, nameTmp.IndexOf("Просмотреть заявку")).Trim();
                                                     }
-                                                    if (nameTmp == lotsTemp[lotPriceDateNum].Winner.Name)
-                                                    {
-                                                        itsWinner = true;
+
+                                                    foreach (Winner winner in winnersTemp) {
+                                                        if (nameTmp.Trim().ToLower() == winner.Name.Trim().ToLower()) {
+                                                            mainWinner = winner;
+                                                            break;
+                                                        }
                                                     }
+
                                                     break;
                                                 case (3):
                                                     if (customerAttributeNode.InnerText.Trim() != "")
@@ -424,28 +429,73 @@ namespace PublicOrders.Processors.Internet
                                                 case (4):
                                                     if (customerAttributeNode.InnerText.Trim() != "")
                                                     {
+                                                        // Цена
                                                         string priceTypePriceLot = Globals.DecodeInternetSymbs(customerAttributeNode.InnerText.Trim());
-                                                        if (priceTypePriceLot.IndexOf(' ') > -1)
-                                                        {
-                                                            _223lotDocumentPrice = Convert.ToInt64(Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim()));
+
+                                                        string[] priceTypePriceLotMas = priceTypePriceLot.Split(' ');
+                                                        if (priceTypePriceLotMas[0].IndexOf('.') > -1) {
+                                                            string str = priceTypePriceLotMas[0].Substring(0, priceTypePriceLotMas[0].IndexOf('.'));
+
+                                                            _223lotDocumentPrice = Convert.ToInt64(str);
+                                                        } else {
+                                                            _223lotDocumentPrice = Convert.ToInt64(priceTypePriceLotMas[0]);
                                                         }
+
+                                                        // Валюта
+                                                        _223lotPriceTypeName = priceTypePriceLotMas[1].Trim();
+                                                        /*string lotPriceTypeStr = priceTypePriceLotMas[1].Trim();
+
+                                                        LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == lotPriceTypeStr.ToLower());
+                                                        if (lotPriceType == null)
+                                                        {
+                                                            lotPriceType = new LotPriceType();
+                                                            lotPriceType.Name = lotPriceTypeStr;
+                                                            mvm.wc.LotPriceTypes.Add(lotPriceType);
+                                                            mvm.wc.SaveChanges();
+                                                        }
+                                                        order.OrderPriceType = lotPriceType;*/
                                                     }
                                                     break;
                                             }
 
                                             attrNum++;
                                         }
-                                        if (itsWinner)
+                                        if (mainWinner != null)
                                         {
-                                            lotsTemp[lotPriceDateNum].DocumentPrice = _223lotDocumentPrice;
+                                            mainWinner.Lot.Name = lotsTemp[lotPriceDateNum].Name;
+
+                                            // Цена
+                                            mainWinner.Lot.DocumentPrice = _223lotDocumentPrice;
+
+                                            // Валюта
+                                            LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _223lotPriceTypeName.ToLower());
+                                            if (lotPriceType == null)
+                                            {
+                                                lotPriceType = new LotPriceType();
+                                                lotPriceType.Name = _223lotPriceTypeName;
+                                                mvm.wc.LotPriceTypes.Add(lotPriceType);
+                                                mvm.wc.SaveChanges();
+                                            }
+                                            mainWinner.Lot.LotPriceType = lotPriceType; 
+
                                             if (_223lotDocumentDate.IndexOf('(') > -1)
                                             {
-                                                lotsTemp[lotPriceDateNum].DocumentDateTime = Convert.ToDateTime(_223lotDocumentDate.Substring(0, _223lotDocumentDate.IndexOf('(')).Trim());
+                                                mainWinner.Lot.DocumentDateTime = Convert.ToDateTime(_223lotDocumentDate.Substring(0, _223lotDocumentDate.IndexOf('(')).Trim());
                                             }
                                             else
                                             {
-                                                lotsTemp[lotPriceDateNum].DocumentDateTime = Convert.ToDateTime(_223lotDocumentDate.Trim());
+                                                mainWinner.Lot.DocumentDateTime = Convert.ToDateTime(_223lotDocumentDate.Trim());
                                             }
+
+                                            // Сохраняем победителя
+                                            mvm.wc.Lots.Add(mainWinner.Lot);
+                                            mvm.wc.SaveChanges();
+
+                                            mvm.wc.Winners.Add(mainWinner);
+                                            mvm.wc.SaveChanges();
+
+                                            lotSearched_delegate(mainWinner);
+
                                             break;
                                         }
                                         else
@@ -459,30 +509,16 @@ namespace PublicOrders.Processors.Internet
                                 lotPriceDateNum++;
                             }
                         }
-
-                        // Заполняем заказ
-                        foreach (Lot lotTmp in lotsTemp)
-                        {
-                            if (lotTmp.Name != "")
-                            {
-                                mvm.wc.Winners.Add(lotTmp.Winner);
-                                mvm.wc.SaveChanges();
-
-                                mvm.wc.Lots.Add(lotTmp);
-                                mvm.wc.SaveChanges();
-
-                                lotSearched_delegate(lotTmp);
-                            }
-                        }
                     }
                 }
                 else
-                {*/
+                {
                     if (hasWinners)
                     {
                         foreach (Winner winnerTmp in winnersTemp)
                         {
-                            if ((winnerTmp.Name != "") && (winnerTmp.Lot.Name != ""))
+                            if ((winnerTmp.Name != null) && (winnerTmp.Name != "") && 
+                                (winnerTmp.Lot.Name != null) && (winnerTmp.Lot.Name != ""))
                             {
                                 mvm.wc.Lots.Add(winnerTmp.Lot);
                                 mvm.wc.SaveChanges();
@@ -494,7 +530,7 @@ namespace PublicOrders.Processors.Internet
                             }
                         }
                     }
-                //}
+                }
 
                 return ResultType_enum.Done;
             }
