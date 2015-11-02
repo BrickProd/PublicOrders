@@ -6,7 +6,8 @@
 	x:Class="PublicOrders.App"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-	StartupUri="MainWindow.xaml">
+	StartupUri="MainWindow.xaml"
+    Exit="Application_Exit">
 	<Application.Resources>
 		<!-- Resources scoped at the Application level should be defined here. -->
         <main:MainViewModel x:Key="MainViewModel" d:IsDataSource="True"></main:MainViewModel>
