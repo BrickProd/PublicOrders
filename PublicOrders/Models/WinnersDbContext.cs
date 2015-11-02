@@ -233,6 +233,9 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
+        [Index]
+        public DateTime? WinnersSearchDateTime { get; set; }
+
         private ICollection<Lot> _lots;
         public virtual ICollection<Lot> Lots
         {

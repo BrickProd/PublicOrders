@@ -107,9 +107,19 @@ namespace PublicOrders.Processors.Main
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+                resultTypeCheck = ResultType_enum.ErrorNetwork;
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
-                    customersSearchDone_delegate(customers, resultTypeCheck, checkMessage);
+                    customers = new ObservableCollection<Customer>(mvm.wc.Customers.Where(m => ((m.Name.Contains(customerName)) || (m.Vatin.Contains(customerName)))).ToList());
+
+                    if (customers.Count() > 0)
+                    {
+                        customersSearchDone_delegate(customers, ResultType_enum.Done, "Соединение с сервером отсутствует!");
+                    }
+                    else {
+                        customersSearchDone_delegate(customers, ResultType_enum.ErrorNetwork, "Соединение с сервером отсутствует!\nПобедители в БД не найдены!");
+                    }
+
                     return;
                 }
 

@@ -496,7 +496,6 @@ namespace PublicOrders.Processors.Internet
                         return ResultType_enum.Done; // !!! Необходимо добавить 94 закон
                 }
 
-
                 if (!isWinner) return ResultType_enum.NotSearch; else return ResultType_enum.Done;
             }
             catch (Exception ex)

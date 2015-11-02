@@ -30,8 +30,8 @@ namespace PublicOrders.Processors.Main
         private Customer customer = null;
         private CustomerType_enum customerType_enum;
         private LawType_enum lawType_enum;
-        private UInt64 lowPrice = 0;
-        private UInt64 highPrice = 0;
+        private Int64 lowPrice = 0;
+        private Int64 highPrice = 0;
         private DateTime lowPublishDate;
         private DateTime highPublishDate;
 
@@ -43,7 +43,7 @@ namespace PublicOrders.Processors.Main
         private ObservableCollection<Order> orders = null;
 
         public LotsSearchProcessor(Customer _customer, CustomerType_enum _customerType_enum, 
-                                   LawType_enum _lawType_enum, UInt64 _lowPrice, UInt64 _highPrice,
+                                   LawType_enum _lawType_enum, Int64 _lowPrice, Int64 _highPrice,
                                    DateTime _lowPublishDate, DateTime _highPublishDate,
                                    LotSearched_delegate _lotSearched_delegate, 
                                    AllLotsSearched_delegete _allLotsSearched_delegete)
@@ -124,11 +124,55 @@ namespace PublicOrders.Processors.Main
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+                //resultTypeCheck = ResultType_enum.ErrorNetwork;
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
-                    allLotsSearched_delegete(resultTypeCheck, checkMessage);
+                    // Если нет подключения к интернету, то берем значения из БД
+                    bool searchedFromDB = false;
+                    List<Order> orders = mvm.wc.Orders.Where(m => ((m.Customer.Name == customer.Name) && 
+                                                                   (m.PublishDateTime < highPublishDate) && 
+                                                                   (m.PublishDateTime > lowPublishDate))).ToList();
+
+                    if (orders != null) {
+                        switch (lawType_enum)
+                        {
+                            case (LawType_enum._44_94_223):
+                                orders = orders.Where(m => ((m.LawType.Name == "44") || (m.LawType.Name == "94") || (m.LawType.Name == "223"))).ToList();
+                                break;
+                            case (LawType_enum._44_94):
+                                orders = orders.Where(m => ((m.LawType.Name == "44") || (m.LawType.Name == "94"))).ToList();
+                                break;
+                            case (LawType_enum._223):
+                                orders = orders.Where(m => m.LawType.Name == "223").ToList();
+                                break;
+                        }
+
+                        List<Lot> searchLots = null;
+                        foreach (Order searchOrder in orders)
+                        {
+                            searchLots = searchOrder.Lots.Where(m => ((m.Price > lowPrice) && (m.Price < highPrice))).ToList();
+                            foreach (Lot searchLot in searchLots)
+                            {
+                                if ((searchLot.Winners != null) && (searchLot.Winners.Count() > 0))
+                                {
+                                    searchedFromDB = true;
+                                    lotSearched_delegate(searchLot.Winners.ElementAt(0));
+                                }
+                            }
+                        }
+                    }
+
+                    if (searchedFromDB == false)
+                    {
+                        allLotsSearched_delegete(ResultType_enum.ErrorNetwork, "Соединение с сервером отсутствует!\nПобедители в БД не найдены!");
+                    }
+                    else {
+                        allLotsSearched_delegete(ResultType_enum.Done, "Соединение с сервером отсутствует!");
+                    }
+
                     return;
                 }
+
 
                 text = "//div[@class=\"outerWrapper mainPage\"]";
                 text += "/div[@class=\"wrapper\"]";
@@ -192,7 +236,7 @@ namespace PublicOrders.Processors.Main
                     #region Поиск победителей по заказу
                     var lots = mvm.wc.Lots.Where(p => p.Order.Number.Trim().ToLower() == order.Number.Trim().ToLower()).ToList();
                     // В БД уже есть лоты на заказ (лот заполняется вместе с его победителем, поэтому выводим эти лоты)
-                    if (lots.Count() > 0)
+                    if ((lots != null) && (lots.Count() > 0))
                     {
                         //var winner = null;
                         foreach (var lot in lots ) {
@@ -203,8 +247,16 @@ namespace PublicOrders.Processors.Main
                     }
                     // Начинаем поиск победителей в интернете
                     else {
-                        string winnerEngineMessage = "";
-                        winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
+                        // Ищем победителей, если у заказа прошла неделя с момента поиска победителей
+                        if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7))) {
+                            string winnerEngineMessage = "";
+                            winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
+
+                            // Сохраняем дату поиска победителей
+                            order.WinnersSearchDateTime = DateTime.Now;
+                            mvm.wc.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                            mvm.wc.SaveChanges();
+                        }
                     }
                     #endregion
                 }
