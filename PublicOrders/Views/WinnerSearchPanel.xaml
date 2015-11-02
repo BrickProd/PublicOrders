@@ -85,11 +85,11 @@
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
-                            <ListBox.ItemContainerStyle>
+                            <!--<ListBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
                                     <EventSetter Event="Control.MouseDoubleClick" Handler="CustomerDoubleClick"/>
                                 </Style>
-                            </ListBox.ItemContainerStyle>
+                            </ListBox.ItemContainerStyle>-->
                         </ListBox>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" Margin="505,0,0,0" HorizontalAlignment="Left" Width="500">

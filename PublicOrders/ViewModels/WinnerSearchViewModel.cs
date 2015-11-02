@@ -77,6 +77,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        // Число
         private int _searchingProgress;
         public int SearchingProgress
         {
@@ -85,6 +86,18 @@ namespace PublicOrders.ViewModels
             {
                 _searchingProgress = value;
                 OnPropertyChanged("SearchingProgress");
+            }
+        }
+
+        // Текст в прогрессе
+        private string _searchingProgressText;
+        public string SearchingProgressText
+        {
+            get { return _searchingProgressText; }
+            set
+            {
+                _searchingProgressText = value;
+                OnPropertyChanged("SearchingProgressText");
             }
         }
         #endregion
@@ -244,17 +257,52 @@ namespace PublicOrders.ViewModels
                 mvm.csProcessor.Stop();
             }
 
+            SearchingProgressText = "Поиск заказчиков..";
+            SearchingProgress = 50;
+
+            // Переводим значения из Properties в enum
+            // CustomerType
+            CustomerType_enum customerType_enum;
+            switch (Properties.Settings.Default.CustomerType.Trim().ToLower()) {
+                case ("customer"):
+                    customerType_enum = CustomerType_enum.Customer;
+                    break;
+                case ("organization"):
+                    customerType_enum = CustomerType_enum.Organization;
+                    break;
+                default:
+                    customerType_enum = CustomerType_enum.Customer;
+                    break;
+            }
+
+            // LawType
+            LawType_enum lawType_enum;
+            switch (Properties.Settings.Default.LawType.Trim().ToLower())
+            {
+                case ("_44_94_223"):
+                    lawType_enum = LawType_enum._44_94_223;
+                    break;
+                case ("_44_94"):
+                    lawType_enum = LawType_enum._44_94;
+                    break;
+                case ("_223"):
+                    lawType_enum = LawType_enum._223;
+                    break;
+                default:
+                    lawType_enum = LawType_enum._44_94_223;
+                    break;
+            }
+
             CustomersSearchDone_delegate customerSearchDone_delege = new CustomersSearchDone_delegate(CustomersSearchDone_proc);
-            mvm.csProcessor = new CustomersSearchProcessor(SearchInput, 
-                                                           CustomerType_enum.Customer, 
-                                                           100, 
-                                                           100000000, 
-                                                           "", 
-                                                           Convert.ToDateTime("2010.01.01"), 
-                                                           DateTime.Now, 
-                                                           LawType_enum._44_94_223, 
-                                                           customerSearchDone_delege, 
-                                                           SearchingProgress);
+            mvm.csProcessor = new CustomersSearchProcessor(SearchInput,
+                                                           customerType_enum,
+                                                           Properties.Settings.Default.MinPrice,
+                                                           Properties.Settings.Default.MaxPrice,
+                                                           Properties.Settings.Default.CustomerCity,
+                                                           Properties.Settings.Default.MinPublicDate,
+                                                           Properties.Settings.Default.MaxPublicDate,
+                                                           lawType_enum, 
+                                                           customerSearchDone_delege);
             mvm.csProcessor.Operate();
         }
 
@@ -262,14 +310,26 @@ namespace PublicOrders.ViewModels
 
         private void CustomersSearchDone_proc(ObservableCollection<Customer> serchedCustomers, ResultType_enum resultSearch, string message)
         {
-            if (serchedCustomers != null)
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    Customers = serchedCustomers;
-                }));
+            if (resultSearch == ResultType_enum.ErrorNetwork) {
+                MessageBox.Show(message, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            else {
+                if (serchedCustomers != null)
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        Customers = serchedCustomers;
+                    }));
+            }
 
-            SearchingProgress = 0;
-            IsCustomersSearching = false;
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SearchingProgress = 0;
+                SearchingProgressText = "";
+                IsCustomersSearching = false;
+            }));
+
+
+
             //MessageBox.Show("Поиск заказчиков завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             //WinnerLotsSearch();
         }
@@ -278,9 +338,6 @@ namespace PublicOrders.ViewModels
             //if ((Customers != null) && (Customers.Count > 0)) {
             //    SelectedCustomer = Customers[0];
             //}
-
-            
-
 
             if (Winners != null)
             {
@@ -306,24 +363,78 @@ namespace PublicOrders.ViewModels
                 mvm.lsProcessor.Stop();
             }
 
+
+            // Переводим значения из Properties в enum
+            // CustomerType
+            CustomerType_enum customerType_enum;
+            switch (Properties.Settings.Default.CustomerType.Trim().ToLower())
+            {
+                case ("customer"):
+                    customerType_enum = CustomerType_enum.Customer;
+                    break;
+                case ("organization"):
+                    customerType_enum = CustomerType_enum.Organization;
+                    break;
+                default:
+                    customerType_enum = CustomerType_enum.Customer;
+                    break;
+            }
+
+            // LawType
+            LawType_enum lawType_enum;
+            switch (Properties.Settings.Default.LawType.Trim().ToLower())
+            {
+                case ("_44_94_223"):
+                    lawType_enum = LawType_enum._44_94_223;
+                    break;
+                case ("_44_94"):
+                    lawType_enum = LawType_enum._44_94;
+                    break;
+                case ("_223"):
+                    lawType_enum = LawType_enum._223;
+                    break;
+                default:
+                    lawType_enum = LawType_enum._44_94_223;
+                    break;
+            }
+
             AllLotsSearched_delegete allLotsSearched_delegete = new AllLotsSearched_delegete(AllLotsSearched_proc);
             LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched__proc);
+            LotSearchProgress_delegate lotSearchProgress_delegate = new LotSearchProgress_delegate(LotSearchProgress_proc);
             mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer,
-                                                      //Properties.Settings.Default.CustomerType,
-                                                      CustomerType_enum.Customer, 
-                                                      LawType_enum._44_94_223,
-                                                      100,
-                                                      100000000,
-                                                      Convert.ToDateTime("2010.01.01"),
-                                                      DateTime.Now,
+                                                      customerType_enum,
+                                                      lawType_enum,
+                                                      Properties.Settings.Default.MinPrice,
+                                                      Properties.Settings.Default.MaxPrice,
+                                                      Properties.Settings.Default.MinPublicDate,
+                                                      Properties.Settings.Default.MaxPublicDate,
                                                       lotSearched_delegate,
-                                                      allLotsSearched_delegete
+                                                      allLotsSearched_delegete,
+                                                      lotSearchProgress_delegate
                                                       );
             mvm.lsProcessor.Operate();
         }
 
-        private void AllLotsSearched_proc(ResultType_enum ResultType_enum, string message) {
-            IsWinnerLotsSearching = false;
+        private void LotSearchProgress_proc(string text, int intValue) {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SearchingProgressText = text;
+                SearchingProgress = intValue;
+            }));
+        }
+
+        private void AllLotsSearched_proc(ResultType_enum resultType_enum, string message) {
+            if (resultType_enum == ResultType_enum.ErrorNetwork) {
+                MessageBox.Show(message, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                IsWinnerLotsSearching = false;
+                SearchingProgressText = "";
+                SearchingProgress = 0;
+            }));
+
             //MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

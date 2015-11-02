@@ -60,7 +60,7 @@ namespace PublicOrders.Processors.Internet
                     case ("44"):
                         // Параметры лота
                         string _44lotName = order.Name;
-                        long _44lotPrice = order.Price;
+                        ulong _44lotPrice = order.Price;
                         string _44lotPriceTypeName = order.OrderPriceType.Name;
                         string _44lotOrderHref = @"http://zakupki.gov.ru/epz/order/notice/zp44/view/common-info.html?regNumber=" + order.HrefId;
                         long _44lotDocumentPrice = 0;
@@ -292,7 +292,7 @@ namespace PublicOrders.Processors.Internet
                         if ((order.Price == null) || (order.Price == 0)) break;
                         // Параметры лота
                         string _94lotName = order.Name;
-                        long _94lotPrice = order.Price;
+                        ulong _94lotPrice = order.Price;
                         string _94lotPriceTypeName = order.OrderPriceType.Name;
                     
                         string _94lotOrderHref = @"http://zakupki.gov.ru/pgz/public/action/orders/info/common_info/show?source=epz&notificationId=" + order.HrefId;

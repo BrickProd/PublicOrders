@@ -198,7 +198,7 @@ namespace PublicOrders.Models
         public string Name { get; set; }
 
         [Index]
-        public long Price { get; set; }
+        public ulong Price { get; set; }
 
         [ForeignKey("OrderPriceType")]
         public int? OrderPriceTypeId { get; set; }
@@ -338,7 +338,7 @@ namespace PublicOrders.Models
         virtual public Order Order { get; set; }
 
         [Index, Required]
-        public long Price { get; set; }
+        public ulong Price { get; set; }
 
         [Index]
         public long DocumentPrice { get; set; }

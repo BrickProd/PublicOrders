@@ -14,6 +14,7 @@ namespace PublicOrders.Processors.Main
 {
     public delegate void AllLotsSearched_delegete(ResultType_enum ResultType_enum, string message);
     public delegate void LotSearched_delegate(Winner winner);
+    public delegate void LotSearchProgress_delegate(string text, int intValue);
 
 
     public class LotsSearchProcessor
@@ -30,23 +31,24 @@ namespace PublicOrders.Processors.Main
         private Customer customer = null;
         private CustomerType_enum customerType_enum;
         private LawType_enum lawType_enum;
-        private Int64 lowPrice = 0;
-        private Int64 highPrice = 0;
+        private UInt64 lowPrice = 0;
+        private UInt64 highPrice = 0;
         private DateTime lowPublishDate;
         private DateTime highPublishDate;
 
         private WinnerSearchEngine winnerSearchEngine = null;
         private AllLotsSearched_delegete allLotsSearched_delegete = null;
         private LotSearched_delegate lotSearched_delegate = null;
-        private int searchingProgress = 0;
+        LotSearchProgress_delegate lotSearchProgress_delegate = null;
 
         private ObservableCollection<Order> orders = null;
 
         public LotsSearchProcessor(Customer _customer, CustomerType_enum _customerType_enum, 
-                                   LawType_enum _lawType_enum, Int64 _lowPrice, Int64 _highPrice,
+                                   LawType_enum _lawType_enum, UInt64 _lowPrice, UInt64 _highPrice,
                                    DateTime _lowPublishDate, DateTime _highPublishDate,
                                    LotSearched_delegate _lotSearched_delegate, 
-                                   AllLotsSearched_delegete _allLotsSearched_delegete)
+                                   AllLotsSearched_delegete _allLotsSearched_delegete,
+                                   LotSearchProgress_delegate _lotSearchProgress_delegate)
         {
 
             customer = _customer;
@@ -58,6 +60,7 @@ namespace PublicOrders.Processors.Main
             highPublishDate = _highPublishDate;
             lotSearched_delegate = _lotSearched_delegate;
             allLotsSearched_delegete = _allLotsSearched_delegete;
+            lotSearchProgress_delegate = _lotSearchProgress_delegate;
 
             winnerSearchEngine = new WinnerSearchEngine();
         }
@@ -128,6 +131,8 @@ namespace PublicOrders.Processors.Main
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
                     // Если нет подключения к интернету, то берем значения из БД
+                    lotSearchProgress_delegate("Получение заказов из БД..", 50);
+
                     bool searchedFromDB = false;
                     List<Order> orders = mvm.wc.Orders.Where(m => ((m.Customer.Name == customer.Name) && 
                                                                    (m.PublishDateTime < highPublishDate) && 
@@ -191,10 +196,16 @@ namespace PublicOrders.Processors.Main
                 #endregion
 
 
+                double orderInterval = 100 / Convert.ToDouble(orderCollection.Count());
+                int currentInterval = 0;
+
                 int orderNum = 1;
                 Order order = null;
                 foreach (HtmlAgilityPack.HtmlNode nodeOrder in orderCollection)
                 {
+                    currentInterval = Convert.ToInt32(orderNum * orderInterval);
+                    lotSearchProgress_delegate("Обработка заказа.. [" + orderNum + "\\" + orderCollection.Count() + "]", currentInterval);
+
                     while (isPause) {
                         Thread.Sleep(300);
                     }
@@ -451,10 +462,10 @@ namespace PublicOrders.Processors.Main
                                     
                                     if (orderPriceStr.IndexOf(',') > -1)
                                     {
-                                        order.Price = Convert.ToInt64(orderPriceStr.Substring(0, orderPriceStr.IndexOf(',')));
+                                        order.Price = Convert.ToUInt64(orderPriceStr.Substring(0, orderPriceStr.IndexOf(',')));
                                     }
                                     else {
-                                        order.Price = Convert.ToInt64(orderPriceStr);
+                                        order.Price = Convert.ToUInt64(orderPriceStr);
                                     }
                                 }
                                 catch {

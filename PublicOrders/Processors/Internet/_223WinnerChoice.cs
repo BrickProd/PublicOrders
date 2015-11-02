@@ -59,7 +59,7 @@ namespace PublicOrders.Processors.Internet
 
 
                 string _223lotName = "";
-                long _223lotPrice = 0;
+                ulong _223lotPrice = 0;
                 string _223lotPriceTypeName = "";
                 long _223lotDocumentPrice = 0;
                 string _223lotDocumentDate = "";
@@ -112,10 +112,10 @@ namespace PublicOrders.Processors.Internet
                                     string _223lotPriceStr = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim());
                                     if (_223lotPriceStr.IndexOf(',') > -1)
                                     {
-                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
+                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
                                     }
                                     else {
-                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr);
+                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr);
                                     }
 
                                     _223lotPriceTypeName = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(priceTypePriceLot.IndexOf(' '), priceTypePriceLot.Length - priceTypePriceLot.IndexOf(' ')).Trim());
@@ -171,11 +171,11 @@ namespace PublicOrders.Processors.Internet
                                                     string _223lotPriceStr = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim());
                                                     if (_223lotPriceStr.IndexOf(',') > -1)
                                                     {
-                                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
+                                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
                                                     }
                                                     else
                                                     {
-                                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr);
+                                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr);
                                                     }
                                                     _223lotPriceTypeName = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(priceTypePriceLot.IndexOf(' '), priceTypePriceLot.Length - priceTypePriceLot.IndexOf(' ')).Trim());
                                                     break;

@@ -36,14 +36,12 @@ namespace PublicOrders.Processors.Main
         private CustomerType_enum customerType_enum;
         private LawType_enum lawType_enum;
         private CustomersSearchDone_delegate customersSearchDone_delegate = null;
-        private int searchingProgress = 0;
 
         private ObservableCollection<Customer> customers;
 
         public CustomersSearchProcessor(string _customerName, CustomerType_enum _customerType_enum, decimal _priceMin, decimal _priceMax, string _town,
                                DateTime _publishDateMin, DateTime _publishDateMax,
-                               LawType_enum _lawType_enum, CustomersSearchDone_delegate _customersSearchDone_delegate,
-                               int _searchingProgress)
+                               LawType_enum _lawType_enum, CustomersSearchDone_delegate _customersSearchDone_delegate)
         {
             customerName = _customerName;
             customerType_enum = _customerType_enum;
@@ -54,7 +52,6 @@ namespace PublicOrders.Processors.Main
             publishDateMax = _publishDateMax;
             lawType_enum = _lawType_enum;
             customersSearchDone_delegate = _customersSearchDone_delegate;
-            searchingProgress = _searchingProgress;
         }
 
         private void SearchCustomers_proc()
@@ -107,7 +104,7 @@ namespace PublicOrders.Processors.Main
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
-                resultTypeCheck = ResultType_enum.ErrorNetwork;
+                //resultTypeCheck = ResultType_enum.ErrorNetwork;
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
                     customers = new ObservableCollection<Customer>(mvm.wc.Customers.Where(m => ((m.Name.Contains(customerName)) || (m.Vatin.Contains(customerName)))).ToList());
