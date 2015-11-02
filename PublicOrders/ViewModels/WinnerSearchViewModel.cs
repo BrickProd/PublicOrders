@@ -246,6 +246,9 @@ namespace PublicOrders.ViewModels
             //    SelectedCustomer = Customers[0];
             //}
 
+            
+
+
             if (Winners != null)
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
