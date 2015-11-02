@@ -20,7 +20,7 @@
                 <Grid Margin="10 20" Grid.Row="0">
                     <TextBox x:Name="key" FontSize="18" Margin="0" KeyDown="OnKeyDownHandler">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Execute"  Command="{Binding CustomersSearchCommand}"></KeyBinding> 
+                            <KeyBinding Key="Execute"  Command="{Binding CustomersSearchCommand}"></KeyBinding>
                         </TextBox.InputBindings>
                         <TextBox.Template>
                             <ControlTemplate>
@@ -106,9 +106,9 @@
                                         </Style.Triggers>
                                     </Style>
                                 </StackPanel.Style>
-                                <Button Content="Старт" Command="{Binding WinnerLotsSearchCommand}" Style="{StaticResource PlayButtonStyle}" Width="77" Height="25"></Button>
-                                <Button Content="Пауза" Command="{Binding WinnerLotsSearchPausePlayCommand}"></Button>
-                                <Button Content="Стоп" Command="{Binding WinnerLotsSearchStopCommand}"></Button>
+                                <Button Content="Старт" Command="{Binding WinnerLotsSearchCommand}" Style="{StaticResource PlayButtonStyle}" Width="115" Height="25" Margin="0,0,0,0"></Button>
+                                <Button Content="Пауза" Command="{Binding WinnerLotsSearchPausePlayCommand}" Style="{StaticResource PauseButtonStyle}" Width="112" Height="25" Margin="0,0,0,0"></Button>
+                                <Button Content="Стоп" Command="{Binding WinnerLotsSearchStopCommand}" Style="{StaticResource StopButtonStyle}" Width="120" Height="25" Margin="0,0,0,0"></Button>
                             </StackPanel>
                             <ListBox x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Winners}" BorderThickness="0" FontSize="16"
 							    ItemContainerStyle="{StaticResource ListBoxItemStyle}"
