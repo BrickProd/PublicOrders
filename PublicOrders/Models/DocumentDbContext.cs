@@ -125,8 +125,7 @@ namespace PublicOrders.Models
         [Index]
         public string TradeMark { get; set; }
 
-        [Column(TypeName = "nvarchar"), MaxLength(400)]
-        [Index]
+        [Column(TypeName = "ntext")]
         public string Certification { get; set; }
 
         [ForeignKey("Rubric")]

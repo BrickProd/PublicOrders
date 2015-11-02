@@ -81,16 +81,23 @@ namespace PublicOrders.Processors
 
                     else
                     {
-                        product.Rubric = rubric;
-                        mvm.dc.Products.Add(product);
-
-                        mvm.dc.SaveChanges();
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        try
                         {
-                            mvm.ProductCollection.Add(product);
-                        }));
+                            product.Rubric = rubric;
+                            mvm.dc.Products.Add(product);
 
-                        productsAddedCount++;
+                            mvm.dc.SaveChanges();
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                mvm.ProductCollection.Add(product);
+                            }));
+
+                            productsAddedCount++;
+                        }
+                        catch (Exception ex) {
+                            string sss = "авыаыва";
+                        }
+
                     }
                 }
             }
@@ -195,6 +202,7 @@ namespace PublicOrders.Processors
                         {
                             case (2):
                                 // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
+                                if (Globals.CleanWordCell(cellValue) == "") break;
                                 if (product != null)
                                 {
                                     SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);

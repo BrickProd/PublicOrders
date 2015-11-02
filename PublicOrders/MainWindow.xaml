@@ -22,7 +22,10 @@
             <Border BorderThickness="0.5 0 0 0" BorderBrush="LightGray" VerticalAlignment="Center">
                 <TextBlock x:Name="BaxInfo" Text="" FontSize="14" Margin="20 0" FontWeight="Bold" Foreground="Gray"/>
             </Border>
-            
+            <Border BorderThickness="0.5 0 0 0" BorderBrush="LightGray" VerticalAlignment="Center">
+                <TextBlock x:Name="EuroInfo" Text="" FontSize="14" Margin="20 0" FontWeight="Bold" Foreground="Gray"/>
+            </Border>
+
         </StackPanel>
 
         <local:MainView Margin="0,0,0,0" Grid.Row="1"/>

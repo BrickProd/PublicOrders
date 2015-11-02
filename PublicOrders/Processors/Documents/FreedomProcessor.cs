@@ -192,6 +192,7 @@ namespace PublicOrders.Processors
                         switch (cell.ColumnIndex) {
                             case (2):
                                 // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
+                                if (Globals.CleanWordCell(cellValue) == "") break;
                                 if (product != null)
                                 {
                                     SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);

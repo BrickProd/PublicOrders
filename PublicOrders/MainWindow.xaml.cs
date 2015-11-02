@@ -46,10 +46,14 @@ namespace PublicOrders
                     );
 
 
-
+                // Ξbrick
                 xmlConditions.Load(string.Format("http://www.cbr.ru/scripts/XML_daily.asp"));
-                var bax = xmlConditions.SelectSingleNode("/ValCurs/Valute [@ID='R01235']/Value").InnerText;
-                this.BaxInfo.Text = "$ "+ bax.Substring(0, bax.Length-2);
+                var bax = xmlConditions.SelectSingleNode("/ValCurs/Valute[@ID='R01235']/Value").InnerText;
+                this.BaxInfo.Text = "$ "+ bax.Substring(0, bax.Length - 2);
+
+                var euro = xmlConditions.SelectSingleNode("/ValCurs/Valute[@ID='R01239']/Value").InnerText;
+                this.EuroInfo.Text = "€ " + euro.Substring(0, euro.Length - 2);
+
 
             }
             catch (Exception ex)

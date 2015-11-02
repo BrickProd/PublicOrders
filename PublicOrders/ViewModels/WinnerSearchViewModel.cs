@@ -272,7 +272,8 @@ namespace PublicOrders.ViewModels
 
             AllLotsSearched_delegete allLotsSearched_delegete = new AllLotsSearched_delegete(AllLotsSearched_proc);
             LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched__proc);
-            mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer, 
+            mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer,
+                                                      //Properties.Settings.Default.CustomerType,
                                                       CustomerType_enum.Customer, 
                                                       LawType_enum._44_94_223,
                                                       100,
@@ -317,7 +318,7 @@ namespace PublicOrders.ViewModels
 
             CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = new CreateWinnersDocumentDone_delegete(CreateWinnersDocumentDone_proc);
             mvm.cwProcessor = new CreateWinnersDocProcessor (Winners.ToList(), createWinnersDocumentDone_delegete);
-            mvm.lsProcessor.Operate();
+            mvm.cwProcessor.Operate();
         }
 
         private void CreateReportStop()
