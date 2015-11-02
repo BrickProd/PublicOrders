@@ -63,7 +63,153 @@
             </Setter>
         </Style>
 
+
+        <Style TargetType="Button" x:Key="PlayButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Grid Margin="10 0">
+                                    <Path Name="PlayPath" Data="M7.0491511,14.391343 L11.556472,19.111688 19.218636,9.8933579"  Stretch="Fill" Stroke="#FF007ACB" Margin="5.6,6.24,5.127,6.205" StrokeThickness="3"/>
+                                </Grid>
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"></ContentPresenter>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            
+                                            <ColorAnimation Storyboard.TargetName="PlayPath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            
+                                            <ColorAnimation Storyboard.TargetName="PlayPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.0" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray"></Setter>
+                                <Setter TargetName="PlayPath" Property="Stroke" Value="Gray"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <Style TargetType="Button" x:Key="PauseButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Grid Margin="10 0">
+                                    <Path Name="PausePath" Data="M7.0491511,14.391343 L11.556472,19.111688 19.218636,9.8933579"  Stretch="Fill" Stroke="#FF007ACB" Margin="5.6,6.24,5.127,6.205" StrokeThickness="3"/>
+                                </Grid>
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"></ContentPresenter>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+
+                                            <ColorAnimation Storyboard.TargetName="PausePath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+
+                                            <ColorAnimation Storyboard.TargetName="PausePath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.0" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray"></Setter>
+                                <Setter TargetName="PausePath" Property="Stroke" Value="Gray"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         
+        
+        <Style TargetType="Button" x:Key="StopButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Grid Margin="10 0">
+                                    <Path Name="StopPath" Data="M7.0491511,14.391343 L11.556472,19.111688 19.218636,9.8933579"  Stretch="Fill" Stroke="#FF007ACB" Margin="5.6,6.24,5.127,6.205" StrokeThickness="3"/>
+                                </Grid>
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"></ContentPresenter>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+
+                                            <ColorAnimation Storyboard.TargetName="StopPath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+
+                                            <ColorAnimation Storyboard.TargetName="StopPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.0" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray"></Setter>
+                                <Setter TargetName="StopPath" Property="Stroke" Value="Gray"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
 
         <!--табконтролы-->
         <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">

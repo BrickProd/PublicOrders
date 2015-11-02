@@ -242,9 +242,9 @@ namespace PublicOrders.ViewModels
         }
 
         private void WinnerLotsSearch() {
-            if ((Customers != null) && (Customers.Count > 0)) {
-                SelectedCustomer = Customers[0];
-            }
+            //if ((Customers != null) && (Customers.Count > 0)) {
+            //    SelectedCustomer = Customers[0];
+            //}
 
             if (Winners != null)
             {

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.WinnerSearchPanel"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="800" Padding="20 0 20 0">
+             d:DesignHeight="400" d:DesignWidth="1200" Padding="20 0 20 0">
     <UserControl.DataContext>
         <ViewModels:WinnerSearchViewModel/>
     </UserControl.DataContext>
@@ -74,9 +74,9 @@
 
                     <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
 
-                    <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" Width="500">
+                    <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" HorizontalAlignment="Left" Width="500">
                         <ListBox x:Name="CustomersListBox" Margin="0,0,0,0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16"
-							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+							ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedCustomer}"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							BorderBrush="LightGray">
                             <ListBox.ItemTemplate>
@@ -89,7 +89,7 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </Border>
-                    <Border BorderBrush="Black" BorderThickness="0" Margin="0,0,85,0" HorizontalAlignment="Right" Width="150">
+                    <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" Margin="505,0,0,0" HorizontalAlignment="Left" Width="500">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="23*"/>
@@ -97,13 +97,34 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                <Button Content="Старт" Command="{Binding WinnerLotsSearchCommand}"></Button>
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedCustomer}" Value="{x:Null}">
+                                                <Setter Property="IsEnabled" Value="False"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Button Content="Старт" Command="{Binding WinnerLotsSearchCommand}" Style="{StaticResource PlayButtonStyle}" Width="77" Height="25"></Button>
                                 <Button Content="Пауза" Command="{Binding WinnerLotsSearchPausePlayCommand}"></Button>
                                 <Button Content="Стоп" Command="{Binding WinnerLotsSearchStopCommand}"></Button>
                             </StackPanel>
                             <ListBox x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Winners}" BorderThickness="0" FontSize="16"
 							    ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-							    BorderBrush="LightGray" Grid.Row="1"/>
+                                     AlternationCount="2"
+							    BorderBrush="LightGray" Grid.Row="1">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Text="{Binding Lot.Name}" FontSize="14" Foreground="Gray"></TextBlock>
+                                            <TextBlock Text="{Binding Email}" FontSize="14" Foreground="Gray"></TextBlock>
+                                            <TextBlock Text="{Binding Phone}" FontSize="14" Foreground="Gray"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </Grid>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,10,0" Width="97.333">

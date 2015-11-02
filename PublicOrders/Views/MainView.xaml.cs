@@ -35,6 +35,10 @@ namespace PublicOrders
 
                 var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+                mvm.RefreshProducts();
+                vm.Products.Source = mvm.ProductCollection;
+                vm.Products.View.Refresh();
                 //vm.LoadProducts();
                 //BackgroundWorker bw = new BackgroundWorker();
                 //bw.DoWork += (w, arg) =>

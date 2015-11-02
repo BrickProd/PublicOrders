@@ -220,6 +220,7 @@
 							ItemsSource="{Binding Products.View}"
 							SelectedItem="{Binding SelectedProduct}"
                                   VirtualizingPanel.IsVirtualizing="True"
+                            AlternationCount="2"
 							Margin="10,45,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             
                             <ListView.ItemContainerStyle>
