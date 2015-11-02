@@ -18,7 +18,8 @@ namespace PublicOrders.ViewModels
 {
     public class ProductEditorViewModel : INotifyPropertyChanged
     {
-        public MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+        private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+        public BackgroundWorker backgroundWorker1;
 
         private CollectionViewSource _products;
         public CollectionViewSource Products
@@ -147,11 +148,15 @@ namespace PublicOrders.ViewModels
 
         public ProductEditorViewModel()
         {
+            backgroundWorker1 = new BackgroundWorker();
             if (mvm != null)
             {
+
+                backgroundWorker1.DoWork += BackgroundWorker1_DoWork;
+
                 Products = new CollectionViewSource();
                 Products.Source = this.mvm.ProductCollection;
-                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric"));
+                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
@@ -161,7 +166,21 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Products = new CollectionViewSource();
 
+            
+        }
+
+        public void LoadProducts()
+        {
+            if (backgroundWorker1.IsBusy != true)
+            {
+                // Start the asynchronous operation.
+                backgroundWorker1.RunWorkerAsync();
+            }
+        }
 
 
 

@@ -13,7 +13,7 @@
     <Grid>
 
         <!--ПАНЕЛЬ ЗАГРУЗКИ-->
-        <Grid x:Name="CreateDocumentBusy" Margin="0" Panel.ZIndex="100" Background="Transparent">
+        <Grid x:Name="CreateDocumentBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" Visibility="Collapsed">
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
                     <Style.Triggers>
@@ -68,7 +68,7 @@
         </Grid.RowDefinitions>
         <ComboBox x:Name="comboBox" FontSize="18" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedIndex="0" Grid.ColumnSpan="2"/>
         <ComboBox x:Name="comboBox1" FontSize="18" Margin="5" Grid.Row="3" ItemsSource="{Binding Instructions}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name" Grid.ColumnSpan="2"/>
-        <Button x:Name="button" FontSize="18" Content="Создать" HorizontalAlignment="Center" Grid.Row="4" Width="150" Command="{Binding CreateDocumentCommand}" Style="{StaticResource OKButtonStyle}" Grid.ColumnSpan="2"/>
+        <Button x:Name="button" FontSize="18" Content="Создать" HorizontalAlignment="Center" Grid.Row="4" Width="150" Command="{Binding CreateDocumentCommand}" Style="{StaticResource OKButtonStyle}" Grid.ColumnSpan="2" Height="25"/>
         <!--<DataGrid x:Name="dataGridSource" Margin="5,10,225,10" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn ></DataGridCheckBoxColumn>
@@ -95,7 +95,7 @@
             </ListBox.ItemTemplate>
         </ListView>
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Развыбрать документ - стрелка влево" VerticalAlignment="Top" Grid.Column="1"/>
-        <ListView  Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocument}" BorderThickness="1" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
+        <ListView  Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocument}" BorderThickness="1" FontSize="16" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.InputBindings>
                 <KeyBinding Key="Left" Command="{Binding UnchooseProductCommand}"></KeyBinding>
             </ListBox.InputBindings>

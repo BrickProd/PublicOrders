@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PublicOrders.ViewModels;
 
 namespace PublicOrders.Views
 {
@@ -24,5 +25,21 @@ namespace PublicOrders.Views
         {
             InitializeComponent();
         }
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                var vm = this.DataContext as WinnerSearchViewModel;
+                vm.CustomersSearchCommand.Execute(new object());
+            }
+        }
+
+        private void CustomerDoubleClick(object sender, MouseEventArgs e)
+        {
+            var vm = this.DataContext as WinnerSearchViewModel;
+            vm.WinnerLotsSearchCommand.Execute(new object());
+        }
+
     }
 }

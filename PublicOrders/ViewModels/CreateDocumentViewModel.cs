@@ -62,9 +62,10 @@ namespace PublicOrders.ViewModels
             set {
                 _selectedTemplate = value;
                 OnPropertyChanged("SelectedTemplate");
+                ProductsForDocument.Clear();
                 this.FilteredProducts.View.Refresh();
 
-                //ProductsForDocument.Clear();
+                
             }
         }
 
