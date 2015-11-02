@@ -25,7 +25,7 @@ namespace PublicOrders
 		{
 			this.InitializeComponent();
 
-            GetWether(new object (), new EventArgs());
+            GetWether(new object(), new EventArgs());
 
             dt = new DispatcherTimer();
 		    dt.Tick += new EventHandler(GetWether);
@@ -36,6 +36,8 @@ namespace PublicOrders
         private void GetWether(object sender, EventArgs e)
         {
             XmlDocument xmlConditions = new XmlDocument();
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
             try
             {
                 xmlConditions.Load(string.Format("http://informer.gismeteo.ru/xml/27612.xml"));
@@ -51,7 +53,7 @@ namespace PublicOrders
                 // Ξbrick
                 xmlConditions.Load(string.Format("http://www.cbr.ru/scripts/XML_daily.asp"));
                 var bax = xmlConditions.SelectSingleNode("/ValCurs/Valute[@ID='R01235']/Value").InnerText;
-                this.BaxInfo.Text = "$ "+ bax.Substring(0, bax.Length - 2);
+                    this.BaxInfo.Text = "$ " + bax.Substring(0, bax.Length - 2);
 
                 var euro = xmlConditions.SelectSingleNode("/ValCurs/Valute[@ID='R01239']/Value").InnerText;
                 this.EuroInfo.Text = "€ " + euro.Substring(0, euro.Length - 2);
@@ -63,6 +65,7 @@ namespace PublicOrders
                 this.TempInfo.Text = "";
                 this.TempInfo.ToolTip = "Погода не доступна Х(";
             }
+            }));
         }
     }
 }
