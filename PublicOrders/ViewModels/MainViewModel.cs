@@ -137,6 +137,10 @@ namespace PublicOrders
             wc = new WinnersDbContext();
         }
 		
+        public void RefreshProducts()
+        {
+            this.ProductCollection = new ObservableCollection<Product>(dc.Products);
+        }
 		
 		
 		#region INotifyPropertyChanged

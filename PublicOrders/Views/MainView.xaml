@@ -26,14 +26,14 @@
                     <views:OrderFilterPanel></views:OrderFilterPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Создать документ"  Style="{StaticResource PanelContentStyle}">
+            <TabItem Header="Создать документ"  Style="{StaticResource PanelContentStyle}" Selector.Selected="CreateDocumentTabItem_Selected">
                 <Grid>
-                    <views:CreateDocumentPanel></views:CreateDocumentPanel>
+                    <views:CreateDocumentPanel x:Name="CreateDocumentPanel"></views:CreateDocumentPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Редактор товара"  Style="{StaticResource PanelContentStyle}">
+            <TabItem Header="Редактор товара" Style="{StaticResource PanelContentStyle}" Selector.Selected="ProductEditorTabItem_Selected">
                 <Grid>
-                    <views:ProductEditorPanel></views:ProductEditorPanel>
+                    <views:ProductEditorPanel x:Name="ProductEditorPanel"  ></views:ProductEditorPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8">
