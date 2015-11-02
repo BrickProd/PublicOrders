@@ -18,7 +18,7 @@ namespace PublicOrders.ViewModels
 {
     public class ProductEditorViewModel : INotifyPropertyChanged
     {
-        public MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+        private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
         private CollectionViewSource _products;
         public CollectionViewSource Products
@@ -150,8 +150,9 @@ namespace PublicOrders.ViewModels
             if (mvm != null)
             {
                 Products = new CollectionViewSource();
+
                 Products.Source = this.mvm.ProductCollection;
-                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric"));
+                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();

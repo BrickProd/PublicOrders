@@ -25,6 +25,8 @@ namespace PublicOrders
 		{
 			this.InitializeComponent();
 
+            GetWether(new object (), new EventArgs());
+
             dt = new DispatcherTimer();
 		    dt.Tick += new EventHandler(GetWether);
             dt.Interval = new TimeSpan(0, 0, 1, 0, 0);
