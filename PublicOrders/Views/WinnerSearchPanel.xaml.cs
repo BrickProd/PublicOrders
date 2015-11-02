@@ -34,5 +34,12 @@ namespace PublicOrders.Views
                 vm.CustomersSearchCommand.Execute(new object());
             }
         }
+
+        private void CustomerDoubleClick(object sender, MouseEventArgs e)
+        {
+            var vm = this.DataContext as WinnerSearchViewModel;
+            vm.WinnerLotsSearchCommand.Execute(new object());
+        }
+
     }
 }

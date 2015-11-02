@@ -238,7 +238,7 @@ namespace PublicOrders.ViewModels
             SearchingProgress = 0;
             IsCustomersSearching = false;
             //MessageBox.Show("Поиск заказчиков завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            WinnerLotsSearch();
+            //WinnerLotsSearch();
         }
 
         private void WinnerLotsSearch() {

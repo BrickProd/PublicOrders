@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PublicOrders.Views"
-             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.WinnerSearchPanel"
+             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" x:Class="PublicOrders.Views.WinnerSearchPanel"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="1200" Padding="20 0 20 0">
     <UserControl.DataContext>
@@ -14,27 +14,26 @@
         <Border BorderBrush="DodgerBlue" BorderThickness="0 0 0 0" Margin="0">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="70"></RowDefinition>
-                    <RowDefinition Height="100*"></RowDefinition>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="100*"/>
                 </Grid.RowDefinitions>
                 <Grid Margin="10 20" Grid.Row="0">
                     <TextBox x:Name="key" FontSize="18" Margin="0" KeyDown="OnKeyDownHandler">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Execute"  Command="{Binding CustomersSearchCommand}"></KeyBinding>
+                            <KeyBinding Key="Execute"  Command="{Binding CustomersSearchCommand}"/>
                         </TextBox.InputBindings>
                         <TextBox.Template>
                             <ControlTemplate>
                                 <Grid>
-                                    <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
-                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay}" ></TextBox>
-                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}"></Button>
+                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay}" />
+                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}"/>
                                     <ProgressBar Margin="0" Value="{Binding SearchingProgress}" Visibility="Hidden" Minimum="0" Maximum="100">
                                         <ProgressBar.Style>
-                                            <Style TargetType="ProgressBar">
-                                                <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+                                            <Style TargetType="{x:Type ProgressBar}">
+                                                <Setter Property="Foreground" Value="#FF007ACB"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                                        <Setter Property="Visibility" Value="Visible"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -47,7 +46,7 @@
                             <Style>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                        <Setter Property="TextBox.IsEnabled" Value="False"></Setter>
+                                        <Setter Property="UIElement.IsEnabled" Value="False"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -55,11 +54,11 @@
                     </TextBox>
                     <ProgressBar Margin="0,30,0,-3" Value="{Binding SearchingProgress}"  Maximum="100" Minimum="0" Opacity="0" >
                         <ProgressBar.Style>
-                            <Style TargetType="ProgressBar">
-                                <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+                            <Style TargetType="{x:Type ProgressBar}">
+                                <Setter Property="Foreground" Value="#FF007ACB"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                        <Setter Property="Opacity" Value="1"></Setter>
+                                        <Setter Property="Opacity" Value="1"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -75,18 +74,22 @@
                     <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
 
                     <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" HorizontalAlignment="Left" Width="500">
-                        <ListBox x:Name="CustomersListBox" Margin="0,0,0,0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16"
-							ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedCustomer}"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        <ListBox x:Name="CustomersListBox" Margin="0,0,0,0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
+							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							BorderBrush="LightGray">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Text="{Binding Vatin}" FontSize="14" Foreground="Gray"></TextBlock>
+                                        <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Vatin}" FontSize="14" Foreground="Gray"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+                                    <EventSetter Event="Control.MouseDoubleClick" Handler="CustomerDoubleClick"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
                         </ListBox>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" Margin="505,0,0,0" HorizontalAlignment="Left" Width="500">
@@ -98,34 +101,42 @@
 
                             <StackPanel Orientation="Horizontal" Grid.Row="0">
                                 <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
+                                    <Style TargetType="{x:Type StackPanel}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding SelectedCustomer}" Value="{x:Null}">
-                                                <Setter Property="IsEnabled" Value="False"></Setter>
+                                                <Setter Property="IsEnabled" Value="False"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </StackPanel.Style>
-                                <Button Content="Старт" Command="{Binding WinnerLotsSearchCommand}" Width="115" Height="25" Margin="0,0,0,0">
+                                <Button Content="Старт" Name="StartBtn" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="115" Height="25" Margin="0,0,0,0">
                                     <Button.Style>
-                                        <Style TargetType="Button" BasedOn="{StaticResource PlayButtonStyle}">
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PlayButtonStyle}">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                                <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsEnabled, ElementName=PauseBtn}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                    <!-- Here is the 'override' content -->
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Button.Style>
                                 </Button>
-                                <Button Content="Пауза" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="112" Height="25" Margin="0,0,0,0" >
+                                <Button Content="Пауза" Name="PauseBtn" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="112" Height="25" Margin="0,0,0,0" >
                                     <Button.Style>
-                                        <Style TargetType="Button" BasedOn="{StaticResource PauseButtonStyle}">
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PauseButtonStyle}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="True"></Setter>
+                                                    <Setter Property="IsEnabled" Value="True"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
-                                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsEnabled, ElementName=StartBtn}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                    <!-- Here is the 'override' content -->
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -133,41 +144,39 @@
                                 </Button>
                                 <Button Content="Стоп" Command="{Binding WinnerLotsSearchStopCommand}" Width="120" Height="25" Margin="0,0,0,0">
                                     <Button.Style>
-                                        <Style TargetType="Button" BasedOn="{StaticResource StopButtonStyle}">
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource StopButtonStyle}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="True"></Setter>
+                                                    <Setter Property="IsEnabled" Value="True"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
-                                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                                    <Setter Property="IsEnabled" Value="False"/>
                                                 </DataTrigger>
-                                                
+
                                             </Style.Triggers>
                                         </Style>
                                     </Button.Style>
                                 </Button>
                             </StackPanel>
                             <ListBox x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Winners}" BorderThickness="0" FontSize="16"
-							    ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                                     AlternationCount="2"
-							    BorderBrush="LightGray" Grid.Row="1">
+								ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+								AlternationCount="2"
+								BorderBrush="LightGray" Grid.Row="1">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"></TextBlock>
-                                            <TextBlock Text="{Binding Lot.Name}" FontSize="14" Foreground="Gray"></TextBlock>
-                                            <TextBlock Text="{Binding Email}" FontSize="14" Foreground="Gray"></TextBlock>
-                                            <TextBlock Text="{Binding Phone}" FontSize="14" Foreground="Gray"></TextBlock>
+                                            <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding Lot.Name}" FontSize="14" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding Email}" FontSize="14" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding Phone}" FontSize="14" Foreground="Gray"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </Grid>
                     </Border>
-                    <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,10,0" Width="97.333">
-
-                    </Border>
-                    <Button Content="Создать отчёт" FontSize="18" Command="{Binding CreateReportCommand}" Style="{StaticResource OKButtonStyle}" Background="Transparent" Grid.Row="1" Height="25" HorizontalAlignment="Center"></Button>
+                    <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,10,0" Width="97.333"/>
+                    <Button Content="Создать отчёт" FontSize="18" Command="{Binding CreateReportCommand}" Style="{StaticResource OKButtonStyle}" Background="Transparent" Grid.Row="1" Height="25" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
 
