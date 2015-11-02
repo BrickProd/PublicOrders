@@ -217,6 +217,8 @@ namespace PublicOrders.ViewModels
         #region Методы
         private void CustomersSearch()
         {
+            IsCustomersSearching = true;
+
             // Очищаем список заказчиков
             if (Customers != null)
             {
@@ -242,8 +244,6 @@ namespace PublicOrders.ViewModels
             {
                 Winners = new ObservableCollection<Winner>();
             }
-
-            IsCustomersSearching = true;
 
             // Останавливаем поиск победителей
             if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
@@ -399,7 +399,7 @@ namespace PublicOrders.ViewModels
             }
 
             AllLotsSearched_delegete allLotsSearched_delegete = new AllLotsSearched_delegete(AllLotsSearched_proc);
-            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched__proc);
+            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched_proc);
             LotSearchProgress_delegate lotSearchProgress_delegate = new LotSearchProgress_delegate(LotSearchProgress_proc);
             mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer,
                                                       customerType_enum,
@@ -438,7 +438,8 @@ namespace PublicOrders.ViewModels
             //MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void LotSearched__proc(Winner winner) {
+        private void LotSearched_proc(Winner winner) {
+            if (IsCustomersSearching) return;
             if (winner.Name != "")
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
