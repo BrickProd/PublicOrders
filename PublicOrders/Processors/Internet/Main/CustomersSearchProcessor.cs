@@ -78,6 +78,7 @@ namespace PublicOrders.Processors.Main
                         lawTypeStr = "EVERYWHERE";
                         break;
                 }
+                //lawTypeStr = "EVERYWHERE";
 
                 string customerTypeStr = "";
                 switch (customerType_enum)
@@ -131,7 +132,7 @@ namespace PublicOrders.Processors.Main
                 HtmlAgilityPack.HtmlNode htmlNode = doc.DocumentNode.SelectSingleNode(text);
                 if (htmlNode == null)
                 {
-                    customersSearchDone_delegate(customers, ResultType_enum.ErrorNetwork, "");
+                    customersSearchDone_delegate(customers, ResultType_enum.ErrorNetwork, "Заказчики не найдены!");
                     return;
                 }
                 if (htmlNode.InnerText.Trim() == "Поиск не дал результатов")

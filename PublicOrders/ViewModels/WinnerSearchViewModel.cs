@@ -228,8 +228,6 @@ namespace PublicOrders.ViewModels
         #region Методы
         private void CustomersSearch()
         {
-            IsCustomersSearching = true;
-
             // Очищаем список заказчиков
             if (Customers != null)
             {
@@ -269,7 +267,7 @@ namespace PublicOrders.ViewModels
             }
 
             SearchingProgressText = "Поиск заказчиков..";
-            SearchingProgress = 50;
+            SearchingProgress = 0;
 
             // Переводим значения из Properties в enum
             // CustomerType
@@ -315,6 +313,9 @@ namespace PublicOrders.ViewModels
                                                            lawType_enum, 
                                                            customerSearchDone_delege);
             mvm.csProcessor.Operate();
+
+            IsCustomersSearching = true;
+            currentCustomerSearching = "";
         }
 
 
@@ -345,10 +346,13 @@ namespace PublicOrders.ViewModels
             //WinnerLotsSearch();
         }
 
+        private string currentCustomerSearching = "";
         private void WinnerLotsSearch() {
-            //if ((Customers != null) && (Customers.Count > 0)) {
-            //    SelectedCustomer = Customers[0];
-            //}
+            if (SelectedCustomer != null)
+            {
+                if (SelectedCustomer.Name == currentCustomerSearching) return;
+                currentCustomerSearching = SelectedCustomer.Name;
+            }
 
             if (Winners != null)
             {
@@ -366,9 +370,6 @@ namespace PublicOrders.ViewModels
                 MessageBox.Show("Выберите заказчика!", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-
-            IsWinnerLotsSearchingPause = false;
-            IsWinnerLotsSearching = true;
 
             if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
             {
@@ -425,28 +426,45 @@ namespace PublicOrders.ViewModels
                                                       lotSearchProgress_delegate
                                                       );
             mvm.lsProcessor.Operate();
+
+            IsWinnerLotsSearchingPause = false;
+            IsWinnerLotsSearching = true;
         }
 
-        private void LotSearchProgress_proc(string text, int intValue) {
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+        private void LotSearchProgress_proc(Customer customer, string text, int intValue) {
+            if (customer != SelectedCustomer) return;
+            try
             {
-                SearchingProgressText = text;
-                SearchingProgress = intValue;
-            }));
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SearchingProgressText = text;
+                    SearchingProgress = intValue;
+                }));
+            }
+            catch {
+
+            }
         }
 
-        private void AllLotsSearched_proc(ResultType_enum resultType_enum, string message) {
-            if (resultType_enum == ResultType_enum.ErrorNetwork) {
+        private void AllLotsSearched_proc(Customer customer, ResultType_enum resultType_enum, string message) {
+            if (customer != SelectedCustomer) return;
+            if (resultType_enum == ResultType_enum.ErrorNetwork)
+            {
                 MessageBox.Show(message, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            try
             {
-                IsWinnerLotsSearching = false;
-                SearchingProgressText = "";
-                SearchingProgress = 0;
-            }));
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    IsWinnerLotsSearching = false;
+                    SearchingProgressText = "";
+                    SearchingProgress = 0;
+                }));
+            }
+            catch {
 
+            }
             //MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

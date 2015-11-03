@@ -375,7 +375,7 @@ namespace PublicOrders.Models
         [Key]
         public long WinnerId { get; set; }
 
-        [Column(TypeName = "varchar"), MaxLength(256), Required]
+        [Column(TypeName = "varchar"), MaxLength(400), Required]
         [Index]
         public string Name { get; set; }
 

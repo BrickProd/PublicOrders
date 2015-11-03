@@ -12,9 +12,9 @@ using System.Web;
 
 namespace PublicOrders.Processors.Main
 {
-    public delegate void AllLotsSearched_delegete(ResultType_enum ResultType_enum, string message);
+    public delegate void AllLotsSearched_delegete(Customer customer, ResultType_enum ResultType_enum, string message);
     public delegate void LotSearched_delegate(Winner winner);
-    public delegate void LotSearchProgress_delegate(string text, int intValue);
+    public delegate void LotSearchProgress_delegate(Customer customer, string text, int intValue);
 
 
     public class LotsSearchProcessor
@@ -88,12 +88,13 @@ namespace PublicOrders.Processors.Main
                         break;
                 }
 
+                //lawTypeStr = "FZ_44%2CFZ_223%2CFZ_94";
                 //lawTypeStr = "FZ_94"; // !!! и 50 записей
 
                 /*switch (customerType_enum)
                 {
                     case (CustomerType_enum.Customer):*/
-                        text = @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
+                text = @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
                         text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&";
                         text += @"searchType=ORDERS&morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
                         text += @"deliveryAddress=&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&okdpWithSubElements=false&orderStages=PC&";
@@ -104,26 +105,27 @@ namespace PublicOrders.Processors.Main
                         text += @"customer.title=" + customer.Name + "&customer.inn=" + customer.Vatin + "&";
                         text += @"extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
 
-                        /*break;
-                    case (CustomerType_enum.Organization):
-                        // Запрос на организации
-                        text += @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
-                        text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&searchType=ORDERS&";
-                        text += @"morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
-                        text += @"deliveryAddress=Москва&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&";
-                        text += @"okdpWithSubElements=false&orderStages=PC&headAgencyWithSubElements=false&smallBusinessSubject=I&";
-                        text += @"rnpData=I&executionRequirement=I&penalSystemAdvantage=I&disabilityOrganizationsAdvantage=I&";
-                        text += @"russianGoodsPreferences=I&orderPriceCurrencyId=-1&okvedWithSubElements=false&jointPurchase=false&";
-                        text += @"byRepresentativeCreated=false&selectedMatchingWordPlace223=NOTICE_AND_DOCS&matchingWordPlace94=NOTIFICATIONS&";
-                        text += @"matchingWordPlace44=NOTIFICATIONS&searchAttachedFile=false&changeParameters=true&showLotsInfo=false&";
-                        text += @"agency.code=&agency.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&agency.title=" + customer.Name + "&";
-                        text += @"agency.inn=&extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
-                        break;
-                    default:
-                        allLotsSearched_delegete(ResultType_enum.Error, "Неизвестный тип заказчика <" + customerType_enum.ToString() + ">");
-                        return;
-                }*/
+                /*break;
+            case (CustomerType_enum.Organization):
+                // Запрос на организации
+                text += @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
+                text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&searchType=ORDERS&";
+                text += @"morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
+                text += @"deliveryAddress=Москва&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&";
+                text += @"okdpWithSubElements=false&orderStages=PC&headAgencyWithSubElements=false&smallBusinessSubject=I&";
+                text += @"rnpData=I&executionRequirement=I&penalSystemAdvantage=I&disabilityOrganizationsAdvantage=I&";
+                text += @"russianGoodsPreferences=I&orderPriceCurrencyId=-1&okvedWithSubElements=false&jointPurchase=false&";
+                text += @"byRepresentativeCreated=false&selectedMatchingWordPlace223=NOTICE_AND_DOCS&matchingWordPlace94=NOTIFICATIONS&";
+                text += @"matchingWordPlace44=NOTIFICATIONS&searchAttachedFile=false&changeParameters=true&showLotsInfo=false&";
+                text += @"agency.code=&agency.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&agency.title=" + customer.Name + "&";
+                text += @"agency.inn=&extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
+                break;
+            default:
+                allLotsSearched_delegete(ResultType_enum.Error, "Неизвестный тип заказчика <" + customerType_enum.ToString() + ">");
+                return;
+        }*/
 
+                lotSearchProgress_delegate(customer, "Поиск заказов..", 0);
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
@@ -131,10 +133,10 @@ namespace PublicOrders.Processors.Main
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
                     // Если нет подключения к интернету, то берем значения из БД
-                    lotSearchProgress_delegate("Получение заказов из БД..", 50);
+                    lotSearchProgress_delegate(customer, "Получение заказов из БД..", 0);
 
                     bool searchedFromDB = false;
-                    List<Order> orders = mvm.wc.Orders.Where(m => ((m.Customer.Name == customer.Name) && 
+                    List<Order> orders = mvm.wc.Orders.Where(m => ((m.Customer.Vatin == customer.Vatin) && 
                                                                    (m.PublishDateTime < highPublishDate) && 
                                                                    (m.PublishDateTime > lowPublishDate))).ToList();
 
@@ -169,10 +171,10 @@ namespace PublicOrders.Processors.Main
 
                     if (searchedFromDB == false)
                     {
-                        allLotsSearched_delegete(ResultType_enum.ErrorNetwork, "Соединение с сервером отсутствует!\nПобедители в БД не найдены!");
+                        allLotsSearched_delegete(customer, ResultType_enum.ErrorNetwork, "Соединение с сервером отсутствует!\nПобедители в БД не найдены!");
                     }
                     else {
-                        allLotsSearched_delegete(ResultType_enum.Done, "Соединение с сервером отсутствует!");
+                        allLotsSearched_delegete(customer, ResultType_enum.Done, "Соединение с сервером отсутствует!");
                     }
 
                     return;
@@ -190,7 +192,7 @@ namespace PublicOrders.Processors.Main
 
                 HtmlAgilityPack.HtmlNodeCollection orderCollection = doc.DocumentNode.SelectNodes(text);
                 if ((orderCollection == null) || (orderCollection.Count == 0)) {
-                    allLotsSearched_delegete(ResultType_enum.NotSearch, "");
+                    allLotsSearched_delegete(customer, ResultType_enum.NotSearch, "");
                     return;
                 }
                 #endregion
@@ -204,7 +206,7 @@ namespace PublicOrders.Processors.Main
                 foreach (HtmlAgilityPack.HtmlNode nodeOrder in orderCollection)
                 {
                     currentInterval = Convert.ToInt32(orderNum * orderInterval);
-                    lotSearchProgress_delegate("Обработка заказа.. [" + orderNum + "\\" + orderCollection.Count() + "]", currentInterval);
+                    lotSearchProgress_delegate(customer, "Обработка заказа.. [" + orderNum + "\\" + orderCollection.Count() + "]", currentInterval);
 
                     while (isPause) {
                         Thread.Sleep(300);
@@ -261,24 +263,28 @@ namespace PublicOrders.Processors.Main
                         // Ищем победителей, если у заказа прошла неделя с момента поиска победителей
                         if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7))) {
                             string winnerEngineMessage = "";
-                            winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
+                            ResultType_enum resultSearch = winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
 
-                            // Сохраняем дату поиска победителей
-                            order.WinnersSearchDateTime = DateTime.Now;
-                            mvm.wc.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                            mvm.wc.SaveChanges();
+                            if ((resultSearch != ResultType_enum.Error) &&
+                                (resultSearch != ResultType_enum.ErrorNetwork) &&
+                                (resultSearch != ResultType_enum.ReglamentaWork)) {
+                                    // Сохраняем дату поиска победителей
+                                    order.WinnersSearchDateTime = DateTime.Now;
+                                    mvm.wc.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                                    mvm.wc.SaveChanges();
+                            }
                         }
                     }
                     #endregion
                 }
 
-                allLotsSearched_delegete(ResultType_enum.Done, "");
+                allLotsSearched_delegete(customer, ResultType_enum.Done, "");
             }
             catch (Exception ex)
             {
                 isWork = false;
                 orders = null;
-                allLotsSearched_delegete(ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
+                allLotsSearched_delegete(customer, ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
                 return;
             }
         }

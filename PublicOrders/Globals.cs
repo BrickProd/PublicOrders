@@ -230,6 +230,13 @@ namespace PublicOrders.Models
                     message = "Не удается подключиться к сети";
                     return ResultType_enum.ErrorNetwork;
                 }
+                // Бан
+                if (doc.DocumentNode.InnerText.IndexOf("403 Forbidden") > -1)
+                {
+                    message = "Бан";
+                    return ResultType_enum.ErrorNetwork;
+                }
+                
                 if (doc.DocumentNode.InnerText.IndexOf("Ведутся регламентные работы") > -1)
                 {
                     message = "Ведутся регламентские работы";

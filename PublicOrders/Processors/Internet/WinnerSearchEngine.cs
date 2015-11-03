@@ -270,6 +270,11 @@ namespace PublicOrders.Processors.Internet
 
                                 Winner winner = new Winner();
                                 winner.Name = winnerName;
+                                if (winner.Name.Length > 400)
+                                {
+                                    winner.Name = winner.Name.Substring(0, 398) + "..";
+                                }
+
                                 winner.Phone = winnerPhone;
                                 if (winnerEmail.Trim() != "")
                                     winner.Email = winnerEmail;
