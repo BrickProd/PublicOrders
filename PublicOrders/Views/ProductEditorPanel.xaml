@@ -10,63 +10,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" Padding="20 0 20 0">
     <UserControl.Resources>
-        <Style TargetType="{x:Type Button}" x:Key="SlideDownEButtonStyle">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Foreground" Value="#FF007ACB"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid Background="Transparent">
-                            <StackPanel>
-                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0"/>
-                                <ed:BlockArrow Name="ArrowDown" Height="60" Margin="0 10" Orientation="Down" Grid.Row="5" Fill="#FF007ACB" Stroke="#FF007ACB" StrokeThickness="0" VerticalAlignment="Top" Width="15"/>
-                            </StackPanel>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ThicknessAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Margin" To="0 15" Duration="0:0:0.2" >
-                                                <ThicknessAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </ThicknessAnimation.EasingFunction>
-                                            </ThicknessAnimation>
-                                            <DoubleAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Height" To="70" Duration="0:0:0.2">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ThicknessAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Margin" To="0 10" Duration="0:0:0.2">
-                                                <ThicknessAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </ThicknessAnimation.EasingFunction>
-                                            </ThicknessAnimation>
-                                            <DoubleAnimation Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Height" To="60" Duration="0:0:0.2">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <BackEase></BackEase>
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        
+
+
         <DataTemplate x:Key="ListBoxItemTemplate">
             <TextBlock Text="{Binding Name}" FontSize="20" TextTrimming="WordEllipsis"/>
         </DataTemplate>
@@ -75,7 +20,7 @@
         <ViewModels:ProductEditorViewModel/>
     </UserControl.DataContext>
     <Grid>
-        
+
         <!--РЕДАКТОР ПРОДУКТА-->
         <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="ProductEditPanel" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
@@ -111,102 +56,51 @@
             <TextBlock Text="Шаблоны" Grid.Column="0" Grid.Row="5" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBox Grid.Row="1" Text="{Binding SelectedProduct.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             <TextBox Grid.Row="2" Text="{Binding SelectedProduct.TradeMark}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <TextBox Grid.Row="2" Text="{Binding SelectedProduct.Certification}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <ComboBox Grid.Row="3" ItemsSource="{Binding Rubrics}" SelectedItem="{Binding SelectedProduct.Rubric, Mode=TwoWay}" DisplayMemberPath="Name" SelectedValuePath="Rubric" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="3">
-                <TabItem Header="Комитет" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <StackPanel>
-                            <DataGrid Margin="0" ItemsSource="{Binding SelectedProduct.CommitteeProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Width="*" Header="Наименование показателя" Binding="{Binding ParamName}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                    <DataGridTextColumn Width="*" Header="Минимальные значения показателей" Binding="{Binding MinValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                    <DataGridTextColumn Width="*" Header="Максимальные значения показателей" Binding="{Binding MaxValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                    <DataGridTextColumn Width="*" Header="Значения показателей, которые не могут изменяться" Binding="{Binding VariableParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                    <DataGridTextColumn Width="*" Header="Конкретные показатели используемого товара" Binding="{Binding SpecificParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                    <DataGridTextColumn Width="*" Header="Единица измерения" Binding="{Binding Measure}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                            <Button Name="AddCommitteePropertyBtn" Content="Добавить"></Button>
-                        </StackPanel>
+            <TextBox Grid.Row="3" Text="{Binding SelectedProduct.Certification}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <ComboBox Grid.Row="4" ItemsSource="{Binding Rubrics}" SelectedItem="{Binding SelectedProduct.Rubric, Mode=TwoWay}" DisplayMemberPath="Name" SelectedValuePath="Rubric" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <TabControl Grid.Row="5" Grid.Column="1" Margin="10,0,10,10" Grid.RowSpan="3">
+                <TabItem Header="Комитет" Style="{StaticResource PanelContentStyleMini}" Margin="0">
+                    <Grid Margin="0">
+                        <DataGrid ItemsSource="{Binding SelectedProduct.CommitteeProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
+                                  EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*" Header="Наименование показателя" Binding="{Binding ParamName}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Минимальные значения показателей" Binding="{Binding MinValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Максимальные значения показателей" Binding="{Binding MaxValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значения показателей, которые не могут изменяться" Binding="{Binding VariableParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Конкретные показатели используемого товара" Binding="{Binding SpecificParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Единица измерения" Binding="{Binding Measure}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Свобода" Style="{StaticResource PanelContentStyleMini}">
                     <Grid>
-                        <StackPanel>
-                            <DataGrid x:Name="FreedomPropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.FreedomProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding Path=CustomerParam}"/>
-                                    <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapCell}"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                            <Button Name="AddFreedomPropertyBtn" Content="Добавить"></Button>
-                        </StackPanel>
+                        <DataGrid x:Name="FreedomPropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.FreedomProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
+                                  EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding Path=CustomerParam}"/>
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Форма 2" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <StackPanel>
-                            <DataGrid x:Name="Form2PropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.Form2Properties, Mode=TwoWay}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam}">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                        <DataGridTextColumn.EditingElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.EditingElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue}">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                        <DataGridTextColumn.EditingElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.EditingElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding OfferValue}">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                        <DataGridTextColumn.EditingElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.EditingElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure}">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                        <DataGridTextColumn.EditingElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
-                                            </Style>
-                                        </DataGridTextColumn.EditingElementStyle>
-                                    </DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                            <Button Name="AddForm2PropertyBtn" Content="Добавить" Command="{Binding AddForm2PropertyCommand}"/>
-
-                        </StackPanel>
+                    <Grid >
+                        <DataGrid x:Name="Form2PropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.Form2Properties, Mode=TwoWay}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
+                                  EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding OfferValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </TabItem>
             </TabControl>
         </Grid>
-        
+
         <!--ОСНОВНАЯ ПАНЕЛЬ-->
         <Border BorderThickness="0 0 0 0" Padding="10 10 50 10">
             <TabControl BorderThickness="0" TabStripPlacement="Top" x:Name="EditTabControl" >
@@ -222,7 +116,7 @@
                                   VirtualizingPanel.IsVirtualizing="True"
                             AlternationCount="2"
 							Margin="10,45,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            
+
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
                                     <EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>

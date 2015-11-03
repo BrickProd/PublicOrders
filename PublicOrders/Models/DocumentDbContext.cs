@@ -31,7 +31,7 @@ namespace PublicOrders.Models
         {
             //у документов много атрибутов
             //атрибут может быть в разных документах
-           
+
 
             //modelBuilder.Entity<Document>().Property(e => e.Name).HasColumnAnnotation(IndexAnnotation.AnnotationName, new IndexAnnotation(new IndexAttribute()));
             //modelBuilder.Entity<Document>().Property(e => e.CreateDateTime).HasColumnAnnotation(IndexAnnotation.AnnotationName, new IndexAnnotation(new IndexAttribute()));
@@ -59,8 +59,10 @@ namespace PublicOrders.Models
             //    .WithMany(ob => ob.Product_Params)
             //    .HasForeignKey(o => o.ParamId);
 
-            //составной первичный ключ
-            //modelBuilder.Entity<Product_Param>().HasKey(k => new { k.ProductId, k.ParamId });
+
+            modelBuilder.Entity<CommitteeProperty>().HasKey(p => new { p.ProductId, p.CommitteePropertyId });
+            modelBuilder.Entity<Form2Property>().HasKey(p => new { p.ProductId, p.Form2PropertyId});
+            modelBuilder.Entity<FreedomProperty>().HasKey(p => new { p.ProductId, p.FreedomPropertyId });
         }
 
 
@@ -130,7 +132,7 @@ namespace PublicOrders.Models
 
         [ForeignKey("Rubric")]
         public int? RubricId { get; set; }
-        virtual public Rubric Rubric { get; set; }
+        public virtual  Rubric Rubric { get; set; }
 
         [Index]
         public DateTime ModifiedDateTime { get; set; }
