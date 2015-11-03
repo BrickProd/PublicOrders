@@ -205,7 +205,7 @@ namespace PublicOrders.Models
     #region ШАБЛОНЫ
     public class CommitteeProperty
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CommitteePropertyId { get; set; }
 
         [ForeignKey("Product"), Required]
@@ -238,7 +238,7 @@ namespace PublicOrders.Models
 
     public class Form2Property
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Form2PropertyId { get; set; }
 
         [ForeignKey("Product"), Required]
@@ -266,7 +266,7 @@ namespace PublicOrders.Models
 
     public class FreedomProperty
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FreedomPropertyId { get; set; }
 
         [ForeignKey("Product"), Required]

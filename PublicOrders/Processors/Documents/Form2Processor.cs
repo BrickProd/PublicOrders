@@ -84,9 +84,18 @@ namespace PublicOrders.Processors
                         try
                         {
                             product.Rubric = rubric;
-                            mvm.dc.Products.Add(product);
 
+                            /*foreach (Form2Property fp in product.Form2Properties) {
+                                mvm.dc.Form2Properties.Add(fp);
+                                mvm.dc.SaveChanges();
+                            }*/
+
+                            //mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            //mvm.dc.SaveChanges();
+
+                            mvm.dc.Products.Add(product);
                             mvm.dc.SaveChanges();
+
                             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                             {
                                 mvm.ProductCollection.Add(product);
@@ -111,7 +120,9 @@ namespace PublicOrders.Processors
                     (form2Property.RequiredValue != "") ||
                     (form2Property.Measure != ""))
                 {
+                    //form2Property.Product = product;
                     product.Form2Properties.Add(form2Property);
+
                 }
 
             }
@@ -210,6 +221,9 @@ namespace PublicOrders.Processors
 
                                 product = new Product();
                                 product.Name = Globals.DeleteNandSpaces(Globals.ConvertTextExtent(Globals.CleanWordCell(cellValue)));
+                                //product.ModifiedDateTime = DateTime.Now;
+                                //mvm.dc.Products.Add(product);
+                                //mvm.dc.SaveChanges();
 
                                 break;
                             case (3):
