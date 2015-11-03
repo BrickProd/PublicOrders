@@ -27,18 +27,25 @@
                                 <Grid>
                                     <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay}" />
                                     <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}"/>
-                                    <ProgressBar Margin="0" Value="{Binding SearchingProgress}" Visibility="Hidden" Minimum="0" Maximum="100">
-                                        <ProgressBar.Style>
-                                            <Style TargetType="{x:Type ProgressBar}">
-                                                <Setter Property="Foreground" Value="#FF007ACB"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ProgressBar.Style>
-                                    </ProgressBar>
+                                    <Grid Margin="0">
+                                        <ProgressBar Value="{Binding SearchingProgress}" Minimum="0" Maximum="100">
+                                            <ProgressBar.Style>
+                                                <Style TargetType="{x:Type ProgressBar}">
+                                                    <Setter Property="Foreground" Value="#FF007ACB"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsCustomersSearching}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ProgressBar.Style>
+                                        </ProgressBar>
+                                        <TextBlock Text="{Binding SearchingProgressText}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                    </Grid>
+                                    
                                 </Grid>
                             </ControlTemplate>
                         </TextBox.Template>
@@ -52,7 +59,7 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <ProgressBar Margin="0,30,0,-3" Value="{Binding SearchingProgress}"  Maximum="100" Minimum="0" Opacity="0" >
+                    <!--<ProgressBar Margin="0,30,0,-3" Value="{Binding SearchingProgress}"  Maximum="100" Minimum="0" >
                         <ProgressBar.Style>
                             <Style TargetType="{x:Type ProgressBar}">
                                 <Setter Property="Foreground" Value="#FF007ACB"/>
@@ -60,10 +67,13 @@
                                     <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
                                         <Setter Property="Opacity" Value="1"/>
                                     </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsCustomersSearching}" Value="False">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </ProgressBar.Style>
-                    </ProgressBar>
+                    </ProgressBar>-->
                 </Grid>
                 <Grid Margin="10 0" Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -74,23 +84,23 @@
                     <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
 
                     <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" HorizontalAlignment="Left" Width="500">
-                        <ListBox x:Name="CustomersListBox" Margin="0,0,0,0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
+                        <ListView x:Name="CustomersListBox" Margin="0,0,0,0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							BorderBrush="LightGray">
-                            <ListBox.ItemTemplate>
+                            <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
                                         <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
                                         <TextBlock Text="{Binding Vatin}" FontSize="14" Foreground="Gray"/>
                                     </StackPanel>
                                 </DataTemplate>
-                            </ListBox.ItemTemplate>
-                            <!--<ListBox.ItemContainerStyle>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
                                     <EventSetter Event="Control.MouseDoubleClick" Handler="CustomerDoubleClick"/>
                                 </Style>
-                            </ListBox.ItemContainerStyle>-->
-                        </ListBox>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="0.5 0 0.5 0" Margin="505,0,0,0" HorizontalAlignment="Left" Width="500">
                         <Grid>
@@ -116,9 +126,23 @@
                                                 <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
                                                     <Setter Property="IsEnabled" Value="False"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsEnabled, ElementName=PauseBtn}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="False" />
-                                                    <!-- Here is the 'override' content -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                        <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                        <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </MultiDataTrigger>
+                                                
+                                                <DataTrigger Binding="{Binding IsWinnerLotsSearchingPause}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -128,16 +152,27 @@
                                     <Button.Style>
                                         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PauseButtonStyle}">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="True"/>
-                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
                                                     <Setter Property="IsEnabled" Value="False"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsEnabled, ElementName=StartBtn}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="False" />
-                                                    <!-- Here is the 'override' content -->
-                                                </DataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                        <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                        <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                </MultiDataTrigger>
+                                                
+                                                <!--<DataTrigger Binding="{Binding IsWinnerLotsSearchingPause}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                </DataTrigger>-->
                                             </Style.Triggers>
                                         </Style>
                                     </Button.Style>

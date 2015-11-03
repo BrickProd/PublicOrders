@@ -66,6 +66,17 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private bool _isWinnerLotsSearchingPause;
+        public bool IsWinnerLotsSearchingPause
+        {
+            get { return _isWinnerLotsSearchingPause; }
+            set
+            {
+                _isWinnerLotsSearchingPause = value;
+                OnPropertyChanged("IsWinnerLotsSearchingPause");
+            }
+        }
+
         private bool _reportCreating;
         public bool ReportCreating
         {
@@ -356,6 +367,7 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
+            IsWinnerLotsSearchingPause = false;
             IsWinnerLotsSearching = true;
 
             if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
@@ -448,11 +460,13 @@ namespace PublicOrders.ViewModels
         }
 
         private void WinnerLotsSearchStop() {
+            IsWinnerLotsSearchingPause = false;
             mvm.lsProcessor.Stop();
         }
 
         private void WinnerLotsSearchPausePlay()
         {
+            IsWinnerLotsSearchingPause = !IsWinnerLotsSearchingPause;
             mvm.lsProcessor.PausePlay();
         }
 
@@ -484,6 +498,7 @@ namespace PublicOrders.ViewModels
 
         public WinnerSearchViewModel()
         {
+            IsWinnerLotsSearchingPause = false;
             //Winners = new ObservableCollection<object>(база);
         }
 
