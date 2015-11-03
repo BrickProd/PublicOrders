@@ -19,7 +19,6 @@ namespace PublicOrders.ViewModels
     public class ProductEditorViewModel : INotifyPropertyChanged
     {
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-        public BackgroundWorker backgroundWorker1;
 
         private CollectionViewSource _products;
         public CollectionViewSource Products
@@ -148,37 +147,17 @@ namespace PublicOrders.ViewModels
 
         public ProductEditorViewModel()
         {
-            backgroundWorker1 = new BackgroundWorker();
             if (mvm != null)
             {
-
-                backgroundWorker1.DoWork += BackgroundWorker1_DoWork;
-
                 Products = new CollectionViewSource();
                 Products.Source = this.mvm.ProductCollection;
-                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric"));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
 
                 Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics);
                 Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
-            }
-        }
-
-        private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Products = new CollectionViewSource();
-
-            
-        }
-
-        public void LoadProducts()
-        {
-            if (backgroundWorker1.IsBusy != true)
-            {
-                // Start the asynchronous operation.
-                backgroundWorker1.RunWorkerAsync();
             }
         }
 
@@ -223,19 +202,20 @@ namespace PublicOrders.ViewModels
         }
         private void SaveProduct()
         {
-            var task = new Task(new Action(() =>
+            if (SelectedProduct.FreedomProperties.Count > 1)
             {
-                if (SelectedProduct != null)
-                {
+                MessageBox.Show("В шаблоне свобода может быть только 1 свойство");
+                return;
+            }    
 
-                    mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
-                    mvm.dc.SaveChanges();
-                }
-            }));
-            task.Start();
+            if (SelectedProduct != null)
+            {
+
+                mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
+                var a = mvm.dc.SaveChanges();
+            }
 
             this.Products.View.Refresh();
-
         }
 
         private void AddForm2Property()

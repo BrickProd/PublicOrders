@@ -33,25 +33,14 @@ namespace PublicOrders
             try
             {
 
-                var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
-                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+                //var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
+                //var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-                mvm.RefreshProducts();
-                vm.Products.Source = mvm.ProductCollection;
-                vm.Products.View.Refresh();
-                //vm.LoadProducts();
-                //BackgroundWorker bw = new BackgroundWorker();
-                //bw.DoWork += (w, arg) =>
-                // {
-                //     mvm.RefreshProducts();
-                //     Application.Current.Dispatcher.BeginInvoke(new Action(()=>{
-                //        vm.Products.Source = mvm.ProductCollection;
-                //        vm.Products.View.Refresh();
-                //     }));
+                //mvm.RefreshProducts();
+                //vm.Products.Source = mvm.ProductCollection;
+                //vm.Products.View.Refresh();
 
-                // };
-                //bw.RunWorkerAsync();
-
+                //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }
             catch (Exception ex)
             {

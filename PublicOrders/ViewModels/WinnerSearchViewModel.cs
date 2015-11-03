@@ -518,6 +518,9 @@ namespace PublicOrders.ViewModels
         {
             IsWinnerLotsSearchingPause = false;
             //Winners = new ObservableCollection<object>(база);
+
+            Customers = new ObservableCollection<Customer>();
+            Customers.Add(new Customer() { Name = "wsefasgfsdg" });
         }
 
 
