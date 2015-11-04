@@ -32,8 +32,6 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
@@ -41,39 +39,106 @@
 				x:Name="CloseWinnerInfoPanel" Command="{Binding SaveProductCommand}" Click="CloseWinnerInfoPanel_Click"
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Торговая марка" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Сертификация" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Рубрика" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Шаблоны" Grid.Column="0" Grid.Row="5" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBox Grid.Row="1" Text="{Binding SelectedProduct.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <TextBox Grid.Row="2" Text="{Binding SelectedProduct.TradeMark}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <TextBox Grid.Row="2" Text="{Binding SelectedProduct.Certification}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <ComboBox Grid.Row="3" ItemsSource="{Binding Rubrics}" SelectedItem="{Binding SelectedProduct.Rubric, Mode=TwoWay}" DisplayMemberPath="Name" SelectedValuePath="Rubric" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="3">
-                
+            <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Grid.Row="1" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" TextTrimming="WordEllipsis" ToolTip="{Binding SelectedWinner.Name}"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                <TextBlock Grid.Row="1" Text="Email: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
+                <TextBlock Grid.Row="1" Text="{Binding SelectedWinner.Email}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+                <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
+                <TextBlock Grid.Row="1" Text="{Binding SelectedWinner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            </StackPanel>
+            <TabControl Grid.Row="3" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
+                <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
+                    <Grid>
+                        <ScrollViewer>
+                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                <TextBlock Text="Название:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Цена:" FontSize="18"></TextBlock>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedWinner.Lot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBlock Text=" -> " FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBlock Text="{Binding SelectedWinner.Lot.Price}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBlock Text=" " FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBlock Text="{Binding SelectedWinner.Lot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                </StackPanel>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Дата:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.DocumentDateTime}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Закон:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.LawType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Тип заказа:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.OrderType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Номер заказа:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Number}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                </TabItem>
+                <TabItem Header="Заказчик" Style="{StaticResource PanelContentStyleMini}">
+                    <Grid>
+                        <ScrollViewer>
+                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                <TextBlock Text="ИНН:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.Vatin}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                
+                                <TextBlock Text="Название:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Адрес:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.Address}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                                <TextBlock Text="Уровень:" FontSize="18"></TextBlock>
+                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.CustomerLevel.CustomerLevelCode}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
             </TabControl>
+            <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
+                <Hyperlink NavigateUri="{Binding SelectedWinner.Lot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
+                    Подробности на сайте
+                </Hyperlink>
+            </TextBlock>
         </Grid>
 
 
 
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
-        <Border BorderBrush="DodgerBlue" BorderThickness="0 0 0 0" Margin="0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <Border BorderThickness="0 0 0 0" Margin="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70"/>
@@ -88,7 +153,7 @@
                             <ControlTemplate>
                                 <Grid>
                                     <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}"/>
+                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}" Click="Button_Click"/>
                                     <Grid Margin="0">
                                         <ProgressBar Value="{Binding SearchingProgress}" Minimum="0" Maximum="100" Name="ProgressBar">
                                             <ProgressBar.Style>
@@ -162,10 +227,10 @@
                     </Grid.RowDefinitions>
 
                     <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" >
 
                         <!--ЗаКАЗЧИКИ-->
-                        <Border BorderThickness="0.5 0 0.5 0" BorderBrush="LightGray" Grid.Row="0" Margin="0,0" Grid.Column="0" Name="CustomersSide" Width="555">
+                        <Border BorderThickness="0.5 0 0.5 0" BorderBrush="LightGray" Grid.Row="0" Margin="0,0" Grid.Column="0" Name="CustomersSide" Width="555" >
                             <Grid Margin="0">
 
                                 <Border Margin="0" Name="OpenCustomerSide" Visibility="Visible">
@@ -230,6 +295,7 @@
                                 </Border>
                                 <ListView x:Name="CustomersListBox" Margin="0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
 							    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                          MouseLeave="CustomersSide_MouseLeave"
 							    BorderBrush="LightGray">
                                     <ListView.Style>
                                         <Style TargetType="ListView">
@@ -363,8 +429,8 @@
 
 
                                 <ListView x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Winners}" BorderThickness="0" FontSize="16"
-								AlternationCount="2"
-								BorderBrush="LightGray" Grid.Row="2">
+								AlternationCount="2" SelectedItem="{Binding SelectedWinner}"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" Grid.Row="2">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
                                             <EventSetter Event="Control.MouseDoubleClick" Handler="WinnerDoubleClick"/>
@@ -385,9 +451,6 @@
                         </Border>
 
                     </StackPanel>
-
-
-
 
 
                     <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,10,0" Width="97.333"/>

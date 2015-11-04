@@ -33,6 +33,17 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private Winner _selectedWinner = null;
+        public Winner SelectedWinner
+        {
+            get { return _selectedWinner; }
+            set
+            {
+                _selectedWinner = value;
+                OnPropertyChanged("SelectedWinner");
+            }
+        }
+
         private string _searchInput;
         public string SearchInput
         {
@@ -520,7 +531,6 @@ namespace PublicOrders.ViewModels
             //Winners = new ObservableCollection<object>(база);
 
             Customers = new ObservableCollection<Customer>();
-            Customers.Add(new Customer() { Name = "wsefasgfsdg" });
         }
 
 
