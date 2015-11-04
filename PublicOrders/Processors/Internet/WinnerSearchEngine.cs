@@ -377,9 +377,9 @@ namespace PublicOrders.Processors.Internet
                         text += "/div[@class=\"noticeTabBoxWrapper\"]";
 
                         HtmlAgilityPack.HtmlNodeCollection lotInfoColl = doc.DocumentNode.SelectNodes(text);
-                        if ((lotInfoColl == null) || (lotInfoColl.Count != 5)) return ResultType_enum.NotSearch;
+                        if ((lotInfoColl == null)/* || (lotInfoColl.Count != 5)*/) return ResultType_enum.NotSearch;
 
-                        HtmlAgilityPack.HtmlNodeCollection tdColl = lotInfoColl[3].SelectNodes(".//table/tr/td");
+                        HtmlAgilityPack.HtmlNodeCollection tdColl = lotInfoColl[lotInfoColl.Count - 2].SelectNodes(".//table/tr/td");
                         // Дата заключения контракта
                         _94lotDocumentDateTime = tdColl[1].InnerText.Trim();
                         if (_94lotDocumentDateTime.IndexOf('(') > -1)
