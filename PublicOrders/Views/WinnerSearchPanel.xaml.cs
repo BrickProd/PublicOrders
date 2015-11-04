@@ -39,7 +39,7 @@ namespace PublicOrders.Views
         private void CustomerDoubleClick(object sender, MouseEventArgs e)
         {
             var vm = this.DataContext as WinnerSearchViewModel;
-            //vm.WinnerLotsSearchCommand.Execute(new object());
+            vm.WinnerLotsSearchCommand.Execute(new object());
 
 
 

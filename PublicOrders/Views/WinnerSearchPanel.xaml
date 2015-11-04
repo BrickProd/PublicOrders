@@ -87,7 +87,7 @@
                         <TextBox.Template>
                             <ControlTemplate>
                                 <Grid>
-                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay}" />
+                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                     <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}"/>
                                     <Grid Margin="0">
                                         <ProgressBar Value="{Binding SearchingProgress}" Minimum="0" Maximum="100" Name="ProgressBar">
@@ -95,19 +95,19 @@
                                                 <Style TargetType="{x:Type ProgressBar}">
                                                     <Setter Property="Foreground" Value="#FF007ACB"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
-                                                        <MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <!--<MultiDataTrigger>
                                                             <MultiDataTrigger.Conditions>
                                                                 <Condition Binding="{Binding IsCustomersSearching}" Value="False" />
                                                                 <Condition Binding="{Binding IsWinnerLotsSearching}" Value="False" />
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </MultiDataTrigger>
+                                                        </MultiDataTrigger>-->
                                                     </Style.Triggers>
                                                 </Style>
                                             </ProgressBar.Style>
@@ -139,7 +139,7 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <!--<ProgressBar Margin="0,30,0,-3" Value="{Binding SearchingProgress}"  Maximum="100" Minimum="0" >
+                    <ProgressBar Margin="0,29,0,-3" IsIndeterminate="True" Panel.ZIndex="-10" Background="Transparent" BorderBrush="Transparent">
                         <ProgressBar.Style>
                             <Style TargetType="{x:Type ProgressBar}">
                                 <Setter Property="Foreground" Value="#FF007ACB"/>
@@ -153,7 +153,7 @@
                                 </Style.Triggers>
                             </Style>
                         </ProgressBar.Style>
-                    </ProgressBar>-->
+                    </ProgressBar>
                 </Grid>
                 <Grid Margin="10 0" Grid.Row="1">
                     <Grid.RowDefinitions>
