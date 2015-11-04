@@ -107,66 +107,91 @@
                 <!--ПАНЕЛЬ ТОВАРОВ-->
                 <TabItem Header="Товары" Style="{StaticResource PanelContentStyleMini}">
                     <Grid>
-                        <TextBox x:Name="textBox" HorizontalAlignment="Stretch" Height="30" Margin="10,10,10,0" FontSize="18" TextWrapping="NoWrap"
+                        <Button x:Name="AddNewProductBtn_Copy" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,0,0" Width="30"
+        	                Background="Transparent" BorderBrush="Transparent"
+        	                Style="{StaticResource AddButtonStyle}"
+                                Command="{Binding AddProductCommand}"
+        	                FontSize="16"
+        	                Click="AddNewRubricBtn_Click" Height="30" VerticalAlignment="Top"/>
+
+                        <Border BorderBrush="Gray" Margin="10,45,10,51.167" BorderThickness="1">
+                            <Grid>
+                                <TextBox x:Name="textBox" HorizontalAlignment="Stretch" Height="30" Margin="0,0,0,0" FontSize="18" TextWrapping="NoWrap"
                                  Text="{Binding ProductFilterStr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                  VerticalAlignment="Top" Width="Auto" BorderBrush="Gray" BorderThickness="0 0 0 1"/>
-                        <ListView x:Name="ProductsListView"
-							ItemsSource="{Binding Products.View}"
+                                <ListView x:Name="ProductsListView"
+                                          BorderBrush="Transparent"
+							ItemsSource="{Binding Products.View, IsAsync=True, FallbackValue=...}"
 							SelectedItem="{Binding SelectedProduct}"
                                   VirtualizingPanel.IsVirtualizing="True"
                             AlternationCount="2"
-							Margin="10,45,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+							Margin="0,35,0,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
-                                    <EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20"/>
-                                            <ColumnDefinition Width="20"/>
-                                            <ColumnDefinition Width="20"/>
-                                            <ColumnDefinition Width="20"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock FontSize="14" Text="{Binding Komitet}" Grid.Column="0" VerticalAlignment="Center" Foreground="#002D4B" FontWeight="Bold"/>
-                                        <TextBlock FontSize="14" Text="{Binding Svoboda}" Grid.Column="1" VerticalAlignment="Center" Foreground="#17364B" FontWeight="Bold"/>
-                                        <TextBlock FontSize="14" Text="{Binding Form2}" Grid.Column="2" VerticalAlignment="Center" Foreground="#005B98" FontWeight="Bold"/>
-                                        <StackPanel Grid.Column="4">
-                                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" FontSize="16"/>
-                                            <TextBlock TextWrapping="Wrap" Text="{Binding TradeMark}" FontSize="12" FontStyle="Italic"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate>
-                                                        <Expander IsExpanded="True">
-                                                            <Expander.Header>
-                                                                <Border>
-                                                                    <StackPanel Orientation="Horizontal">
-                                                                        <TextBlock Text="{Binding Name}" FontSize="22" FontStretch="Expanded" Margin="20 5 0 5"/>
-                                                                    </StackPanel>
-                                                                </Border>
-                                                            </Expander.Header>
-                                                            <ItemsPresenter/>
-                                                        </Expander>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+                                            <EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>
                                         </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                        </ListView>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock FontSize="14" Text="{Binding Komitet}" Grid.Column="0" VerticalAlignment="Center" Foreground="#002D4B" FontWeight="Bold"/>
+                                                <TextBlock FontSize="14" Text="{Binding Svoboda}" Grid.Column="1" VerticalAlignment="Center" Foreground="#17364B" FontWeight="Bold"/>
+                                                <TextBlock FontSize="14" Text="{Binding Form2}" Grid.Column="2" VerticalAlignment="Center" Foreground="#005B98" FontWeight="Bold"/>
+                                                <StackPanel Grid.Column="4">
+                                                    <TextBlock TextWrapping="Wrap" Text="{Binding Name}" FontSize="16">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsRepetition}" Value="True">
+                                                                        <Setter Property="Foreground" Value="DarkRed"></Setter>
+                                                                        <Setter Property="FontWeight" Value="Bold"></Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBlock TextWrapping="Wrap" Text="{Binding TradeMark}" FontSize="12" FontStyle="Italic"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.ContainerStyle>
+                                                <Style TargetType="{x:Type GroupItem}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate>
+                                                                <Expander IsExpanded="True">
+                                                                    <Expander.Header>
+                                                                        <Border>
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="{Binding Name}" FontSize="22" FontStretch="Expanded" Margin="20 5 0 5"/>
+                                                                            </StackPanel>
+                                                                        </Border>
+                                                                    </Expander.Header>
+                                                                    <ItemsPresenter/>
+                                                                </Expander>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </GroupStyle.ContainerStyle>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
+                                </ListView>
+                            </Grid>
+
+                        </Border>
+
                     </Grid>
                 </TabItem>
 
@@ -174,9 +199,10 @@
                 <!--ПАНЕЛЬ РУБРИК-->
                 <TabItem Header="Рубрики" Style="{StaticResource PanelContentStyleMini}">
                     <Grid Margin="0,-0.666,0,0.666">
-                        <Button x:Name="AddNewRubricBtn" Content="+" FontWeight="Bold" HorizontalAlignment="Left"
+                        <Button x:Name="AddNewRubricBtn" FontWeight="Bold" HorizontalAlignment="Left"
 							Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="30"
 							Background="Transparent" BorderBrush="Transparent"
+                            Style="{StaticResource AddButtonStyle}"
 							FontSize="16"
 							Click="AddNewRubricBtn_Click"/>
                         <Rectangle Fill="White" HorizontalAlignment="Left" Height="8.123" Margin="10,43,0,0" Stroke="White"
@@ -217,9 +243,11 @@
                                 </StackPanel>
                             </Grid>
                         </Border>
+                        <TextBox Text="{Binding SelectedRubric.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281"></TextBox>
                         <ListBox x:Name="rubricsListBox" Margin="0,45,0,10" ItemsSource="{Binding Rubrics}" Width="400" BorderThickness="1 0 1 0"
 							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
+                                 SelectedItem="{Binding SelectedRubric}"
 							BorderBrush="LightGray" HorizontalAlignment="Left"/>
                     </Grid>
                 </TabItem>
@@ -227,15 +255,26 @@
 
                 <!--ПАНЕЛЬ ИНСТРУКЦИЙ-->
                 <TabItem Header="Инструкции" Style="{StaticResource PanelContentStyleMini}">
-                    <DataGrid x:Name="instructionGrid" Margin="10,30.96,168,10" ItemsSource="{Binding Instructions}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <Grid Margin="0,-0.666,0,0.666">
+                        <Button x:Name="AddNewInstructionBtn" FontWeight="Bold" HorizontalAlignment="Left"
+							Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="30"
+							Background="Transparent" BorderBrush="Transparent"
+                            Style="{StaticResource AddButtonStyle}"
+                                Command="{Binding AddInstructionCommand}"
+							FontSize="16"/>
+                        <TextBox Text="{Binding SelectedInstruction.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281"></TextBox>
+                        <ListBox x:Name="instructionListBox" Margin="0,45,0,10" ItemsSource="{Binding Instructions}" Width="400" BorderThickness="1 0 1 0"
+							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+                                 SelectedItem="{Binding SelectedInstruction}"
+							ItemTemplate="{StaticResource ListBoxItemTemplate}"
+							BorderBrush="LightGray" HorizontalAlignment="Left"/>
+                        <TextBox Text="{Binding SelectedInstruction.Text}" HorizontalAlignment="Left" Margin="405,81,0,10" TextWrapping="Wrap" Width="281"/>
+                        <Button Visibility="Collapsed" Content="Сохранить" HorizontalAlignment="Left" Margin="405,0,0,10" VerticalAlignment="Bottom" Width="147" Height="25"
+                                Style="{StaticResource OKButtonStyle}" Command="{Binding SaveInstructionCommand}"/>
+
+                    </Grid>
                 </TabItem>
             </TabControl>
         </Border>
-
-
     </Grid>
 </UserControl>

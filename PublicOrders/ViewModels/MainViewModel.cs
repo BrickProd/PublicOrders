@@ -4,6 +4,7 @@ using System.ComponentModel;
 using PublicOrders.Models;
 using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
+using System.Linq;
 
 namespace PublicOrders
 {
@@ -135,16 +136,25 @@ namespace PublicOrders
 
             // Победители
             wc = new WinnersDbContext();
+
+            CheckProductsRepetition();
         }
 		
         public void RefreshProducts()
         {
             this.ProductCollection = new ObservableCollection<Product>(dc.Products);
         }
-		
-		
-		#region INotifyPropertyChanged
-		public event PropertyChangedEventHandler PropertyChanged;
+
+        public void CheckProductsRepetition()
+        {
+            this.ProductCollection.ToList().ForEach(m => {
+                m.IsRepetition = ProductCollection.Where(p => p.Name == m.Name).Count() > 1;
+            });      
+        }
+
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
 
 		private void OnPropertyChanged(String info)
 		{

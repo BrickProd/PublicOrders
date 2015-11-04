@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PublicOrders.ViewModels;
 using System.Windows.Media.Animation;
+using System.Diagnostics;
 
 namespace PublicOrders.Views
 {
@@ -33,6 +34,24 @@ namespace PublicOrders.Views
             {
                 var vm = this.DataContext as WinnerSearchViewModel;
                 vm.CustomersSearchCommand.Execute(new object());
+
+                //сдвиг панелей
+                DoubleAnimation daTo100 = new DoubleAnimation();
+                daTo100.To = 100;
+                daTo100.Duration = TimeSpan.FromSeconds(0.2);
+                daTo100.EasingFunction = new CubicEase();
+
+                DoubleAnimation daTo555 = new DoubleAnimation();
+                daTo555.To = 555;
+                daTo555.Duration = TimeSpan.FromSeconds(0.2);
+                daTo555.EasingFunction = new CubicEase();
+
+
+                this.CustomersSide.BeginAnimation(WidthProperty, daTo555);
+                this.WinnersSide.BeginAnimation(WidthProperty, daTo100);
+
+                this.OpenCustomerSide.Visibility = Visibility.Collapsed;
+                this.CustomersListBox.Visibility = Visibility.Visible;
             }
         }
 
@@ -137,5 +156,52 @@ namespace PublicOrders.Views
 
         }
 
+        private void CustomersSide_MouseLeave(object sender, MouseEventArgs e)
+        {
+            //сдвиг панелей
+            DoubleAnimation daTo100 = new DoubleAnimation();
+            daTo100.To = 100;
+            daTo100.Duration = TimeSpan.FromSeconds(0.2);
+            daTo100.EasingFunction = new CubicEase();
+
+            DoubleAnimation daTo555 = new DoubleAnimation();
+            daTo555.To = 555;
+            daTo555.Duration = TimeSpan.FromSeconds(0.2);
+            daTo555.EasingFunction = new CubicEase();
+
+
+            this.CustomersSide.BeginAnimation(WidthProperty, daTo100);
+            this.WinnersSide.BeginAnimation(WidthProperty, daTo555);
+
+            this.OpenCustomerSide.Visibility = Visibility.Visible;
+            this.CustomersListBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //сдвиг панелей
+            DoubleAnimation daTo100 = new DoubleAnimation();
+            daTo100.To = 100;
+            daTo100.Duration = TimeSpan.FromSeconds(0.2);
+            daTo100.EasingFunction = new CubicEase();
+
+            DoubleAnimation daTo555 = new DoubleAnimation();
+            daTo555.To = 555;
+            daTo555.Duration = TimeSpan.FromSeconds(0.2);
+            daTo555.EasingFunction = new CubicEase();
+
+
+            this.CustomersSide.BeginAnimation(WidthProperty, daTo555);
+            this.WinnersSide.BeginAnimation(WidthProperty, daTo100);
+
+            this.OpenCustomerSide.Visibility = Visibility.Collapsed;
+            this.CustomersListBox.Visibility = Visibility.Visible;
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
     }
 }

@@ -55,7 +55,34 @@ namespace PublicOrders.ViewModels
                 _selectedProduct = value;
                 OnPropertyChanged("SelectedProduct");
             }
+        }
 
+        private Rubric _selectedRubric;
+        public Rubric SelectedRubric
+        {
+            get
+            {
+                return _selectedRubric;
+            }
+            set
+            {
+                _selectedRubric = value;
+                OnPropertyChanged("SelectedRubric");
+            }
+        }
+
+        private Instruction _selectedInstruction;
+        public Instruction SelectedInstruction
+        {
+            get
+            {
+                return _selectedInstruction;
+            }
+            set
+            {
+                _selectedInstruction = value;
+                OnPropertyChanged("SelectedInstruction");
+            }
         }
 
         private DelegateCommand updateProductCommand;
@@ -73,9 +100,7 @@ namespace PublicOrders.ViewModels
 
         private void UpdateProduct()
         {
-            //string sss = "";
             mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
-            //dc.Entry(SelectedProduct).State = EntityState.Modified;
             mvm.dc.SaveChanges();
         }
 
@@ -92,10 +117,14 @@ namespace PublicOrders.ViewModels
         #region КОМАНДЫ
         private DelegateCommand addProductCommand;
         private DelegateCommand addRubricCommand;
+        private DelegateCommand addInstructionCommand;
+
+        private DelegateCommand deleteProductCommand;
+        private DelegateCommand deleteRubricCommand;
+        private DelegateCommand deleteInstructionCommand;
+
         private DelegateCommand saveProductCommand;
-
-        private DelegateCommand addForm2PropertyCommand;
-
+        private DelegateCommand saveInstructionCommand;
 
         public ICommand AddProductCommand
         {
@@ -119,6 +148,42 @@ namespace PublicOrders.ViewModels
                 return addRubricCommand;
             }
         }
+        public ICommand AddInstructionCommand
+        {
+            get
+            {
+                if (addInstructionCommand == null)
+                {
+                    addInstructionCommand = new DelegateCommand(AddInstruction);
+                }
+                return addInstructionCommand;
+            }
+        }
+
+
+        public ICommand DeleteProductCommand
+        {
+            get
+            {
+                if (deleteProductCommand == null)
+                {
+                    deleteProductCommand = new DelegateCommand(DeleteProduct);
+                }
+                return deleteProductCommand;
+            }
+        }
+        public ICommand DeleteRubricCommand
+        {
+            get
+            {
+                if (deleteRubricCommand == null)
+                {
+                    deleteRubricCommand = new DelegateCommand(DeleteRubric);
+                }
+                return deleteRubricCommand;
+            }
+        }
+
         public ICommand SaveProductCommand
         {
             get
@@ -130,16 +195,15 @@ namespace PublicOrders.ViewModels
                 return saveProductCommand;
             }
         }
-
-        public ICommand AddForm2PropertyCommand
+        public ICommand SaveInstructionCommand
         {
             get
             {
-                if (addForm2PropertyCommand == null)
+                if (saveInstructionCommand == null)
                 {
-                    addForm2PropertyCommand = new DelegateCommand(AddForm2Property);
+                    saveInstructionCommand = new DelegateCommand(SaveInstruction);
                 }
-                return addForm2PropertyCommand;
+                return saveInstructionCommand;
             }
         }
 
@@ -151,7 +215,7 @@ namespace PublicOrders.ViewModels
             {
                 Products = new CollectionViewSource();
                 Products.Source = this.mvm.ProductCollection;
-                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric"));
+                Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
@@ -188,18 +252,58 @@ namespace PublicOrders.ViewModels
         #region МЕТОДЫ
         private void AddProduct()
         {
-            //Products.Add(new Product());
-            //dc.Products.Add(new Product());
+            var newProduct = new Product
+            {
+                Name = "НОВЫЙ ПРОДУКТ",
+                Rubric = Rubrics.FirstOrDefault(m=>m.RubricId==1)
+                
+            };
+
+            mvm.dc.Entry(newProduct).State = EntityState.Added;
+            mvm.dc.SaveChanges();
+
+            mvm.ProductCollection.Add(newProduct);
+            mvm.CheckProductsRepetition();
+            this.Products.View.Refresh();
+
+            this.SelectedProduct = newProduct;
         }
         private void AddRubric()
         {
             var newRubric = new Rubric { Name = NewRubricName };
 
-            //mvm.dc.Entry(newRubric);
-            //mvm.dc.SaveChanges();
+            mvm.dc.Entry(newRubric);
+            mvm.dc.SaveChanges();
 
             this.Rubrics.Add(newRubric);
         }
+        private void AddInstruction()
+        {
+            var newInstruction = new Instruction
+            {
+                Name = "НОВАЯ ИНСТРУКЦИЯ"
+            };
+
+            mvm.dc.Entry(newInstruction).State = EntityState.Added;
+            mvm.dc.SaveChanges();
+
+            Instructions.Add(newInstruction);
+
+            this.SelectedInstruction = newInstruction;
+        }
+
+
+
+        private void DeleteProduct()
+        {
+            //
+        }
+        private void DeleteRubric()
+        {
+            //
+        }
+
+
         private void SaveProduct()
         {
             if (SelectedProduct.FreedomProperties.Count > 1)
@@ -213,14 +317,15 @@ namespace PublicOrders.ViewModels
                 SelectedProduct.ModifiedDateTime = DateTime.Now;
                 mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
                 var a = mvm.dc.SaveChanges();
+                mvm.CheckProductsRepetition();
             }
-
+            
             this.Products.View.Refresh();
         }
-
-        private void AddForm2Property()
+        private void SaveInstruction()
         {
-            this.SelectedProduct.Form2Properties.Add(new Form2Property());
+            mvm.dc.Entry(SelectedInstruction).State = EntityState.Modified;
+            mvm.dc.SaveChanges();
         }
         #endregion
 
