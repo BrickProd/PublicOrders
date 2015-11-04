@@ -31,8 +31,8 @@ namespace PublicOrders.Processors.Main
         private Customer customer = null;
         private CustomerType_enum customerType_enum;
         private LawType_enum lawType_enum;
-        private UInt64 lowPrice = 0;
-        private UInt64 highPrice = 0;
+        private Int64 lowPrice = 0;
+        private Int64 highPrice = 0;
         private DateTime lowPublishDate;
         private DateTime highPublishDate;
 
@@ -44,7 +44,7 @@ namespace PublicOrders.Processors.Main
         private ObservableCollection<Order> orders = null;
 
         public LotsSearchProcessor(Customer _customer, CustomerType_enum _customerType_enum, 
-                                   LawType_enum _lawType_enum, UInt64 _lowPrice, UInt64 _highPrice,
+                                   LawType_enum _lawType_enum, Int64 _lowPrice, Int64 _highPrice,
                                    DateTime _lowPublishDate, DateTime _highPublishDate,
                                    LotSearched_delegate _lotSearched_delegate, 
                                    AllLotsSearched_delegete _allLotsSearched_delegete,
@@ -157,7 +157,7 @@ namespace PublicOrders.Processors.Main
                         List<Lot> searchLots = null;
                         foreach (Order searchOrder in orders)
                         {
-                            searchLots = searchOrder.Lots.Where(m => ((m.Price > lowPrice) && (m.Price < highPrice))).ToList();
+                            searchLots = searchOrder.Lots.Where(m => ((m.LotPrice > lowPrice) && (m.LotPrice < highPrice))).ToList();
                             foreach (Lot searchLot in searchLots)
                             {
                                 if ((searchLot.Winners != null) && (searchLot.Winners.Count() > 0))
@@ -239,6 +239,11 @@ namespace PublicOrders.Processors.Main
                         mvm.wc.SaveChanges();
                     }
                     else {
+                        /*if ((repeatOrder.Price == 0) && (order.Price > 0)) {
+                            repeatOrder.Price = order.Price;
+                            mvm.wc.Entry(repeatOrder).State = System.Data.Entity.EntityState.Modified;
+                            mvm.wc.SaveChanges();
+                        }*/
                         order = repeatOrder;
                     }
 
@@ -261,7 +266,7 @@ namespace PublicOrders.Processors.Main
                     // Начинаем поиск победителей в интернете
                     else {
                         // Ищем победителей, если у заказа прошла неделя с момента поиска победителей
-                        if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7))) {
+                        //if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7))) {
                             string winnerEngineMessage = "";
                             ResultType_enum resultSearch = winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
 
@@ -273,7 +278,7 @@ namespace PublicOrders.Processors.Main
                                     mvm.wc.Entry(order).State = System.Data.Entity.EntityState.Modified;
                                     mvm.wc.SaveChanges();
                             }
-                        }
+                        //}
                     }
                     #endregion
                 }
@@ -462,21 +467,27 @@ namespace PublicOrders.Processors.Main
                         case ("dt"):
                             // Цена
                             string orderPriceStr = dtddNode.InnerText.Trim().Replace(" ", "").ToLower();
-                            if (orderPriceStr != "нескольколотов") {
+                            if (orderPriceStr != "нескольколотов")
+                            {
                                 try
                                 {
-                                    
+
                                     if (orderPriceStr.IndexOf(',') > -1)
                                     {
-                                        order.Price = Convert.ToUInt64(orderPriceStr.Substring(0, orderPriceStr.IndexOf(',')));
+                                        order.OrderPrice = Convert.ToInt64(orderPriceStr.Substring(0, orderPriceStr.IndexOf(',')));
                                     }
-                                    else {
-                                        order.Price = Convert.ToUInt64(orderPriceStr);
+                                    else
+                                    {
+                                        order.OrderPrice = Convert.ToInt64(orderPriceStr);
                                     }
                                 }
-                                catch {
+                                catch
+                                {
                                     string sss = "ывавы";
                                 }
+                            }
+                            else {
+                                order.OrderPrice = 0;
                             }
                             break;
                         case ("dd"):

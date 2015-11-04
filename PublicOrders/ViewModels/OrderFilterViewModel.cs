@@ -11,7 +11,7 @@ namespace PublicOrders.ViewModels
 {
     public class OrderFilterViewModel
     {
-        public ulong MinPrice
+        public long MinPrice
         {
             get
             {
@@ -24,7 +24,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public ulong MaxPrice
+        public long MaxPrice
         {
             get
             {

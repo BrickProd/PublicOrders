@@ -60,7 +60,7 @@ namespace PublicOrders.Processors.Internet
                 if (lotsColl == null) return ResultType_enum.NotSearch;
 
                 string _223lotName = "";
-                ulong _223lotPrice = 0;
+                long _223lotPrice = 0;
                 string _223lotPriceTypeName = "";
                 long _223lotDocumentPrice = 0;
                 string _223lotDocumentDate = "";
@@ -112,11 +112,11 @@ namespace PublicOrders.Processors.Internet
                                     string _223lotPriceStr = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim());
                                     if (_223lotPriceStr.IndexOf(',') > -1)
                                     {
-                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')).Replace(" ", ""));
+                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')).Replace(" ", ""));
                                     }
                                     else
                                     {
-                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr.Replace(" ", ""));
+                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Replace(" ", ""));
                                     }
                                     //_223lotPrice = Convert.ToInt64(Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim()));
                                     _223lotPriceTypeName = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(priceTypePriceLot.IndexOf(' '), priceTypePriceLot.Length - priceTypePriceLot.IndexOf(' ')).Trim());
@@ -171,11 +171,11 @@ namespace PublicOrders.Processors.Internet
                                                     string _223lotPriceStr = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim());
                                                     if (_223lotPriceStr.IndexOf(',') > -1)
                                                     {
-                                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
+                                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr.Substring(0, _223lotPriceStr.IndexOf(',')));
                                                     }
                                                     else
                                                     {
-                                                        _223lotPrice = Convert.ToUInt64(_223lotPriceStr);
+                                                        _223lotPrice = Convert.ToInt64(_223lotPriceStr);
                                                     }
                                                     //_223lotPrice = Convert.ToInt64(Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(0, priceTypePriceLot.IndexOf(' ')).Trim()));
                                                     _223lotPriceTypeName = Globals.DecodeInternetSymbs(priceTypePriceLot.Substring(priceTypePriceLot.IndexOf(' '), priceTypePriceLot.Length - priceTypePriceLot.IndexOf(' ')).Trim());
@@ -210,7 +210,7 @@ namespace PublicOrders.Processors.Internet
 
                     if ((_223lotPrice != 0) && (_223lotPriceTypeName != ""))
                     {
-                        _223lot.Price = _223lotPrice;
+                        _223lot.LotPrice = _223lotPrice;
                         LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _223lotPriceTypeName.ToLower());
                         if (lotPriceType == null)
                         {

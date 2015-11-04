@@ -60,7 +60,7 @@ namespace PublicOrders.Processors.Internet
                     case ("44"):
                         // Параметры лота
                         string _44lotName = order.Name;
-                        ulong _44lotPrice = order.Price;
+                        long _44lotPrice = order.OrderPrice;
                         string _44lotPriceTypeName = order.OrderPriceType.Name;
                         string _44lotOrderHref = @"http://zakupki.gov.ru/epz/order/notice/zp44/view/common-info.html?regNumber=" + order.HrefId;
                         long _44lotDocumentPrice = 0;
@@ -233,7 +233,7 @@ namespace PublicOrders.Processors.Internet
                                 _44lot.Name = _44lot.Name.Substring(0, 398) + "..";
                             }
 
-                            _44lot.Price = _44lotPrice;
+                            _44lot.LotPrice = _44lotPrice;
                             // LotPriceType
                             LotPriceType _44lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _44lotPriceTypeName.ToLower());
                             if (_44lotPriceType == null)
@@ -294,10 +294,10 @@ namespace PublicOrders.Processors.Internet
                     #region 94 Закон
                     case ("94"):
                         // Если в заказе больше одного лота (<order.Price == 0>), то не заполняем (в будущем предусмотреть и такую ситуацию)
-                        if ((order.Price == null) || (order.Price == 0)) break;
+                        if ((order.OrderPrice == null) || (order.OrderPrice == 0)) break;
                         // Параметры лота
                         string _94lotName = order.Name;
-                        ulong _94lotPrice = order.Price;
+                        long _94lotPrice = order.OrderPrice;
                         string _94lotPriceTypeName = order.OrderPriceType.Name;
                     
                         string _94lotOrderHref = @"http://zakupki.gov.ru/pgz/public/action/orders/info/common_info/show?source=epz&notificationId=" + order.HrefId;
@@ -316,7 +316,9 @@ namespace PublicOrders.Processors.Internet
                         Regex regex = new Regex("html\\?reestrNumber=(\\d*)");
                         Match match = regex.Match(doc.DocumentNode.OuterHtml);
                         Group gr = match.Groups[1];
-
+                        if (gr.Value == "") {
+                            return ResultType_enum.NotSearch;
+                        }
 
                         doc = internetRequestEngine.GetHtmlDoc(@"http://zakupki.gov.ru/epz/contract/contractCard/common-info.html?reestrNumber=" + match.Groups[1].Value);
                         checkMessage = "";
@@ -404,7 +406,7 @@ namespace PublicOrders.Processors.Internet
                         Lot _94lot = new Lot();
                         _94winner.Lot = _94lot;
                         _94lot.Name = _94lotName;
-                        _94lot.Price = _94lotPrice;
+                        _94lot.LotPrice = _94lotPrice;
                         // lotPriceType
                         LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == _94lotPriceTypeName.ToLower());
                         if (lotPriceType == null)

@@ -26,9 +26,9 @@ namespace PublicOrders.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public ulong MinPrice {
+        public long MinPrice {
             get {
-                return ((ulong)(this["MinPrice"]));
+                return ((long)(this["MinPrice"]));
             }
             set {
                 this["MinPrice"] = value;
@@ -38,9 +38,9 @@ namespace PublicOrders.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public ulong MaxPrice {
+        public long MaxPrice {
             get {
-                return ((ulong)(this["MaxPrice"]));
+                return ((long)(this["MaxPrice"]));
             }
             set {
                 this["MaxPrice"] = value;

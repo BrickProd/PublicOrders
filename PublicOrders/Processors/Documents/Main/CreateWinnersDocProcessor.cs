@@ -148,7 +148,7 @@ namespace PublicOrders.Processors.Documents.Main
                         doc.Tables[1].Cell(i + 3, 2).Range.Text = winners[i].Lot.Name.Trim();
                         doc.Tables[1].Cell(i + 3, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                        doc.Tables[1].Cell(i + 3, 3).Range.Text = winners[i].Lot.Price + " >> " +
+                        doc.Tables[1].Cell(i + 3, 3).Range.Text = winners[i].Lot.LotPrice + " >> " +
                                                                   winners[i].Lot.DocumentPrice + " (" +
                                                                   winners[i].Lot.LotPriceType.Name.Trim() + ")";
                         doc.Tables[1].Cell(i + 3, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;

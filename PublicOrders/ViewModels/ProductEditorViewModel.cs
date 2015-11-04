@@ -210,7 +210,7 @@ namespace PublicOrders.ViewModels
 
             if (SelectedProduct != null)
             {
-
+                SelectedProduct.ModifiedDateTime = DateTime.Now;
                 mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
                 var a = mvm.dc.SaveChanges();
             }
