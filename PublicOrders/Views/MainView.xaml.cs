@@ -33,12 +33,12 @@ namespace PublicOrders
             try
             {
 
-                //var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
-                //var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+                var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
+                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-                //mvm.RefreshProducts();
-                //vm.Products.Source = mvm.ProductCollection;
-                //vm.Products.View.Refresh();
+                mvm.RefreshProducts();
+                vm.Products.Source = mvm.ProductCollection;
+                vm.Products.View.Refresh();
 
                 //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }

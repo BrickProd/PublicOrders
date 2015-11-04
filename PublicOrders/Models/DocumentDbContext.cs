@@ -29,37 +29,6 @@ namespace PublicOrders.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //у документов много атрибутов
-            //атрибут может быть в разных документах
-
-
-            //modelBuilder.Entity<Document>().Property(e => e.Name).HasColumnAnnotation(IndexAnnotation.AnnotationName, new IndexAnnotation(new IndexAttribute()));
-            //modelBuilder.Entity<Document>().Property(e => e.CreateDateTime).HasColumnAnnotation(IndexAnnotation.AnnotationName, new IndexAnnotation(new IndexAttribute()));
-
-            //в рубрике много объектов
-            //объект может быть в разных рубриках
-            //modelBuilder.Entity<Rubric>().HasMany(o => o.Products).WithMany(d => d.Rubrics).Map(m =>
-            //{
-            //    m.ToTable("Rubrics_Objects");
-            //    m.MapLeftKey("RubricId");
-            //    m.MapRightKey("ObjectId");
-            //});
-
-
-
-            //у объекта много параметров
-            //параметр может быть у разных объектов
-            //modelBuilder.Entity<Product_Param>()
-            //    .HasRequired(o => o.Product)
-            //    .WithMany(ob => ob.Product_Params)
-            //    .HasForeignKey(o => o.ProductId);
-
-            //modelBuilder.Entity<Product_Param>()
-            //    .HasRequired(o => o.Param)
-            //    .WithMany(ob => ob.Product_Params)
-            //    .HasForeignKey(o => o.ParamId);
-
-
             modelBuilder.Entity<CommitteeProperty>().HasKey(p => new { p.ProductId, p.CommitteePropertyId });
             modelBuilder.Entity<Form2Property>().HasKey(p => new { p.ProductId, p.Form2PropertyId});
             modelBuilder.Entity<FreedomProperty>().HasKey(p => new { p.ProductId, p.FreedomPropertyId });
@@ -132,11 +101,11 @@ namespace PublicOrders.Models
 
         [ForeignKey("Rubric")]
         public int? RubricId { get; set; }
-        public virtual  Rubric Rubric { get; set; }
+        public virtual Rubric Rubric { get; set; }
 
         [Index]
+        [Column(TypeName = "datetime2")]
         public DateTime ModifiedDateTime { get; set; }
-
 
         private ObservableCollection<CommitteeProperty> _committeeProperties;
         public virtual ObservableCollection<CommitteeProperty> CommitteeProperties
@@ -155,7 +124,7 @@ namespace PublicOrders.Models
         private ObservableCollection<FreedomProperty> _freedomProperties;
         public virtual ObservableCollection<FreedomProperty> FreedomProperties
         {
-            get { return _freedomProperties ?? (_freedomProperties = new ObservableCollection<FreedomProperty>(new  HashSet<FreedomProperty>())); } // Try HashSet<N>
+            get { return _freedomProperties ?? (_freedomProperties = new ObservableCollection<FreedomProperty>(new HashSet<FreedomProperty>())); } // Try HashSet<N>
             set { _freedomProperties = value; }
         }
 
@@ -188,9 +157,25 @@ namespace PublicOrders.Models
 
         public Product()
         {
-
+            this.IsRepetition = false;
         }
 
+        [NotMapped]
+        private bool _isRepetiotion;
+        public bool IsRepetition
+        {
+            get
+            {
+                return _isRepetiotion;
+            }
+            set
+            {
+                _isRepetiotion = value;
+                OnPropertyChanged("IsRepetition");
+            }
+        }
+        
+       
 
         public event PropertyChangedEventHandler PropertyChanged;
 
