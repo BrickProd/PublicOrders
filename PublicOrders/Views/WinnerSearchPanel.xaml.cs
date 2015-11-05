@@ -28,6 +28,35 @@ namespace PublicOrders.Views
             InitializeComponent();
         }
 
+        private void SlideInCustomers()
+        {
+            //сдвиг панелей
+            ThicknessAnimation slideIn = new ThicknessAnimation();
+            slideIn.To = new Thickness(0,0,10,0);
+            slideIn.Duration = TimeSpan.FromSeconds(0.2);
+            slideIn.EasingFunction = new CubicEase();
+
+            this.CustomersSide.BeginAnimation(MarginProperty, slideIn);
+
+            this.OpenCustomerSide.Visibility = Visibility.Collapsed;
+            this.CustomersListBox.Visibility = Visibility.Visible;
+        }
+
+        private void SlideOutCustomers()
+        {
+            //сдвиг панелей
+            ThicknessAnimation slideOut = new ThicknessAnimation();
+            slideOut.To = new Thickness(0, 0, this.MainPanelGrid.ActualWidth-100, 0);
+            slideOut.Duration = TimeSpan.FromSeconds(0.2);
+            slideOut.EasingFunction = new CubicEase();
+            
+            this.CustomersSide.BeginAnimation(MarginProperty, slideOut);
+
+            this.OpenCustomerSide.Visibility = Visibility.Visible;
+            this.CustomersListBox.Visibility = Visibility.Collapsed;
+        }
+
+
         private void OnKeyDownHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return)
@@ -35,23 +64,7 @@ namespace PublicOrders.Views
                 var vm = this.DataContext as WinnerSearchViewModel;
                 vm.CustomersSearchCommand.Execute(new object());
 
-                //сдвиг панелей
-                DoubleAnimation daTo100 = new DoubleAnimation();
-                daTo100.To = 100;
-                daTo100.Duration = TimeSpan.FromSeconds(0.2);
-                daTo100.EasingFunction = new CubicEase();
-
-                DoubleAnimation daTo555 = new DoubleAnimation();
-                daTo555.To = 555;
-                daTo555.Duration = TimeSpan.FromSeconds(0.2);
-                daTo555.EasingFunction = new CubicEase();
-
-
-                this.CustomersSide.BeginAnimation(WidthProperty, daTo555);
-                this.WinnersSide.BeginAnimation(WidthProperty, daTo100);
-
-                this.OpenCustomerSide.Visibility = Visibility.Collapsed;
-                this.CustomersListBox.Visibility = Visibility.Visible;
+                SlideInCustomers();
             }
         }
 
@@ -60,47 +73,12 @@ namespace PublicOrders.Views
             var vm = this.DataContext as WinnerSearchViewModel;
             vm.WinnerLotsSearchCommand.Execute(new object());
 
-
-
-
-            //сдвиг панелей
-            DoubleAnimation daTo100 = new DoubleAnimation();
-            daTo100.To = 100;
-            daTo100.Duration = TimeSpan.FromSeconds(0.2);
-            daTo100.EasingFunction = new CubicEase();
-
-            DoubleAnimation daTo555 = new DoubleAnimation();
-            daTo555.To = 555;
-            daTo555.Duration = TimeSpan.FromSeconds(0.2);
-            daTo555.EasingFunction = new CubicEase();
-
-
-            this.CustomersSide.BeginAnimation(WidthProperty, daTo100);
-            this.WinnersSide.BeginAnimation(WidthProperty, daTo555);
-
-            this.OpenCustomerSide.Visibility = Visibility.Visible;
-            this.CustomersListBox.Visibility = Visibility.Collapsed;
+            SlideOutCustomers();
         }
 
         private void OpenCustomerSideBtn_Click(object sender, RoutedEventArgs e)
         {
-            //сдвиг панелей
-            DoubleAnimation daTo100 = new DoubleAnimation();
-            daTo100.To = 100;
-            daTo100.Duration = TimeSpan.FromSeconds(0.2);
-            daTo100.EasingFunction = new CubicEase();
-
-            DoubleAnimation daTo555 = new DoubleAnimation();
-            daTo555.To = 555;
-            daTo555.Duration = TimeSpan.FromSeconds(0.2);
-            daTo555.EasingFunction = new CubicEase();
-
-
-            this.CustomersSide.BeginAnimation(WidthProperty, daTo555);
-            this.WinnersSide.BeginAnimation(WidthProperty, daTo100);
-
-            this.OpenCustomerSide.Visibility = Visibility.Collapsed;
-            this.CustomersListBox.Visibility = Visibility.Visible;
+            SlideInCustomers();
         }
 
         private void WinnerDoubleClick(object sender, MouseEventArgs e)
@@ -158,44 +136,12 @@ namespace PublicOrders.Views
 
         private void CustomersSide_MouseLeave(object sender, MouseEventArgs e)
         {
-            //сдвиг панелей
-            DoubleAnimation daTo100 = new DoubleAnimation();
-            daTo100.To = 100;
-            daTo100.Duration = TimeSpan.FromSeconds(0.2);
-            daTo100.EasingFunction = new CubicEase();
-
-            DoubleAnimation daTo555 = new DoubleAnimation();
-            daTo555.To = 555;
-            daTo555.Duration = TimeSpan.FromSeconds(0.2);
-            daTo555.EasingFunction = new CubicEase();
-
-
-            this.CustomersSide.BeginAnimation(WidthProperty, daTo100);
-            this.WinnersSide.BeginAnimation(WidthProperty, daTo555);
-
-            this.OpenCustomerSide.Visibility = Visibility.Visible;
-            this.CustomersListBox.Visibility = Visibility.Collapsed;
+            SlideOutCustomers();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //сдвиг панелей
-            DoubleAnimation daTo100 = new DoubleAnimation();
-            daTo100.To = 100;
-            daTo100.Duration = TimeSpan.FromSeconds(0.2);
-            daTo100.EasingFunction = new CubicEase();
-
-            DoubleAnimation daTo555 = new DoubleAnimation();
-            daTo555.To = 555;
-            daTo555.Duration = TimeSpan.FromSeconds(0.2);
-            daTo555.EasingFunction = new CubicEase();
-
-
-            this.CustomersSide.BeginAnimation(WidthProperty, daTo555);
-            this.WinnersSide.BeginAnimation(WidthProperty, daTo100);
-
-            this.OpenCustomerSide.Visibility = Visibility.Collapsed;
-            this.CustomersListBox.Visibility = Visibility.Visible;
+            SlideInCustomers();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

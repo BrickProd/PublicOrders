@@ -226,12 +226,11 @@
                     </Grid.RowDefinitions>
 
                     <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
-                    <StackPanel Orientation="Horizontal" >
+                    <Grid x:Name="MainPanelGrid">
 
                         <!--ЗаКАЗЧИКИ-->
-                        <Border BorderThickness="0.5 0 0.5 0" BorderBrush="LightGray" Grid.Row="0" Margin="0,0" Grid.Column="0" Name="CustomersSide" Width="555" >
+                        <Border BorderThickness="0.5 0 0.5 0" BorderBrush="LightGray" Grid.Row="0" Margin="0 0 10 0" Grid.Column="0" Name="CustomersSide" Panel.ZIndex="2">
                             <Grid Margin="0">
-
                                 <Border Margin="0" Name="OpenCustomerSide" Visibility="Visible">
                                     <Border.Style>
                                         <Style TargetType="Border">
@@ -255,7 +254,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <Button Name="OpenCustomerSideBtn" Click="OpenCustomerSideBtn_Click" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Height="100">
+                                    <Button Name="OpenCustomerSideBtn" Click="OpenCustomerSideBtn_Click" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Height="100" HorizontalAlignment="Right" Margin="0,90" Width="100">
                                         <Button.Template>
                                             <ControlTemplate>
                                                 <Grid Background="Transparent">
@@ -336,7 +335,7 @@
                         </Border>
 
                         <!--ПОБЕДИТЕЛИ-->
-                        <Border BorderBrush="LightGray" BorderThickness="0.5 0 0.5 0" Grid.Row="0" Grid.Column="1" Name="WinnersSide" Width="400">
+                        <Border BorderBrush="LightGray" BorderThickness="0.5 0 0.5 0" Grid.Row="0" Grid.Column="1" Name="WinnersSide" Margin="100 0 0 0">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="25"/>
@@ -439,7 +438,7 @@
                                         <DataTemplate>
                                             <StackPanel>
                                                 <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding Lot.Name}" FontSize="14" Foreground="Gray"/>
+                                                <TextBlock Text="{Binding Lot.Name}" FontSize="14" Foreground="Gray" TextWrapping="Wrap"/>
                                                 <TextBlock Text="{Binding Email}" FontSize="14" Foreground="Gray"/>
                                                 <TextBlock Text="{Binding Phone}" FontSize="14" Foreground="Gray"/>
                                             </StackPanel>
@@ -449,10 +448,7 @@
                             </Grid>
                         </Border>
 
-                    </StackPanel>
-
-
-                    <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Right" Margin="0,0,10,0" Width="97.333"/>
+                    </Grid>
                     <Button Content="Создать отчёт" FontSize="18" Command="{Binding CreateReportCommand}" Style="{StaticResource OKButtonStyle}" Background="Transparent" Grid.Row="1" Height="25" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
