@@ -98,7 +98,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private void UpdateProduct()
+        private void UpdateProduct(object param)
         {
             mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
             mvm.dc.SaveChanges();
@@ -222,6 +222,8 @@ namespace PublicOrders.ViewModels
 
                 Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics);
                 Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
+
+                mvm.CheckProductsRepetition();
             }
         }
 
@@ -250,7 +252,7 @@ namespace PublicOrders.ViewModels
 
 
         #region МЕТОДЫ
-        private void AddProduct()
+        private void AddProduct(object param)
         {
             var newProduct = new Product
             {
@@ -268,7 +270,7 @@ namespace PublicOrders.ViewModels
 
             this.SelectedProduct = newProduct;
         }
-        private void AddRubric()
+        private void AddRubric(object param)
         {
             var newRubric = new Rubric { Name = NewRubricName };
 
@@ -277,7 +279,7 @@ namespace PublicOrders.ViewModels
 
             this.Rubrics.Add(newRubric);
         }
-        private void AddInstruction()
+        private void AddInstruction(object param)
         {
             var newInstruction = new Instruction
             {
@@ -294,17 +296,37 @@ namespace PublicOrders.ViewModels
 
 
 
-        private void DeleteProduct()
+        private void DeleteProduct(object param)
         {
-            //
+            if (MessageBox.Show("Удалить выделенные продукты?", "Предупреждение",
+               MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+            {
+                //IEnumerable<Product> prods = param as IEnumerable<Product>;
+
+                var d = Products.View.Cast<Product>().Where(m => m.IsSelected);
+
+                //prods.ToList().ForEach(m =>
+                //{
+                //    var s = m. as Product;
+                //    mvm.dc.Entry(m).State = EntityState.Deleted;
+                //    mvm.dc.SaveChanges();
+                //    mvm.ProductCollection.Remove(m);
+                //});
+                //foreach (var pr in ((ObservableCollection<Product>)param).ToList())
+                //{
+                //    mvm.dc.Entry(pr).State = EntityState.Deleted;
+                //    mvm.dc.SaveChanges();
+                //    mvm.ProductCollection.Remove(pr);
+                //}
+            }
         }
-        private void DeleteRubric()
+        private void DeleteRubric(object param)
         {
             //
         }
 
 
-        private void SaveProduct()
+        private void SaveProduct(object param)
         {
             if (SelectedProduct.FreedomProperties.Count > 1)
             {
@@ -322,7 +344,7 @@ namespace PublicOrders.ViewModels
             
             this.Products.View.Refresh();
         }
-        private void SaveInstruction()
+        private void SaveInstruction(object param)
         {
             mvm.dc.Entry(SelectedInstruction).State = EntityState.Modified;
             mvm.dc.SaveChanges();

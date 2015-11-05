@@ -266,7 +266,7 @@ namespace PublicOrders.Processors.Main
                     // Начинаем поиск победителей в интернете
                     else {
                         // Ищем победителей, если у заказа прошла неделя с момента поиска победителей
-                        //if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7))) {
+                        if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7))) {
                             string winnerEngineMessage = "";
                             ResultType_enum resultSearch = winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
 
@@ -278,7 +278,7 @@ namespace PublicOrders.Processors.Main
                                     mvm.wc.Entry(order).State = System.Data.Entity.EntityState.Modified;
                                     mvm.wc.SaveChanges();
                             }
-                        //}
+                        }
                     }
                     #endregion
                 }

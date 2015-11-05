@@ -237,7 +237,7 @@ namespace PublicOrders.ViewModels
         #endregion
 
         #region Методы
-        private void CustomersSearch()
+        private void CustomersSearch(object param)
         {
             // Очищаем список заказчиков
             if (Customers != null)
@@ -358,7 +358,7 @@ namespace PublicOrders.ViewModels
         }
 
         private string currentCustomerSearching = "";
-        private void WinnerLotsSearch() {
+        private void WinnerLotsSearch(object param) {
             if (SelectedCustomer != null)
             {
                 if (SelectedCustomer.Name == currentCustomerSearching) return;
@@ -488,18 +488,18 @@ namespace PublicOrders.ViewModels
                 }));
         }
 
-        private void WinnerLotsSearchStop() {
+        private void WinnerLotsSearchStop(object param) {
             IsWinnerLotsSearchingPause = false;
             mvm.lsProcessor.Stop();
         }
 
-        private void WinnerLotsSearchPausePlay()
+        private void WinnerLotsSearchPausePlay(object param)
         {
             IsWinnerLotsSearchingPause = !IsWinnerLotsSearchingPause;
             mvm.lsProcessor.PausePlay();
         }
 
-        private void CreateReport()
+        private void CreateReport(object param)
         {
             ReportCreating = true;
             if ((mvm.cwProcessor != null) && (mvm.cwProcessor.isWorking()))
@@ -512,7 +512,7 @@ namespace PublicOrders.ViewModels
             mvm.cwProcessor.Operate();
         }
 
-        private void CreateReportStop()
+        private void CreateReportStop(object param)
         {
             mvm.cwProcessor.Stop();
         }

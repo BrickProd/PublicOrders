@@ -18,17 +18,20 @@ namespace PublicOrders.Processors
 
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        private void SaveProduct(Product product, Rubric rubric, ref int productsAddedCount, ref int productsRepeatCount, ref int productsMergeCount)
+        private void SaveProduct(DocumentDbContext ddc, Product product, ref int productsAddedCount, ref int productsRepeatCount, ref int productsMergeCount)
         {
             if (product != null)
             {
+                // Заполняем
+                Rubric rubric = ddc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
+
                 product.ModifiedDateTime = DateTime.Now;
                 // Проверка на повтор
                 // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
                 // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
                 // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
                 bool isRepeat = false;
-                IEnumerable<Product> repeatProducts = mvm.dc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&&
+                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&&
                                                                                  (m.Certification == product.Certification || m.Certification == null || m.Certification == "")*/)).ToList();
                 if (repeatProducts.Any())
                 {
@@ -59,6 +62,10 @@ namespace PublicOrders.Processors
                                     break;
                                 }
                             }
+                            if (isRepeat)
+                            {
+                                break;
+                            }
                         }
                         else
                         {
@@ -79,17 +86,17 @@ namespace PublicOrders.Processors
 
                         repeatProducts.ElementAt(0).CommitteeProperties = product.CommitteeProperties;
                         //repeatProducts.ElementAt(0).Certification = product.Certification;
-                        mvm.dc.Entry(repeatProducts.ElementAt(0)).State = System.Data.Entity.EntityState.Modified;
-                        mvm.dc.SaveChanges();
+                        ddc.Entry(repeatProducts.ElementAt(0)).State = System.Data.Entity.EntityState.Modified;
+                        ddc.SaveChanges();
                         productsMergeCount++;
                     }
 
                     else
                     {
                         product.Rubric = rubric;
-                        mvm.dc.Products.Add(product);
+                        ddc.Products.Add(product);
 
-                        mvm.dc.SaveChanges();
+                        ddc.SaveChanges();
                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             mvm.ProductCollection.Add(product);
@@ -173,10 +180,8 @@ namespace PublicOrders.Processors
                     return ResultType_enum.Error;
                 }
 
-                // Заполняем
-                var r = mvm.dc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
-
                 // Новый обход документа
+                DocumentDbContext ddc = new DocumentDbContext();
                 Product product = null;
                 CommitteeProperty committeeProperty = null;
 
@@ -205,7 +210,7 @@ namespace PublicOrders.Processors
                                 if (Globals.CleanWordCell(cellValue) == "") break;
                                 if (product != null)
                                 {
-                                    SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+                                    SaveProduct(ddc, product, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
                                 }
 
                                 product = new Product();
@@ -255,7 +260,9 @@ namespace PublicOrders.Processors
                     }
                 }
                 SaveProperty(product, committeeProperty);
-                SaveProduct(product, r, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+                SaveProduct(ddc, product, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+
+                ddc.Dispose();
 
                 // Закрываем приложение
                 application.Quit(ref missing, ref missing, ref missing);
@@ -376,7 +383,8 @@ namespace PublicOrders.Processors
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
-                        if ((products[i].CommitteeProperties == null) || (products[i].CommitteeProperties.Count == 0)) continue;
+                        if ((products[productIndexCompilator].CommitteeProperties == null) || 
+                            (products[productIndexCompilator].CommitteeProperties.Count == 0)) continue;
 
                         if (propertyIndexCompilator == 0)
                         {

@@ -74,7 +74,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private void Load()
+        private void Load(object param)
         {
             if (DocPath.Trim() == "")
             {
@@ -99,7 +99,7 @@ namespace PublicOrders.ViewModels
             mvm.lpProcessor.Operate();
         }
 
-        private void OpenFile()
+        private void OpenFile(object param)
         {
             Stream myStream = null;
             OpenFileDialog openLoadingFileDialog = new OpenFileDialog();

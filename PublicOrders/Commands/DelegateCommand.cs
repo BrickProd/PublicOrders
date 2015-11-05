@@ -16,7 +16,7 @@ namespace PublicOrders.Commands
         /// <summary>
         ///     Constructor
         /// </summary>
-        public DelegateCommand(Action executeMethod)
+        public DelegateCommand(Action<object> executeMethod)
             : this(executeMethod, null, false)
         {
         }
@@ -24,7 +24,7 @@ namespace PublicOrders.Commands
         /// <summary>
         ///     Constructor
         /// </summary>
-        public DelegateCommand(Action executeMethod, Func<bool> canExecuteMethod)
+        public DelegateCommand(Action<object> executeMethod, Func<bool> canExecuteMethod)
             : this(executeMethod, canExecuteMethod, false)
         {
         }
@@ -32,7 +32,7 @@ namespace PublicOrders.Commands
         /// <summary>
         ///     Constructor
         /// </summary>
-        public DelegateCommand(Action executeMethod, Func<bool> canExecuteMethod, bool isAutomaticRequeryDisabled)
+        public DelegateCommand(Action<object> executeMethod, Func<bool> canExecuteMethod, bool isAutomaticRequeryDisabled)
         {
             if (executeMethod == null)
             {
@@ -63,11 +63,11 @@ namespace PublicOrders.Commands
         /// <summary>
         ///     Execution of the command
         /// </summary>
-        public void Execute()
+        public void Execute(object param)
         {
             if (_executeMethod != null)
             {
-                _executeMethod();
+                _executeMethod(param);
             }
         }
 
@@ -147,14 +147,14 @@ namespace PublicOrders.Commands
 
         void ICommand.Execute(object parameter)
         {
-            Execute();
+            Execute(parameter);
         }
 
         #endregion
 
         #region Data
 
-        private readonly Action _executeMethod = null;
+        private readonly Action<object> _executeMethod = null;
         private readonly Func<bool> _canExecuteMethod = null;
         private bool _isAutomaticRequeryDisabled = false;
         private List<WeakReference> _canExecuteChangedHandlers;

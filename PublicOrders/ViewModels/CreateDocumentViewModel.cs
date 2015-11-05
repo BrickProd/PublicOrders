@@ -52,6 +52,7 @@ namespace PublicOrders.ViewModels
         public ObservableCollection<string> Templates { get; set; }
         public ObservableCollection<Product> Products { get; set; }
         public CollectionViewSource FilteredProducts { get; set; }
+        public CollectionViewSource ProductsForDocumentGroped { get; set; }
         public ObservableCollection<Product> ProductsForDocument { get; set; }
         public Product SelectedProduct { get; set; }
 
@@ -92,8 +93,10 @@ namespace PublicOrders.ViewModels
         {
             get
             {
+
                 if (chooseProductCommand == null)
                 {
+
                     chooseProductCommand = new DelegateCommand(ChooseProduct);
                 }
                 return chooseProductCommand;
@@ -112,7 +115,7 @@ namespace PublicOrders.ViewModels
         }
 
 
-        private void CreateDocument()
+        private void CreateDocument(object param)
         {
             if (ProductsForDocument.Count == 0) {
                 MessageBox.Show("Веберите продукты!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -127,12 +130,12 @@ namespace PublicOrders.ViewModels
             mvm.cdProcessor = new CreateDocumentProcessor(/*FilteredProducts.View.Cast<Product>().ToList()*/ProductsForDocument.ToList(), SelectedInstruction, SelectedTemplate, done_del);
             mvm.cdProcessor.Operate();
         }
-        private void UnchooseProduct()
+        private void UnchooseProduct(object param)
         {
             ProductsForDocument.Remove(SelectedProduct);
             this.FilteredProducts.View.Refresh();
         }
-        private void ChooseProduct()
+        private void ChooseProduct(object param)
         {
             ProductsForDocument.Add(SelectedProduct);
             this.FilteredProducts.View.Refresh();
@@ -175,12 +178,25 @@ namespace PublicOrders.ViewModels
                 }); ;
                 Products = mvm.ProductCollection;
             }
+
+
             ProductsForDocument = new ObservableCollection<Product>();
 
             Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
             FilteredProducts = new CollectionViewSource();
+
+
+
             FilteredProducts.Source = this.Products;
+            FilteredProducts.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+
+            FilteredProducts.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             FilteredProducts.Filter += ProductFilter;
+
+            ProductsForDocumentGroped = new CollectionViewSource();
+            ProductsForDocumentGroped.Source = ProductsForDocument;
+            ProductsForDocumentGroped.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+
         }
 
         private void ProductFilter(object sender, FilterEventArgs e)

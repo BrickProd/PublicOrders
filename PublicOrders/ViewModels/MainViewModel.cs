@@ -148,7 +148,7 @@ namespace PublicOrders
         public void CheckProductsRepetition()
         {
             this.ProductCollection.ToList().ForEach(m => {
-                m.IsRepetition = ProductCollection.Where(p => p.Name == m.Name).Count() > 1;
+                m.IsRepetition = ProductCollection.Where(p => ((p.Name == m.Name) && (p.TradeMark == m.TradeMark))).Count() > 1;
             });      
         }
 

@@ -152,7 +152,16 @@ namespace PublicOrders.Models
             }
         }
 
-
+        private bool _isSelected;
+        [NotMapped]
+        public bool IsSelected { get {
+                return _isSelected;
+            } set
+            {
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
+        }
 
 
         public Product()

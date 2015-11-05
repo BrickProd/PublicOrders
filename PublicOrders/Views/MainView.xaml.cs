@@ -25,7 +25,14 @@ namespace PublicOrders
 
         private void CreateDocumentTabItem_Selected(object sender, RoutedEventArgs e)
         {
-            
+            try
+            {
+                this.CreateDocumentPanel.DataContext = new CreateDocumentViewModel();
+            }
+            catch (Exception ex)
+            {
+                //
+            }
         }
 
         private  void ProductEditorTabItem_Selected(object sender, RoutedEventArgs e)
@@ -33,14 +40,13 @@ namespace PublicOrders
             try
             {
 
-                var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
+                /*var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
                 mvm.RefreshProducts();
                 vm.Products.Source = mvm.ProductCollection;
-                vm.Products.View.Refresh();
-
-                //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
+                vm.Products.View.Refresh();*/
+                this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }
             catch (Exception ex)
             {

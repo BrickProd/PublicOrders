@@ -121,12 +121,14 @@
                                  VerticalAlignment="Top" Width="Auto" BorderBrush="Gray" BorderThickness="0 0 0 1"/>
                                 <ListView x:Name="ProductsListView"
                                           BorderBrush="Transparent"
-							ItemsSource="{Binding Products.View, IsAsync=True, FallbackValue=...}"
+							ItemsSource="{Binding Products.View}"
 							SelectedItem="{Binding SelectedProduct}"
-                                  VirtualizingPanel.IsVirtualizing="True"
                             AlternationCount="2"
-							Margin="0,35,0,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
+							Margin="0,35,0,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+                                    
+                                    <ListView.InputBindings>
+                                        <KeyBinding Key="Delete" Command="{Binding DeleteProductCommand}" CommandParameter="{Binding ElementName=ProductsListView, Path=SelectedItems}"></KeyBinding>
+                                    </ListView.InputBindings>
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
                                             <EventSetter Event="Control.MouseDoubleClick" Handler="MouseDoubleClickHandler"/>

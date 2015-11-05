@@ -93,9 +93,33 @@
                     <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListView>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <Border>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Name}" FontSize="22" FontStretch="Expanded" Margin="20 5 0 5"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter/>
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Развыбрать документ - стрелка влево" VerticalAlignment="Top" Grid.Column="1"/>
-        <ListView  Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocument}" BorderThickness="1" FontSize="16" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
+        <ListView  Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocumentGroped.View}" BorderThickness="1" FontSize="16" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.InputBindings>
                 <KeyBinding Key="Left" Command="{Binding UnchooseProductCommand}"></KeyBinding>
             </ListBox.InputBindings>
@@ -104,8 +128,32 @@
                     <TextBlock Text="{Binding Name}"></TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListView>
-        <!--<Button x:Name="button1" Content=">" HorizontalAlignment="Right" Height="19.209" Margin="0,117.68,-5,0" Grid.Row="2" VerticalAlignment="Top" Width="10" Command="{Binding ChooseProductCommand}"/>-->
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <Border>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Name}" FontSize="22" FontStretch="Expanded" Margin="20 5 0 5"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter/>
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+
 
             </Grid>
         </Border>

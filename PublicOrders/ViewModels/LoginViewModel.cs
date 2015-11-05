@@ -34,7 +34,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private void Enter()
+        private void Enter(object param)
         {
             //метод
             // мессадже
