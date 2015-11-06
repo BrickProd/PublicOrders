@@ -252,7 +252,7 @@
                                 </StackPanel>
                             </Grid>
                         </Border>
-                        <TextBox Text="{Binding SelectedRubric.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281"></TextBox>
+                        <TextBox x:Name="selectedRubricName" Text="{Binding SelectedRubric.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281" LostFocus="SaveChanges_LostFocus"></TextBox>
                         <ListBox x:Name="rubricsListBox" Margin="0,45,0,10" ItemsSource="{Binding Rubrics}" Width="400" BorderThickness="1 0 1 0"
 							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
@@ -262,6 +262,7 @@
                             <ListBox.InputBindings>
                                 <KeyBinding Key="Delete" Command="{Binding DeleteRubricCommand}"></KeyBinding>
                             </ListBox.InputBindings>
+                            
                         </ListBox>
                     </Grid>
                 </TabItem>
@@ -276,13 +277,13 @@
                             Style="{StaticResource AddButtonStyle}"
                                 Command="{Binding AddInstructionCommand}"
 							FontSize="16"/>
-                        <TextBox Text="{Binding SelectedInstruction.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281"></TextBox>
+                        <TextBox x:Name="selectedInstructionName" Text="{Binding SelectedInstruction.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281" LostFocus="SaveChanges_LostFocus"></TextBox>
                         <ListBox x:Name="instructionListBox" Margin="0,45,0,10" ItemsSource="{Binding Instructions}" Width="400" BorderThickness="1 0 1 0"
 							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                                  SelectedItem="{Binding SelectedInstruction}"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
 							BorderBrush="LightGray" HorizontalAlignment="Left"/>
-                        <TextBox Text="{Binding SelectedInstruction.Text}" HorizontalAlignment="Left" Margin="405,81,0,10" TextWrapping="Wrap" Width="281"/>
+                        <TextBox Text="{Binding SelectedInstruction.Text}" HorizontalAlignment="Left" Margin="405,81,0,10" TextWrapping="Wrap" Width="281" LostFocus="SaveChanges_LostFocus"/>
                         <Button Visibility="Collapsed" Content="Сохранить" HorizontalAlignment="Left" Margin="405,0,0,10" VerticalAlignment="Bottom" Width="147" Height="25"
                                 Style="{StaticResource OKButtonStyle}" Command="{Binding SaveInstructionCommand}"/>
 

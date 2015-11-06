@@ -7,15 +7,15 @@
 	x:Class="PublicOrders.Login"
 	x:Name="Window"
 	Title="Login"
-	Width="366" Height="177" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+	Width="419" Height="185" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:LoginViewModel/>
     </Window.DataContext>
     <Grid x:Name="LayoutRoot">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="33*"/>
-                <ColumnDefinition Width="146*"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>

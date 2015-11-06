@@ -148,5 +148,11 @@ namespace PublicOrders.Views
         }
 
         #endregion
+
+        private void SaveChanges_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+            mvm.dc.SaveChanges();
+        }
     }
 }
