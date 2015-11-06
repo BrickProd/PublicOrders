@@ -260,7 +260,7 @@
                                  SelectionMode="Single"
 							BorderBrush="LightGray" HorizontalAlignment="Left">
                             <ListBox.InputBindings>
-                                <KeyBinding Key="Delete" Command="{Binding DeleteProductCommand}"></KeyBinding>
+                                <KeyBinding Key="Delete" Command="{Binding DeleteRubricCommand}"></KeyBinding>
                             </ListBox.InputBindings>
                             
                         </ListBox>
