@@ -126,7 +126,11 @@
 							SelectedItem="{Binding SelectedProduct}"
                             AlternationCount="2"
 							Margin="0,35,0,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
-                                    
+                                    <ListView.Resources>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                                        </Style>
+                                    </ListView.Resources>
                                     <ListView.InputBindings>
                                         <KeyBinding Key="Delete" Command="{Binding DeleteProductCommand}" CommandParameter="{Binding ElementName=ProductsListView, Path=SelectedItems}"></KeyBinding>
                                     </ListView.InputBindings>
@@ -144,6 +148,7 @@
                                                     <ColumnDefinition Width="20"/>
                                                     <ColumnDefinition Width="20"/>
                                                     <ColumnDefinition/>
+                                                    <ColumnDefinition Width="150"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock FontSize="14" Text="{Binding Komitet}" Grid.Column="0" VerticalAlignment="Center" Foreground="#002D4B" FontWeight="Bold"/>
                                                 <TextBlock FontSize="14" Text="{Binding Svoboda}" Grid.Column="1" VerticalAlignment="Center" Foreground="#17364B" FontWeight="Bold"/>
@@ -163,6 +168,7 @@
                                                     </TextBlock>
                                                     <TextBlock TextWrapping="Wrap" Text="{Binding TradeMark}" FontSize="12" FontStyle="Italic"/>
                                                 </StackPanel>
+                                                <TextBlock Grid.Column="5" Text="{Binding ModifiedDateTime}" FontSize="14" Foreground="DarkGray"></TextBlock>
                                             </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>

@@ -15,6 +15,8 @@ using System.IO;
 using PublicOrders.Processors;
 using Microsoft.Win32;
 using PublicOrders.Processors.Main;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace PublicOrders.ViewModels
 {
@@ -24,6 +26,8 @@ namespace PublicOrders.ViewModels
 
         private string _docPath;
         private bool _isLoadInProcess;
+        private ImageSource _selectedTemplateImage;
+        private string _selectedTemplate;
 
         public string DocPath
         {
@@ -45,8 +49,62 @@ namespace PublicOrders.ViewModels
         }
 
         public ObservableCollection<string> Templates { get; set; }
-        public string SelectedTemplate { get; set; }
-        
+
+        public string SelectedTemplate
+        {
+            get
+            {
+                return _selectedTemplate;
+            }
+            set
+            {
+                _selectedTemplate = value;
+                OnPropertyChanged("SelectedTemplate");
+
+                if (!string.IsNullOrEmpty("TheImageYouWantToShow"))
+                {
+
+                    BitmapImage yourImage = null;
+                    switch (_selectedTemplate)
+                    {
+                        //case "Комитет":
+                        //    yourImage = new BitmapImage(new Uri(Path.GetFullPath("Image/3.png")));
+
+                        //    break;
+                        //case "Свобода":
+                        //    yourImage = new BitmapImage(new Uri(String.Format("Image/1.png"), UriKind.Relative));
+
+                        //    break;
+                        //case "Форма 2":
+                        //    yourImage = new BitmapImage(new Uri(String.Format("Image/2.png"), UriKind.Relative));
+
+                        //    break;
+                    }
+
+                    //yourImage.Freeze(); // -> to prevent error: "Must create DependencySource on same Thread as the DependencyObject"
+                    SelectedTemplateImage = yourImage;
+                }
+                else
+                {
+                    SelectedTemplateImage = null;
+                }
+
+                
+            }
+        }
+
+
+        public ImageSource SelectedTemplateImage {
+            get
+            {
+                return _selectedTemplateImage;
+            } set
+            {
+                _selectedTemplateImage = value;
+                OnPropertyChanged("SelectedTemplateImage");
+            }
+        }
+
         #region КОМАНДЫ
         private DelegateCommand loadCommand;
         private DelegateCommand openFileCommand;

@@ -301,28 +301,37 @@ namespace PublicOrders.ViewModels
             if (MessageBox.Show("Удалить выделенные продукты?", "Предупреждение",
                MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
             {
-                //IEnumerable<Product> prods = param as IEnumerable<Product>;
+                var products = param as IEnumerable<object>;
 
-                var d = Products.View.Cast<Product>().Where(m => m.IsSelected);
-
-                //prods.ToList().ForEach(m =>
-                //{
-                //    var s = m. as Product;
-                //    mvm.dc.Entry(m).State = EntityState.Deleted;
-                //    mvm.dc.SaveChanges();
-                //    mvm.ProductCollection.Remove(m);
-                //});
-                //foreach (var pr in ((ObservableCollection<Product>)param).ToList())
-                //{
-                //    mvm.dc.Entry(pr).State = EntityState.Deleted;
-                //    mvm.dc.SaveChanges();
-                //    mvm.ProductCollection.Remove(pr);
-                //}
+                products.ToList().ForEach(m =>
+                {
+                    var p = m as Product;
+                    mvm.dc.Entry(p).State = EntityState.Deleted;
+                    mvm.dc.SaveChanges();
+                    mvm.ProductCollection.Remove(p);
+                });
             }
         }
         private void DeleteRubric(object param)
         {
-            //
+            if (MessageBox.Show("Удалить выделенные рубрики?", "Предупреждение",
+               MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+            {
+                var rubrics = param as IEnumerable<object>;
+
+                rubrics.ToList().ForEach(m =>
+                {
+                    var r = m as Rubric;
+                    r.Products.ToList().ForEach(p => {
+                        p.RubricId = 1;
+                        mvm.dc.Entry(p).State = EntityState.Modified;
+                    });
+                    mvm.dc.SaveChanges();
+                    mvm.dc.Entry(r).State = EntityState.Deleted;
+                    mvm.dc.SaveChanges();
+                    Rubrics.Remove(r);
+                });
+            }
         }
 
 
