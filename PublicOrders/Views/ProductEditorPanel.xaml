@@ -121,6 +121,7 @@
                                  VerticalAlignment="Top" Width="Auto" BorderBrush="Gray" BorderThickness="0 0 0 1"/>
                                 <ListView x:Name="ProductsListView"
                                           BorderBrush="Transparent"
+                                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
 							ItemsSource="{Binding Products.View}"
 							SelectedItem="{Binding SelectedProduct}"
                             AlternationCount="2"

@@ -326,7 +326,7 @@ namespace PublicOrders.ViewModels
         }
 
 
-        private void SaveProduct(object param)
+        private async void SaveProduct(object param)
         {
             if (SelectedProduct.FreedomProperties.Count > 1)
             {
@@ -337,9 +337,9 @@ namespace PublicOrders.ViewModels
             if (SelectedProduct != null)
             {
                 SelectedProduct.ModifiedDateTime = DateTime.Now;
-                mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
-                var a = mvm.dc.SaveChanges();
-                mvm.CheckProductsRepetition();
+                //mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
+                await mvm.dc.SaveChangesAsync();
+                //mvm.CheckProductsRepetition();
             }
             
             this.Products.View.Refresh();
