@@ -319,20 +319,15 @@ namespace PublicOrders.ViewModels
             if (MessageBox.Show("Удалить выделенные рубрики?", "Предупреждение",
                MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
             {
-                var rubrics = param as IEnumerable<object>;
 
-                rubrics.ToList().ForEach(m =>
-                {
-                    var r = m as Rubric;
-                    r.Products.ToList().ForEach(p => {
+                    SelectedRubric.Products.ToList().ForEach(p => {
                         p.RubricId = 1;
                         mvm.dc.Entry(p).State = EntityState.Modified;
                     });
                     mvm.dc.SaveChanges();
-                    mvm.dc.Entry(r).State = EntityState.Deleted;
+                    mvm.dc.Entry(SelectedRubric).State = EntityState.Deleted;
                     mvm.dc.SaveChanges();
-                    Rubrics.Remove(r);
-                });
+                    Rubrics.Remove(SelectedRubric);
             }
         }
 

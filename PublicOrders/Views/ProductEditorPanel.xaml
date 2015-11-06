@@ -257,7 +257,12 @@
 							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
                                  SelectedItem="{Binding SelectedRubric}"
-							BorderBrush="LightGray" HorizontalAlignment="Left"/>
+                                 SelectionMode="Single"
+							BorderBrush="LightGray" HorizontalAlignment="Left">
+                            <ListBox.InputBindings>
+                                <KeyBinding Key="Delete" Command="{Binding DeleteProductCommand}"></KeyBinding>
+                            </ListBox.InputBindings>
+                        </ListBox>
                     </Grid>
                 </TabItem>
 
