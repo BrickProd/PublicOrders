@@ -66,6 +66,7 @@ namespace PublicOrders.ViewModels
             }
             set
             {
+                mvm.dc.SaveChanges();
                 _selectedRubric = value;
                 OnPropertyChanged("SelectedRubric");
             }
@@ -80,6 +81,7 @@ namespace PublicOrders.ViewModels
             }
             set
             {
+                mvm.dc.SaveChanges();
                 _selectedInstruction = value;
                 OnPropertyChanged("SelectedInstruction");
             }
