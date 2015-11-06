@@ -93,6 +93,7 @@ namespace PublicOrders.Models
 
         public static string DecodeInternetSymbs(string text)
         {
+            text = text.Replace("&#034;", "\"");
             text = text.Replace("&amp;", "&");
             text = text.Replace("&quot;", "\"");
             text = text.Replace("&nbsp;", " ");

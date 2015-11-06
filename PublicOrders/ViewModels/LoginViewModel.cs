@@ -10,14 +10,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PublicOrders.Commands;
+using PublicOrders.Models;
+using System.Linq;
 
 namespace PublicOrders.ViewModels
 {
 	public class LoginViewModel
-	{	
-        public string Server { get; set; }
-        public string DataBase { get; set; }
-        public string User { get; set; }
+	{
+        private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+        private AutenDbContext adc = null;
+
+        public string UserStr { get; set; }
         public string Password { get; set; }
 
         #region КОМАНДЫ
@@ -34,17 +38,58 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private DelegateCommand exitCommand;
+        public ICommand ExitCommand
+        {
+            get
+            {
+                if (exitCommand == null)
+                {
+                    exitCommand = new DelegateCommand(Exit);
+                }
+                return exitCommand;
+            }
+        }
+        #endregion
+
+        #region МЕТОДЫ
         private void Enter(object param)
         {
-            //метод
-            // мессадже
-            //dfgsdfgsdfgsdg
+            if (UserStr.Trim() == "") {
+                MessageBox.Show("Введите логин!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            if (Password.Trim() == "")
+            {
+                MessageBox.Show("Введите пароль!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            User currentUser = adc.Users.FirstOrDefault(m => (m.Login == UserStr) && (m.Password == Password));
+            if (currentUser == null) {
+                MessageBox.Show("Неверно введенные данные!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            if (currentUser.UserStatus == null)
+            {
+                MessageBox.Show("Введите в БД статус пользователя <" + currentUser.Login + ">!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            mvm.currentUserStatus = currentUser.UserStatus;
+        }
+
+        private void Exit(object param)
+        {
+            
         }
         #endregion
 
         public LoginViewModel()
 		{
-			// Вставьте ниже код, необходимый для создания объекта.
-		}
+            adc = new AutenDbContext();
+        }
 	}
 }

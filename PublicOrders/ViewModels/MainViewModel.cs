@@ -33,6 +33,10 @@ namespace PublicOrders
         //public ObservableCollection<Customer> CustomerCollection { get; set; }
         #endregion
 
+        #region Пользователи
+        public UserStatus currentUserStatus { get; set; }
+        #endregion
+
         #region Процессоры
         // Документы
         public CreateDocumentProcessor cdProcessor = null;

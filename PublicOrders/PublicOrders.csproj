@@ -79,6 +79,7 @@
     </ApplicationDefinition>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Models\AutenDbContext.cs" />
     <Compile Include="Models\DocumentDbContext.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Models\WinnersDbContext.cs" />
