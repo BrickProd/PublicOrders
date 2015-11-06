@@ -12,6 +12,36 @@
     </UserControl.DataContext>
     <Grid Background="Transparent">
 
+        <!--ПАНЕЛЬ ЗАГРУЗКИ-->
+        <Grid x:Name="CreateReportBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" >
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ReportCreating}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ReportCreating}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <TextBlock Text="Создание отчёта..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Foreground="#FF007ACB">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3" AutoReverse="True" RepeatBehavior="Forever"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
         <!-- подробная информация о победителе -->
         <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="WinnerInfoPanel" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
@@ -123,22 +153,17 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <Border BorderThickness="0 0 0 0" Margin="0">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Visibility, ElementName=CreateReportBusy}" Value="Visible">
+                            <Setter Property="Effect" Value="{StaticResource BlurEffect}"/>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70"/>

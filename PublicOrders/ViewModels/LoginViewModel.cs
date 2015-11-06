@@ -78,8 +78,11 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            mvm.currentUserStatus = currentUser.UserStatus;
             MainWindow mv = new MainWindow();
+
+            var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+            mvm.currentUserStatus = currentUser.UserStatus;
+            mv.DataContext = mvm;
             mv.Show();
 
             var window = param as Window;

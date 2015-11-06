@@ -226,7 +226,7 @@ namespace PublicOrders.ViewModels
 
         public LoadProductsViewModel()
         {
-            this.IsLoadInProcess = false;
+            //this.IsLoadInProcess = false;
             this.DocPath = "";
 
             Templates = new ObservableCollection<string>(new List<string> {

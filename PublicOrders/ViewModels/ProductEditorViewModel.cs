@@ -107,6 +107,7 @@ namespace PublicOrders.ViewModels
         }
 
         public ObservableCollection<Rubric> Rubrics { get; set; }
+        public CollectionViewSource CustomRubrics { get; set; }
         public string NewRubricName { get; set; }
 
 
@@ -120,6 +121,7 @@ namespace PublicOrders.ViewModels
         private DelegateCommand addProductCommand;
         private DelegateCommand addRubricCommand;
         private DelegateCommand addInstructionCommand;
+        private DelegateCommand replaceProductsCommand;
 
         private DelegateCommand deleteProductCommand;
         private DelegateCommand deleteRubricCommand;
@@ -159,6 +161,17 @@ namespace PublicOrders.ViewModels
                     addInstructionCommand = new DelegateCommand(AddInstruction);
                 }
                 return addInstructionCommand;
+            }
+        }
+        public ICommand ReplaceProductsCommand
+        {
+            get
+            {
+                if (replaceProductsCommand == null)
+                {
+                    replaceProductsCommand = new DelegateCommand(ReplaceProducts);
+                }
+                return replaceProductsCommand;
             }
         }
 
@@ -222,10 +235,17 @@ namespace PublicOrders.ViewModels
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
 
-                Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics.Where(m=>m.RubricId!=1));
+                Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics);
+
+                CustomRubrics = new CollectionViewSource();
+                CustomRubrics.Source = Rubrics.Where(m => m.RubricId != 1);
+                CustomRubrics.View.Refresh();
+
                 Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions.Where(m=>m.InstructionId!=1));
 
                 mvm.CheckProductsRepetition();
+
+                this.CustomRubrics.View.Refresh();
             }
         }
 
@@ -258,7 +278,7 @@ namespace PublicOrders.ViewModels
         {
             var newProduct = new Product
             {
-                Name = "НОВЫЙ ПРОДУКТ",
+                Name = "_НОВЫЙ ПРОДУКТ",
                 Rubric = Rubrics.FirstOrDefault(m=>m.RubricId==1)
                 
             };
@@ -276,10 +296,11 @@ namespace PublicOrders.ViewModels
         {
             var newRubric = new Rubric { Name = NewRubricName };
 
-            mvm.dc.Entry(newRubric);
+            mvm.dc.Entry(newRubric).State = EntityState.Added;
             mvm.dc.SaveChanges();
 
             this.Rubrics.Add(newRubric);
+            this.CustomRubrics.View.Refresh();
         }
         private void AddInstruction(object param)
         {
@@ -294,6 +315,22 @@ namespace PublicOrders.ViewModels
             Instructions.Add(newInstruction);
 
             this.SelectedInstruction = newInstruction;
+        }
+        private void ReplaceProducts(object param)
+        {
+            var products = param as IEnumerable<object>;
+
+            products.ToList().ForEach(m =>
+            {
+                var p = m as Product;
+
+                p.Rubric = SelectedRubric;
+
+                mvm.dc.SaveChanges();
+            });
+
+            this.Products.View.Refresh();
+
         }
 
 
@@ -331,6 +368,7 @@ namespace PublicOrders.ViewModels
                     mvm.dc.Entry(SelectedRubric).State = EntityState.Deleted;
                     mvm.dc.SaveChanges();
                     Rubrics.Remove(SelectedRubric);
+                CustomRubrics.View.Refresh();
             }
         }
 

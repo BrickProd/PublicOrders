@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PublicOrders.Models;
+using PublicOrders.ViewModels;
 
 namespace PublicOrders.Views
 {
@@ -28,6 +29,51 @@ namespace PublicOrders.Views
         {
             InitializeComponent();
         }
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Right)
+            {
+                if (this.ProductsListView.SelectedItems.Count > 0)
+                {
+                    ThicknessAnimation anim = new ThicknessAnimation
+                    {
+                        To = new Thickness(0, 0, 0, 0),
+                        Duration = TimeSpan.FromSeconds(0.3),
+                        EasingFunction = new CircleEase()
+                    };
+
+                    toRubricsListBox.BeginAnimation(MarginProperty, anim);
+                }
+            }
+            if (e.Key == Key.Left)
+            {
+                    ThicknessAnimation anim = new ThicknessAnimation
+                    {
+                        To = new Thickness(450, 0, -450, 0),
+                        Duration = TimeSpan.FromSeconds(0.3),
+                        EasingFunction = new CircleEase()
+                    };
+                    toRubricsListBox.BeginAnimation(MarginProperty, anim);
+            }
+        }
+
+        private void SetRubricToReplase(object sender, MouseButtonEventArgs e)
+        {
+            var vm = this.DataContext as ProductEditorViewModel;
+            vm.ReplaceProductsCommand.Execute(this.ProductsListView.SelectedItems);
+
+            ThicknessAnimation anim = new ThicknessAnimation
+            {
+                To = new Thickness(450, 0, -450, 0),
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+
+            toRubricsListBox.BeginAnimation(MarginProperty, anim);
+        }
+
+        
 
         private void AddNewRubricBtn_Click(object sender, RoutedEventArgs e)
         {

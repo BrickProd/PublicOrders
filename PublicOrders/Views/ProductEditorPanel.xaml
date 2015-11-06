@@ -125,7 +125,7 @@
 							ItemsSource="{Binding Products.View}"
 							SelectedItem="{Binding SelectedProduct}"
                             AlternationCount="2"
-							Margin="0,35,0,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+							Margin="0,35,0,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="OnKeyDownHandler">
                                     <ListView.Resources>
                                         <Style TargetType="{x:Type ListViewItem}">
                                             <Setter Property="IsSelected" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
@@ -197,6 +197,17 @@
                                         </GroupStyle>
                                     </ListView.GroupStyle>
                                 </ListView>
+                                <ListBox x:Name="toRubricsListBox" Margin="450,0,-450,0" ItemsSource="{Binding Rubrics}" Width="400" BorderThickness="1 0 0 0"
+							ItemTemplate="{StaticResource ListBoxItemTemplate}"
+                                         SelectedItem="{Binding SelectedRubric}"
+                                 SelectionMode="Single"
+							BorderBrush="LightGray" HorizontalAlignment="Right">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+                                            <EventSetter Event="Control.MouseDoubleClick" Handler="SetRubricToReplase"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
                             </Grid>
 
                         </Border>
@@ -253,7 +264,7 @@
                             </Grid>
                         </Border>
                         <TextBox x:Name="selectedRubricName" Text="{Binding SelectedRubric.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281" LostFocus="SaveChanges_LostFocus"></TextBox>
-                        <ListBox x:Name="rubricsListBox" Margin="0,45,0,10" ItemsSource="{Binding Rubrics}" Width="400" BorderThickness="1 0 1 0"
+                        <ListBox x:Name="rubricsListBox" Margin="0,45,0,10" ItemsSource="{Binding CustomRubrics.View}" Width="400" BorderThickness="1 0 1 0"
 							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
                                  SelectedItem="{Binding SelectedRubric}"

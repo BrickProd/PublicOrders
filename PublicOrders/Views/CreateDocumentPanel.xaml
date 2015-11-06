@@ -13,7 +13,7 @@
     <Grid>
 
         <!--ПАНЕЛЬ ЗАГРУЗКИ-->
-        <Grid x:Name="CreateDocumentBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" Visibility="Collapsed">
+        <Grid x:Name="CreateDocumentBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" >
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
                     <Style.Triggers>

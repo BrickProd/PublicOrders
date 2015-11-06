@@ -41,7 +41,16 @@ namespace PublicOrders
         #endregion
 
         #region Пользователи
-        public UserStatus currentUserStatus { get; set; }
+        private UserStatus _currentUserStatus;
+        public UserStatus currentUserStatus { get
+            {
+                return _currentUserStatus;
+            }
+            set {
+                _currentUserStatus = value;
+                OnPropertyChanged("currentUserStatus");
+            }
+        }
         #endregion
 
         #region Процессоры

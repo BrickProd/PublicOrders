@@ -11,18 +11,42 @@
 	x:Class="PublicOrders.MainView"
 	d:DesignWidth="700" d:DesignHeight="600" Padding="0 0 0 20" >
     <UserControl.Resources>
-        <local:MainViewModel x:Key="MainViewModelDataSource" />
+        <!--<local:MainViewModel x:Key="MainViewModelDataSource" />-->
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" Margin="0 25 0 0">
-        <TextBlock HorizontalAlignment="Right" Text="{Binding currentUserStatus.StatusName}" FontWeight="Bold" FontSize="16" Foreground="Gray"></TextBlock>
-        <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0,2,0,0" BorderBrush="#FF007ACB">
-            <TabItem Header="Поиск победителей" Style="{StaticResource PanelContentStyle}" IsEnabled="{Binding SecretTabIsEnabled}">
+    <Grid x:Name="LayoutRoot"  Margin="0 25 0 0">
+        <TextBlock HorizontalAlignment="Right" Text="{Binding currentUserStatus.StatusName}" FontWeight="Bold" FontSize="16" Foreground="Gray" Margin="0 -25 50 0"></TextBlock>
+        <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0,2,0,0" BorderBrush="#FF007ACB" x:Name="MainTabControl">
+            <TabItem Header="Поиск победителей" >
+                <TabItem.Style>
+                    <Style BasedOn="{StaticResource PanelContentStyle}" TargetType="TabItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SecretTabIsEnabled}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SecretTabIsEnabled}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabItem.Style>
                 <Grid >
                     <views:WinnerSearchPanel Background="Transparent"></views:WinnerSearchPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Фильтр заказов"  Style="{StaticResource PanelContentStyle}" IsEnabled="{Binding SecretTabIsEnabled}">
+            <TabItem Header="Фильтр заказов" IsEnabled="{Binding SecretTabIsEnabled}">
+                <TabItem.Style>
+                    <Style BasedOn="{StaticResource PanelContentStyle}" TargetType="TabItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SecretTabIsEnabled}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SecretTabIsEnabled}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabItem.Style>
                 <Grid >
                     <views:OrderFilterPanel></views:OrderFilterPanel>
                 </Grid>
@@ -32,12 +56,12 @@
                     <views:CreateDocumentPanel x:Name="CreateDocumentPanel"></views:CreateDocumentPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Редактор товара" Style="{StaticResource PanelContentStyle}" Selector.Selected="ProductEditorTabItem_Selected">
+            <TabItem Header="Редактор товара" Style="{StaticResource PanelContentStyle}" Selector.Selected="ProductEditorTabItem_Selected" >
                 <Grid>
                     <views:ProductEditorPanel x:Name="ProductEditorPanel"  ></views:ProductEditorPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8">
+            <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8" >
                 <Grid>
                     <views:LoadProductsPanel></views:LoadProductsPanel>
                 </Grid>

@@ -22,24 +22,13 @@ namespace PublicOrders.ViewModels
     {
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        private bool _buttonCreateDocEnabled;
-
-        public bool ButtonCreateDocEnabled
-        {
-            get { return _buttonCreateDocEnabled; }
-            set
-            {
-                _buttonCreateDocEnabled = value;
-
-                OnPropertyChanged("ButtonCreateDocEnabled");
-            }
-        }
-
         private bool _isCreateInProcess;
 
         public bool IsCreateInProcess
         {
-            get { return _isCreateInProcess; }
+            get {
+                return _isCreateInProcess;
+            }
             set
             {
                 _isCreateInProcess = value;
@@ -122,7 +111,6 @@ namespace PublicOrders.ViewModels
                 return;
             }
             IsCreateInProcess = true;
-            ButtonCreateDocEnabled = false;
             if ((mvm.cdProcessor != null) && (mvm.cdProcessor.isWorking())) {
                 mvm.cdProcessor.Stop();
             }
@@ -160,13 +148,11 @@ namespace PublicOrders.ViewModels
                     break;
             }
 
-            ButtonCreateDocEnabled = true;
             IsCreateInProcess = false;
         }
 
         public CreateDocumentViewModel()
         {
-            this.ButtonCreateDocEnabled = false;
             this.IsCreateInProcess = false;
 
             if (mvm != null)
@@ -178,7 +164,7 @@ namespace PublicOrders.ViewModels
                 }); ;
                 Products = mvm.ProductCollection;
             }
-
+            
 
             ProductsForDocument = new ObservableCollection<Product>();
 
@@ -197,6 +183,8 @@ namespace PublicOrders.ViewModels
             ProductsForDocumentGroped.Source = ProductsForDocument;
             ProductsForDocumentGroped.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
 
+            SelectedTemplate = Templates[1];
+            FilteredProducts.View.Refresh();
         }
 
         private void ProductFilter(object sender, FilterEventArgs e)

@@ -20,6 +20,8 @@ namespace PublicOrders
 		{
 			// Required to initialize variables
 			InitializeComponent();
+
+            this.MainTabControl.SelectedIndex = 3;
             
 		}
 
