@@ -308,6 +308,9 @@ namespace PublicOrders.ViewModels
                 products.ToList().ForEach(m =>
                 {
                     var p = m as Product;
+                    p.CommitteeProperties.Clear();
+                    p.FreedomProperties.Clear();
+                    p.Form2Properties.Clear();
                     mvm.dc.Entry(p).State = EntityState.Deleted;
                     mvm.dc.SaveChanges();
                     mvm.ProductCollection.Remove(p);

@@ -24,13 +24,13 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
-            <TextBlock Margin="5,8.03" Grid.Row="1" TextWrapping="Wrap" Text="Логин:" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin" FontSize="18"/>
-            <TextBox Margin="5,7.03" TextWrapping="Wrap" Text="{Binding User}" Grid.Column="1" Grid.Row="1" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin" FontSize="18"/>
-            <TextBlock Margin="5,8.03" Grid.Row="2" TextWrapping="Wrap" Text="Пароль:" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin" FontSize="18"/>
-            <TextBox Margin="5,7.03" TextWrapping="Wrap" Text="{Binding Password}" Grid.Row="2" Grid.Column="1" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin" FontSize="18"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right"  Height="35" d:LayoutOverrides="LeftMargin, RightMargin" VerticalAlignment="Top">
-                <Button Content="Войти" Command="{Binding EnterCommand}" Margin="5" Style="{StaticResource OKButtonStyle}"/>
-                <Button Content="Выйти" Style="{StaticResource CancelButtonStyle}" Margin="5"/>
+            <TextBlock Margin="5,5,5,5" Grid.Row="1" TextWrapping="Wrap" Text="Логин" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <TextBox Margin="5,5,5,5" TextWrapping="Wrap" Text="{Binding UserStr}" Grid.Column="1" Grid.Row="1" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <TextBlock Margin="5,5,5,5" Grid.Row="2" TextWrapping="Wrap" Text="Пароль" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <TextBox Margin="5,5,5,5" TextWrapping="Wrap" Text="{Binding Password}" Grid.Row="2" Grid.Column="1" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Width="95.043" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin">
+                <Button Content="Войти" Command="{Binding EnterCommand}" CommandParameter="{Binding ElementName=Window}" Margin="5"/>
+                <Button Content="Выйти" Command="{Binding ExitCommand}" Margin="5"/>
             </StackPanel>
         </Grid>
 

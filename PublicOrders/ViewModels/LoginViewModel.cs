@@ -79,11 +79,16 @@ namespace PublicOrders.ViewModels
             }
 
             mvm.currentUserStatus = currentUser.UserStatus;
+            MainWindow mv = new MainWindow();
+            mv.Show();
+
+            var window = param as Window;
+            window.Close();
         }
 
         private void Exit(object param)
         {
-            
+            Application.Current.Shutdown();
         }
         #endregion
 
