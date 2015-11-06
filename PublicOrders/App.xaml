@@ -122,6 +122,59 @@
             </Setter>
         </Style>
 
+        <Style TargetType="Button" x:Key="CancelButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#FF007ACB"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Grid Margin="10 0">
+                                    <Ellipse Name="ButtonEllipse" Fill="Transparent" Stroke="#FF007ACB" Height="25" Width="25"  StrokeThickness="2"/>
+                                    <Path Name="CheckPath" Data="M0,0 L10,10 "  Stretch="Fill" Stroke="#FF007ACB" Margin="5" StrokeThickness="3"/>
+                                    <Path Name="CheckPath2" Data="M0,10 L10,00 "  Stretch="Fill" Stroke="#FF007ACB" Margin="5" StrokeThickness="3"/>
+                                </Grid>
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"></ContentPresenter>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="#FF007ACB" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath2" Storyboard.TargetProperty="Stroke.Color" To="White" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="ButtonEllipse" Storyboard.TargetProperty="Fill.Color" To="Transparent" Duration="0:0:0.2" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.0" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="CheckPath2" Storyboard.TargetProperty="Stroke.Color" To="#FF007ACB" Duration="0:0:0.0" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray"></Setter>
+                                <Setter TargetName="ButtonEllipse" Property="Stroke" Value="Gray"></Setter>
+                                <Setter TargetName="CheckPath" Property="Stroke" Value="Gray"></Setter>
+                                <Setter TargetName="CheckPath2" Property="Stroke" Value="Gray"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
         <Style TargetType="Button" x:Key="PlayButtonStyle">
             <Setter Property="Background" Value="Transparent"/>

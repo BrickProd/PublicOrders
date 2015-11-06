@@ -10,6 +10,13 @@ namespace PublicOrders
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        public bool SecretTabIsEnabled { get
+            {
+                return this.currentUserStatus.StatusName.ToLower() == "admin";
+            }
+        }
+
+
         #region Документы
         public DocumentDbContext dc { get; set; }
         private ObservableCollection<Product> _products;

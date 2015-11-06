@@ -222,8 +222,8 @@ namespace PublicOrders.ViewModels
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
 
-                Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics);
-                Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
+                Rubrics = new ObservableCollection<Rubric>(mvm.dc.Rubrics.Where(m=>m.RubricId!=1));
+                Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions.Where(m=>m.InstructionId!=1));
 
                 mvm.CheckProductsRepetition();
             }
