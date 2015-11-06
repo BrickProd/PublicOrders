@@ -3,35 +3,36 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:PublicOrders"
     xmlns:vm="clr-namespace:PublicOrders.ViewModels"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
 	x:Class="PublicOrders.Login"
 	x:Name="Window"
 	Title="Login"
-	Width="500" Height="185">
-	<Window.DataContext>
-		<vm:LoginViewModel/>
-	</Window.DataContext>
-	<Grid x:Name="LayoutRoot">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="197*"/>
-				<ColumnDefinition Width="295*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="1*"/>
-				<RowDefinition Height="40"/>
-				<RowDefinition Height="40"/>
-				<RowDefinition Height="10"/>
-				<RowDefinition Height="40"/>
-			</Grid.RowDefinitions>
-            <TextBlock Margin="5,5,5,5" Grid.Row="1" TextWrapping="Wrap" Text="Логин"/>
-			<TextBox Margin="5,5,5,5" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="1"/>
-			<TextBlock Margin="5,5,5,5" Grid.Row="2" TextWrapping="Wrap" Text="Пароль"/>
-			<TextBox Margin="5,5,5,5" TextWrapping="Wrap" Text="" Grid.Row="2" Grid.Column="1"/>
-			<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right">
-				<Button Content="Войти" Margin="5"></Button>
-				<Button Content="Выйти" Margin="5"></Button>
-			</StackPanel>
-		</Grid>
-		
-	</Grid>
+	Width="366" Height="177" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <vm:LoginViewModel/>
+    </Window.DataContext>
+    <Grid x:Name="LayoutRoot">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="33*"/>
+                <ColumnDefinition Width="146*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <TextBlock Margin="5,5,5,5" Grid.Row="1" TextWrapping="Wrap" Text="Логин" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <TextBox Margin="5,5,5,5" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="1" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <TextBlock Margin="5,5,5,5" Grid.Row="2" TextWrapping="Wrap" Text="Пароль" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <TextBox Margin="5,5,5,5" TextWrapping="Wrap" Text="" Grid.Row="2" Grid.Column="1" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Width="95.043" d:LayoutOverrides="LeftMargin, RightMargin, TopMargin, BottomMargin">
+                <Button Content="Войти" Margin="5"/>
+                <Button Content="Выйти" Margin="5"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
 </Window>
