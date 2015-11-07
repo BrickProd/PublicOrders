@@ -16,7 +16,7 @@
 
     <Grid x:Name="LayoutRoot"  Margin="0 25 0 0">
         <TextBlock HorizontalAlignment="Right" Text="{Binding currentUserStatus.StatusName}" FontWeight="Bold" FontSize="16" Foreground="Gray" Margin="0 -25 50 0"></TextBlock>
-        <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0,2,0,0" BorderBrush="#FF007ACB" x:Name="MainTabControl">
+        <TabControl Margin="0" TabStripPlacement="Left" BorderThickness="0,2,0,0" BorderBrush="#FF007ACB" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
             <TabItem Header="Поиск победителей" >
                 <TabItem.Style>
                     <Style BasedOn="{StaticResource PanelContentStyle}" TargetType="TabItem">
@@ -56,7 +56,7 @@
                     <views:CreateDocumentPanel x:Name="CreateDocumentPanel"></views:CreateDocumentPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Редактор товара" Style="{StaticResource PanelContentStyle}" Selector.Selected="ProductEditorTabItem_Selected" >
+            <TabItem Header="Редактор товара" x:Name="ProductEditorTabItem" Style="{StaticResource PanelContentStyle}" Selector.Selected="ProductEditorTabItem_Selected" >
                 <Grid>
                     <views:ProductEditorPanel x:Name="ProductEditorPanel"  ></views:ProductEditorPanel>
                 </Grid>

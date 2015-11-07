@@ -256,6 +256,7 @@ namespace PublicOrders.Processors
             }
             finally
             {
+
                 isWork = false;
             }
         }

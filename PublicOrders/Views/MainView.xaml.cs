@@ -62,5 +62,40 @@ namespace PublicOrders
             
             
         }
+
+        private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!this.ProductEditorTabItem.IsSelected)
+            {
+                ThicknessAnimation anim = new ThicknessAnimation
+                {
+                    From = new Thickness(0, 0, 0, 0),
+                    To = new Thickness(0, 50, 0, -50),
+                    Duration = TimeSpan.FromSeconds(0.3),
+                    EasingFunction = new CircleEase()
+                };
+
+                this.ProductEditorPanel.EditTabControl.IsEnabled = true;
+
+                DoubleAnimation anim2 = new DoubleAnimation
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = TimeSpan.FromSeconds(0.3),
+                    EasingFunction = new CircleEase()
+                };
+                anim2.Completed += (o, args) =>
+                {
+                    this.ProductEditorPanel.ProductEditPanel.Visibility = Visibility.Collapsed;
+                };
+
+                this.ProductEditorPanel.ProductEditPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
+                this.ProductEditorPanel.ProductEditPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+
+
+                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+                mvm.dc.SaveChanges();
+            }
+        }
     }
 }

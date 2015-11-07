@@ -85,8 +85,12 @@ namespace PublicOrders.ViewModels
             mv.DataContext = mvm;
             mv.Show();
 
+            Properties.Settings.Default.UserName = UserStr;
+            Properties.Settings.Default.Save();
+
             var window = param as Window;
             window.Close();
+
         }
 
         private void Exit(object param)
@@ -98,6 +102,8 @@ namespace PublicOrders.ViewModels
         public LoginViewModel()
 		{
             adc = new AutenDbContext();
+
+            UserStr = Properties.Settings.Default.UserName;
         }
 	}
 }

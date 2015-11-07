@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PublicOrders.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="MinPrice" Type="System.UInt64" Scope="User">
+    <Setting Name="MinPrice" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MaxPrice" Type="System.UInt64" Scope="User">
+    <Setting Name="MaxPrice" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="CustomerCity" Type="System.String" Scope="User">
@@ -21,6 +21,9 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CustomerType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

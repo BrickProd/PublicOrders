@@ -89,9 +89,9 @@
 
                                 <TextBlock Text="Цена:" FontSize="18"></TextBlock>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding SelectedWinner.Lot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBlock Text="{Binding SelectedWinner.Lot.LotPrice}" FontSize="16" FontStyle="Italic"></TextBlock>
                                     <TextBlock Text=" -> " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBlock Text="{Binding SelectedWinner.Lot.Price}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBlock Text="{Binding SelectedWinner.Lot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBlock>
                                     <TextBlock Text=" " FontSize="16" FontStyle="Italic"></TextBlock>
                                     <TextBlock Text="{Binding SelectedWinner.Lot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBlock>
                                 </StackPanel>

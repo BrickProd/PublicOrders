@@ -79,7 +79,7 @@
                         <DataGrid x:Name="FreedomPropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.FreedomProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
                                   EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding Path=CustomerParam}"/>
+                                <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding Path=CustomerParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
                                 <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
                             </DataGrid.Columns>
                         </DataGrid>

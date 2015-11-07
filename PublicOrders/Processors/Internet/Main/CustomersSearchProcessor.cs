@@ -94,7 +94,7 @@ namespace PublicOrders.Processors.Main
                 text = @"http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?sortDirection=true&";
                 text += @"organizationSimpleSorting=PO_NAZVANIYU&recordsPerPage=_100&pageNumber=1&searchText=" + HttpUtility.UrlEncode(customerName) + "&";
                 text += @"strictEqual=false&morphology=false&placeOfSearch=" + lawTypeStr + "&registrationStatusType=ANY&";
-                text += @"kpp=&custLev=F%2CS%2CM%2CNOT_FSM&organizationRoleList=" + customerTypeStr + "&";
+                text += @"kpp=&custLev=F%2CS%2CM%2CNOT_FSM&organizationRoleList=" + /*customerTypeStr*/"" + "&";
                 text += @"okvedCode=&okvedWithSubElements=false&districtIds=&regionIds=&cityIds=&organizationTypeList=&";
                 text += @"spz=&withBlocked=false&customerIdentifyCode=&headAgencyCode=&headAgencyWithSubElements=false&";
                 text += @"organizationsWithBranches=false&legalEntitiesTypeList=&ppoWithSubElements=false&ppoCode=&";
