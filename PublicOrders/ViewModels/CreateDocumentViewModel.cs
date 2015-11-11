@@ -107,9 +107,16 @@ namespace PublicOrders.ViewModels
         private void CreateDocument(object param)
         {
             if (ProductsForDocument.Count == 0) {
-                MessageBox.Show("Веберите продукты!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Веберите товар!", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
+
+            if (SelectedInstruction == null)
+            {
+                MessageBox.Show("Веберите инструкцию!", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
             IsCreateInProcess = true;
             if ((mvm.cdProcessor != null) && (mvm.cdProcessor.isWorking())) {
                 mvm.cdProcessor.Stop();
@@ -188,6 +195,15 @@ namespace PublicOrders.ViewModels
 
             SelectedTemplate = mvm.TemplateCollection[0];
             FilteredProducts.View.Refresh();
+
+            if (SelectedTemplate == null)
+            {
+                SelectedTemplate = mvm.TemplateCollection[0];
+            }
+
+            if (SelectedInstruction == null) {
+                SelectedInstruction = mvm.InstructionCollection[0];
+            }
         }
 
         private void ProductFilter(object sender, FilterEventArgs e)

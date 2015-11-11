@@ -28,13 +28,15 @@ namespace PublicOrders.Processors
             {
                 // Заполняем
                 product.ModifiedDateTime = DateTime.Now;
+                product.Rubric = ddc.Rubrics.Find(rubric.RubricId);
                 // Проверка на повтор
                 // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
                 // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
-                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ТОВАР
                 bool isRepeat = false;
-                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&&
-                                                                                 (m.Certification == product.Certification || m.Certification == null || m.Certification == "")*/)).ToList();
+                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name &&
+                                                                               m.TradeMark == product.TradeMark &&
+                                                                               m.Rubric.Name.Trim().ToLower() == product.Rubric.Name.Trim().ToLower())).ToList();
                 if (repeatProducts.Any())
                 {
                     // Изначально проверим на повтор
@@ -95,7 +97,6 @@ namespace PublicOrders.Processors
 
                     else
                     {
-                        product.RubricId = rubric.RubricId;
                         ddc.Products.Add(product);
 
                         ddc.SaveChanges();
@@ -343,11 +344,11 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
 
-                    // Подсчитываем количество строк у продуктов (потому что одно свойство продукта занимает одну строку)
+                    // Подсчитываем количество строк у товара (потому что одно свойство товара занимает одну строку)
                     int propertiesCount = 0;
                     foreach (Product product in products)
                     {
-                        if (product.CommitteeProperties == null) continue;
+                        if ((product == null) ||(product.CommitteeProperties == null)) continue;
                         propertiesCount += product.CommitteeProperties.Count();
                     }
 
@@ -379,18 +380,19 @@ namespace PublicOrders.Processors
                     doc.Tables[1].Cell(1, 9).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
 
-                    // Заполнение продуктами
+                    // Заполнение товара
                     int productIndexCompilator = 0;
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
-                        if ((products[productIndexCompilator].CommitteeProperties == null) || 
+                        if ((products[productIndexCompilator] == null) ||
+                            (products[productIndexCompilator].CommitteeProperties == null) ||
                             (products[productIndexCompilator].CommitteeProperties.Count == 0)) continue;
 
                         if (propertyIndexCompilator == 0)
                         {
-                            // Объединяем ячейки по продукту
+                            // Объединяем ячейки по товару
                             // Номер
                             object begCell = wordtable.Cell(i + 2, 1).Range.Start;
                             object endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 1).Range.End;
@@ -405,7 +407,7 @@ namespace PublicOrders.Processors
 
                             }
 
-                            // Название продукта
+                            // Название товара
                             begCell = wordtable.Cell(i + 2, 2).Range.Start;
                             endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 2).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
@@ -483,6 +485,8 @@ namespace PublicOrders.Processors
                     if (doc != null)
                         doc.Close(ref falseObj, ref missingObj, ref missingObj);
                     doc = null;
+                    application.Quit();
+                    application = null;
                 }
 
                 application.Visible = true;

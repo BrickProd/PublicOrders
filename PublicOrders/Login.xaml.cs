@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PublicOrders.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -23,5 +24,14 @@ namespace PublicOrders
 			
 			// Вставьте ниже код, необходимый для создания объекта.
 		}
-	}
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                var vm = this.DataContext as LoginViewModel;
+                vm.EnterCommand.Execute(this);
+            }
+        }
+    }
 }

@@ -21,7 +21,7 @@
     </UserControl.DataContext>
     <Grid>
 
-        <!--РЕДАКТОР ПРОДУКТА-->
+        <!--РЕДАКТОР ТОВАРА-->
         <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="ProductEditPanel" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="170"/>
@@ -64,12 +64,12 @@
                         <DataGrid ItemsSource="{Binding SelectedProduct.CommitteeProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
                                   EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="*" Header="Наименование показателя" Binding="{Binding ParamName}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Минимальные значения показателей" Binding="{Binding MinValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Максимальные значения показателей" Binding="{Binding MaxValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Значения показателей, которые не могут изменяться" Binding="{Binding VariableParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Конкретные показатели используемого товара" Binding="{Binding SpecificParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Единица измерения" Binding="{Binding Measure}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Наименование показателя" Binding="{Binding ParamName}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Минимальные значения показателей" Binding="{Binding MinValue}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Максимальные значения показателей" Binding="{Binding MaxValue}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значения показателей, которые не могут изменяться" Binding="{Binding VariableParam}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Конкретные показатели используемого товара" Binding="{Binding SpecificParam}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
@@ -79,8 +79,8 @@
                         <DataGrid x:Name="FreedomPropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.FreedomProperties}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
                                   EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding Path=CustomerParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Требования, установленные заказчиком" Binding="{Binding Path=CustomerParam}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding MemberParam}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
@@ -90,10 +90,10 @@
                         <DataGrid x:Name="Form2PropertiesGrid" Margin="0" ItemsSource="{Binding SelectedProduct.Form2Properties, Mode=TwoWay}" AutoGenerateColumns="False" FontSize="16" CanUserAddRows="True" CanUserDeleteRows="True"
                                   EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding OfferValue}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
-                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Требуемый параметр" Binding="{Binding RequiredParam}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Требуемое значение" Binding="{Binding RequiredValue}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="*" Header="Значение, предлагаемое участником" Binding="{Binding OfferValue}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
+                                <DataGridTextColumn Width="50" Header="Ед. изм." Binding="{Binding Measure}" HeaderStyle="{StaticResource WrapHeader}" ElementStyle="{StaticResource WrapCell}" EditingElementStyle="{StaticResource WrapEditCell}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
@@ -289,12 +289,16 @@
                                 Command="{Binding AddInstructionCommand}"
 							FontSize="16"/>
                         <TextBox x:Name="selectedInstructionName" Text="{Binding SelectedInstruction.Name}" Margin="405,45,0,0" Height="31" VerticalAlignment="Top" FontSize="18" HorizontalAlignment="Left" Width="281" LostFocus="SaveChanges_LostFocus"></TextBox>
-                        <ListBox x:Name="instructionListBox" Margin="0,45,0,10" ItemsSource="{Binding Instructions}" Width="400" BorderThickness="1 0 1 0"
+                        <ListBox x:Name="instructionListBox" Margin="0,45,0,10" ItemsSource="{Binding CustomInstructions.View}" Width="400" BorderThickness="1 0 1 0"
 							ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                                  SelectedItem="{Binding SelectedInstruction}"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
-							BorderBrush="LightGray" HorizontalAlignment="Left"/>
-                        <TextBox Text="{Binding SelectedInstruction.Text}" HorizontalAlignment="Left" Margin="405,81,0,10" TextWrapping="Wrap" Width="281" LostFocus="SaveChanges_LostFocus"/>
+							BorderBrush="LightGray" HorizontalAlignment="Left">
+                            <ListBox.InputBindings>
+                                <KeyBinding Key="Delete" Command="{Binding DeleteInstructionCommand}"></KeyBinding>
+                            </ListBox.InputBindings>
+                        </ListBox>
+                                <TextBox Text="{Binding SelectedInstruction.Text}" HorizontalAlignment="Left" Margin="405,81,0,10" AcceptsReturn="True" TextWrapping="Wrap" Width="281" LostFocus="SaveChanges_LostFocus"/>
                         <Button Visibility="Collapsed" Content="Сохранить" HorizontalAlignment="Left" Margin="405,0,0,10" VerticalAlignment="Bottom" Width="147" Height="25"
                                 Style="{StaticResource OKButtonStyle}" Command="{Binding SaveInstructionCommand}"/>
 

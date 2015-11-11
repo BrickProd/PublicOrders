@@ -157,6 +157,11 @@ namespace PublicOrders.ViewModels
                 MessageBox.Show("Документа по выбранному пути не существует!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
+            if (SelectedRubric == null)
+            {
+                MessageBox.Show("Выберите рубрику!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
 
             IsLoadInProcess = true;
 

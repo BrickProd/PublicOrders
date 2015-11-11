@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using PublicOrders.Models;
+using System.Linq;
 
 namespace PublicOrders
 {
@@ -35,10 +36,10 @@ namespace PublicOrders
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
                 mvm.RefreshProducts();
-                mvm.RefreshInstructions();
                 vm.FilteredProducts.Source = mvm.ProductCollection;
                 vm.FilteredProducts.View.Refresh();
 
+                mvm.RefreshInstructions();
                 //ObservableCollection<Product> pppp = vm.ProductsForDocument;
                 //vm.ProductsForDocumentGroped.View.Refresh();
                 //vm.ProductsForDocumentGroped.Source = ProductsForDocument;
@@ -61,6 +62,15 @@ namespace PublicOrders
                 mvm.RefreshProducts();
                 vm.Products.Source = mvm.ProductCollection;
                 vm.Products.View.Refresh();
+                mvm.CheckProductsRepetition();
+
+                mvm.RefreshRubrics();
+                vm.CustomRubrics.Source = mvm.RubricCollection.Where(m => m.RubricId != 1);
+                vm.CustomRubrics.View.Refresh();
+
+                mvm.RefreshInstructions();
+                vm.CustomInstructions.Source = mvm.InstructionCollection.Where(m => m.InstructionId != 1);
+                vm.CustomInstructions.View.Refresh();
                 //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }
             catch (Exception ex)

@@ -578,12 +578,23 @@
         
         
         <!--таблицы-->
+        <!--редактируемый заголовок-->
+        <Style x:Key="WrapHeader" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <!--редактируемые ячейки-->
         <Style TargetType="TextBlock" x:Key="WrapCell">
             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
         </Style>
         <Style TargetType="TextBox" x:Key="WrapEditCell">
             <Setter Property="TextBlock.TextWrapping" Value="Wrap"></Setter>
+            <Setter Property="AcceptsReturn" Value="True"></Setter>
         </Style>
 
 

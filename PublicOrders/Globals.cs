@@ -157,15 +157,20 @@ namespace PublicOrders.Models
                     }
                 }
 
+                // Степень системы счисления
                 regexExtent = new Regex("(\\s|\\\\|/|x|·|•|×|х)с{0,1}м{0,1}д{0,1}м\\s{0,1}(-{0,1}\\d)(\\s|$|\\)|\\]|\\.|×|:|,)", RegexOptions.Multiline);
-
-                //regexExtent = new Regex("(\\s|\\|/|x|·|•|×|х)с{0,1}м{0,1}д{0,1}м\\s{0,1}(-{0,1}\\d)(\\s|$|\\)|\\]|\\.|×|:|,)", RegexOptions.Multiline);
                 matchCollExtent = regexExtent.Matches(text);
                 foreach (Match matchExtent in matchCollExtent)
                 {
                     extent = "";
                     if (matchExtent.Groups.Count == 4)
                     {
+                        if ((matchExtent.Groups[2].Value.Length > 1) ||
+                            (matchExtent.Groups[2].Value[0]) == '0')
+                        {
+                            continue;
+                        }
+
                         foreach (char ch in matchExtent.Groups[2].Value)
                         {
                             extent += ConvertDigitForExtent(Convert.ToString(ch));

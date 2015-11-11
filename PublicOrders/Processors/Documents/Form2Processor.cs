@@ -25,14 +25,15 @@ namespace PublicOrders.Processors
             if (product != null)
             {
                 product.ModifiedDateTime = DateTime.Now;
-
+                product.Rubric = ddc.Rubrics.Find(rubric.RubricId);
                 // Проверка на повтор
                 // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
                 // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
-                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ТОВАР
                 bool isRepeat = false;
-                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&&
-                                                                                 (m.Certification == product.Certification || m.Certification == null || m.Certification == "")*/)).ToList();
+                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name &&
+                                                                               m.TradeMark == product.TradeMark &&
+                                                                               m.Rubric.Name.Trim().ToLower() == product.Rubric.Name.Trim().ToLower())).ToList();
                 if (repeatProducts.Any())
                 {
                     // Изначально проверим на повтор
@@ -92,16 +93,6 @@ namespace PublicOrders.Processors
                     {
                         try
                         {
-                            product.RubricId = rubric.RubricId;
-
-                            /*foreach (Form2Property fp in product.Form2Properties) {
-                                mvm.dc.Form2Properties.Add(fp);
-                                mvm.dc.SaveChanges();
-                            }*/
-
-                            //mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                            //mvm.dc.SaveChanges();
-
                             ddc.Products.Add(product);
                             ddc.SaveChanges();
 
@@ -283,7 +274,7 @@ namespace PublicOrders.Processors
 
                 return ResultType_enum.Done;
 
-                // Заносим продукты в БД
+                // Заносим товар в БД
                 //return dbEngineDocs.SetProducts(DocTemplate.Template_2, products, out productAddedCount, out productRepeatCount, out message);
             }
             catch (Exception ex)
@@ -362,11 +353,11 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Range.Text = "Форма 2. Сведения о качестве, технических характеристиках товара, его безопасности, функциональных характеристиках (потребительских свойствах) товара, размере и иные сведения о товаре, представление которых предусмотрено документацией об аукционе в электронной форме";
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                    // Подсчитываем количество строк у продуктов (потому что одно свойство продукта занимает одну строку)
+                    // Подсчитываем количество строк у товара (потому что одно свойство товара занимает одну строку)
                     int propertiesCount = 0;
                     foreach (Product product in products)
                     {
-                        if (product.Form2Properties == null) continue;
+                        if ((product == null) || (product.Form2Properties == null)) continue;
                         propertiesCount += product.Form2Properties.Count();
                     }
 
@@ -462,18 +453,19 @@ namespace PublicOrders.Processors
 
 
 
-                    // Заполняем продукты
+                    // Заполняем товар
                     int productIndexCompilator = 0;
                     int propertyIndexCompilator = 0;
                     for (int i = 0; i < propertiesCount; i++)
                     {
                         if (!isWork) break;
-                        if ((products[productIndexCompilator].Form2Properties == null) || 
+                        if ((products[productIndexCompilator] == null) ||
+                            (products[productIndexCompilator].Form2Properties == null) ||
                             (products[productIndexCompilator].Form2Properties.Count == 0)) continue;
 
                         if (propertyIndexCompilator == 0)
                         {
-                            // Объединяем ячейки по продукту (т.к. свойство занимает строку)
+                            // Объединяем ячейки по товару (т.к. свойство занимает строку)
                             begCell = wordtable.Cell(i + 4, 1).Range.Start;
                             endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 1).Range.End;
                             wordcellrange = doc.Range(ref begCell, ref endCell);
@@ -570,6 +562,8 @@ namespace PublicOrders.Processors
                     if (doc != null)
                         doc.Close(ref falseObj, ref missingObj, ref missingObj);
                     doc = null;
+                    application.Quit();
+                    application = null;
                 }
 
                 application.Visible = true;

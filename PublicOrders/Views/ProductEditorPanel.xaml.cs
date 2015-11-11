@@ -110,7 +110,7 @@ namespace PublicOrders.Views
             //parent.Items.Add(data);
         }
 
-        //открыть редактирование продукта 
+        //открыть редактирование товара 
         private void MouseDoubleClickHandler(object sender, MouseButtonEventArgs e)
         {
             ThicknessAnimation anim = new ThicknessAnimation
@@ -136,7 +136,7 @@ namespace PublicOrders.Views
             this.EditTabControl.IsEnabled = false;
         }
 
-        //закрыть редактирование продукта 
+        //закрыть редактирование товара 
         private void CloseEditProductPanel_Click(object sender, RoutedEventArgs e)
         {
             ThicknessAnimation anim = new ThicknessAnimation

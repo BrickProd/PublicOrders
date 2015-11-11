@@ -19,7 +19,7 @@ namespace PublicOrders
 
         // Глобальные коллекции
         #region Глобальные коллекции
-        // Продукты
+        // Товар
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> ProductCollection
         {

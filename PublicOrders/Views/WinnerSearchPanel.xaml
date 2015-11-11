@@ -171,9 +171,9 @@
                 </Grid.RowDefinitions>
                 <Grid Margin="10 20" Grid.Row="0">
                     <TextBox x:Name="key" FontSize="18" Margin="0" KeyDown="OnKeyDownHandler">
-                        <TextBox.InputBindings>
+                        <!--<TextBox.InputBindings>
                             <KeyBinding Key="Execute"  Command="{Binding CustomersSearchCommand}"/>
-                        </TextBox.InputBindings>
+                        </TextBox.InputBindings>-->
                         <TextBox.Template>
                             <ControlTemplate>
                                 <Grid>

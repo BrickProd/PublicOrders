@@ -39,7 +39,7 @@
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="Тип заказчика" Margin="10,20,10,0" Padding="5">
+                <GroupBox Header="Тип заказчика" Margin="10,20,10,0" Padding="5" Visibility="Hidden">
                     <StackPanel Orientation="Vertical">
                         <ComboBox SelectedItem="{Binding CustomerType}" ItemsSource="{Binding CustomerTypes}" DisplayMemberPath="name" SelectedValuePath="value">
 

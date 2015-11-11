@@ -60,7 +60,7 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            if (Password.Trim() == "")
+            if ((Password == null) || (Password.Trim() == ""))
             {
                 MessageBox.Show("Введите пароль!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;

@@ -28,14 +28,15 @@ namespace PublicOrders.Processors
             if (product != null)
             {
                 product.ModifiedDateTime = DateTime.Now;
-
+                product.Rubric = ddc.Rubrics.Find(rubric.RubricId);
                 // Проверка на повтор
                 // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
                 // Если совпали название и товарный знак и значений по данному шаблону нет (или пусты), то это СЛИЯНИЕ
-                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ПРОДУКТ
+                // Если совпали название и товарный знак и значения НЕ совпали, то это НОВЫЙ ТОВАР
                 bool isRepeat = false;
-                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name && m.TradeMark == product.TradeMark /*&& 
-                                                                                 (m.Certification == product.Certification || m.Certification == null || m.Certification == "")*/)).ToList();
+                IEnumerable<Product> repeatProducts = ddc.Products.Where(m => (m.Name == product.Name && 
+                                                                               m.TradeMark == product.TradeMark &&
+                                                                               m.Rubric.Name.Trim().ToLower() == product.Rubric.Name.Trim().ToLower())).ToList();
                 if (repeatProducts.Any())
                 {
                     // Изначально проверим на повтор
@@ -91,7 +92,6 @@ namespace PublicOrders.Processors
 
                     else
                     {
-                        product.RubricId = rubric.RubricId;
                         ddc.Products.Add(product);
 
                         ddc.SaveChanges();
@@ -172,7 +172,7 @@ namespace PublicOrders.Processors
                 }
 
 
-                // Заполняем продукты
+                // Заполняем товар
                 // Новый обход документа
                 Product product = null;
                 FreedomProperty freedomProperty = null;
@@ -328,15 +328,15 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Range.Text = "ТРЕБОВАНИЯ К ТОВАРАМ, ИСПОЛЬЗУЕМЫМ ПРИ ВЫПОЛНЕНИИ РАБОТ";
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                    // Инициализируем количество заполняемых продуктов
+                    // Инициализируем количество заполняемого товара
                     int linesCount = 0;
                     foreach (Product product in products ) {
-                        if ((product.FreedomProperties == null) || (product.FreedomProperties.Count != 1)) continue;
+                        if ((product == null) || (product.FreedomProperties == null) || (product.FreedomProperties.Count != 1)) continue;
                         linesCount++;
                     }
 
 
-                    //Добавляем таблицу (но перед этим узнаем сколько продуктов)
+                    //Добавляем таблицу (но перед этим узнаем сколько товара)
                     string productsMessage = "";
 
                     Object defaultTableBehavior =
@@ -411,11 +411,13 @@ namespace PublicOrders.Processors
                     doc.Tables[1].Cell(3, 6).Range.Text = "6";
                     doc.Tables[1].Cell(3, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                    // Заполняем продукты
+                    // Заполняем товар
                     for (int i = 0; i < products.Count; i++)
                     {
                         if (!isWork) break;
-                        if ((products[i].FreedomProperties == null) || (products[i].FreedomProperties.Count != 1)) continue;
+                        if ((products[i] == null) ||
+                            (products[i].FreedomProperties == null) ||
+                            (products[i].FreedomProperties.Count != 1)) continue;
 
                         doc.Tables[1].Cell(i + 4, 1).Range.Text = Convert.ToString(i + 1) + '.';
                         doc.Tables[1].Cell(i + 4, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
@@ -449,6 +451,8 @@ namespace PublicOrders.Processors
                     if (doc != null)
                         doc.Close(ref falseObj, ref missingObj, ref missingObj);
                     doc = null;
+                    application.Quit();
+                    application = null;
                 }
 
 

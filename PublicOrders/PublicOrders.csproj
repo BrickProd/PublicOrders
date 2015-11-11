@@ -79,6 +79,11 @@
     </ApplicationDefinition>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Migrations\201511061009004_InitialCreate.cs" />
+    <Compile Include="Migrations\201511061009004_InitialCreate.Designer.cs">
+      <DependentUpon>201511061009004_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AutenDbContext.cs" />
     <Compile Include="Models\DocumentDbContext.cs" />
     <Compile Include="Globals.cs" />
@@ -204,6 +209,11 @@
     <Resource Include="Image\3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201511061009004_InitialCreate.resx">
+      <DependentUpon>201511061009004_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath32)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
