@@ -34,6 +34,21 @@ namespace PublicOrders
             }
         }
 
+        // Инструкции
+        private ObservableCollection<Instruction> _instructions;
+        public ObservableCollection<Instruction> InstructionCollection
+        {
+            get
+            {
+                return _instructions;
+            }
+            set
+            {
+                _instructions = value;
+                OnPropertyChanged("InstructionCollection");
+            }
+        }
+
         // Рубрики
         private ObservableCollection<Rubric> _rubrics;
         public ObservableCollection<Rubric> RubricCollection
@@ -188,6 +203,7 @@ namespace PublicOrders
             dc = new DocumentDbContext();
             this.ProductCollection = new ObservableCollection<Product>(dc.Products);
             this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
+            this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
             this.TemplateCollection = new ObservableCollection<string>(new List<string> {
                         "Комитет",
                         "Свобода",
@@ -202,6 +218,11 @@ namespace PublicOrders
 
         public void RefreshRubrics() {
             this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
+        }
+
+        public void RefreshInstructions()
+        {
+            this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
         }
 
         public void RefreshProducts()

@@ -11,6 +11,8 @@ using System.Threading;
 using PublicOrders.ViewModels;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
+using PublicOrders.Models;
 
 namespace PublicOrders
 {
@@ -29,11 +31,23 @@ namespace PublicOrders
         {
             try
             {
-                this.CreateDocumentPanel.DataContext = new CreateDocumentViewModel();
+                var vm = this.CreateDocumentPanel.DataContext as CreateDocumentViewModel;
+                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+                mvm.RefreshProducts();
+                mvm.RefreshInstructions();
+                vm.FilteredProducts.Source = mvm.ProductCollection;
+                vm.FilteredProducts.View.Refresh();
+
+                //ObservableCollection<Product> pppp = vm.ProductsForDocument;
+                //vm.ProductsForDocumentGroped.View.Refresh();
+                //vm.ProductsForDocumentGroped.Source = ProductsForDocument;
+
+                //this.CreateDocumentPanel.DataContext = new CreateDocumentViewModel();
             }
             catch (Exception ex)
             {
-                //
+                string sfsdf = "dsff";
             }
         }
 
@@ -60,13 +74,8 @@ namespace PublicOrders
         {
             try
             {
-                var vm = this.LoadProductsPanel.DataContext as LoadProductsViewModel;
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-
                 mvm.RefreshRubrics();
-                vm.Rubrics = mvm.RubricCollection;
-
-                //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }
             catch (Exception ex)
             {

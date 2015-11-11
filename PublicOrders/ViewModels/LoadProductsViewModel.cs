@@ -48,17 +48,6 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private ObservableCollection<Rubric> _rubrics;
-        public ObservableCollection<Rubric> Rubrics
-        {
-            get { return _rubrics; }
-            set
-            {
-                _rubrics = value;
-                OnPropertyChanged("Rubrics");
-            }
-        }
-
         private Rubric _selectedRubric;
         public Rubric SelectedRubric
         {
@@ -70,17 +59,6 @@ namespace PublicOrders.ViewModels
             {
                 _selectedRubric = value;
                 OnPropertyChanged("SelectedRubric");
-            }
-        }
-
-        private ObservableCollection<string> _templates;
-        public ObservableCollection<string> Templates
-        {
-            get { return _templates; }
-            set
-            {
-                _templates = value;
-                OnPropertyChanged("Templates");
             }
         }
 
@@ -263,14 +241,15 @@ namespace PublicOrders.ViewModels
         {
             this.DocPath = "";
 
-            Rubrics = new ObservableCollection<Rubric>(mvm.RubricCollection);
+            //Rubrics = new ObservableCollection<Rubric>(mvm.RubricCollection);
             if (SelectedRubric == null) {
-                SelectedRubric = Rubrics.FirstOrDefault(m => m.Name == "--Без рубрики--");
+                SelectedRubric = mvm.RubricCollection.FirstOrDefault(m => m.Name == "--Без рубрики--");
             }
 
-            Templates = mvm.TemplateCollection;
-            if ((Templates != null) && (Templates.Count > 0)) {
-                SelectedTemplate = Templates[0];
+            //Templates = mvm.TemplateCollection;
+            if (SelectedTemplate == null)
+            {
+                SelectedTemplate = mvm.TemplateCollection[0];
             }
         }
 

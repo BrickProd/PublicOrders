@@ -13,6 +13,10 @@ namespace PublicOrders.Processors
 {
     class FreedomProcessor
     {
+        object falseValue = false;
+        object trueValue = true;
+        object missing = Type.Missing;
+
         private bool isWork = false;
         Object missingObj = System.Reflection.Missing.Value;
 
@@ -120,6 +124,7 @@ namespace PublicOrders.Processors
             productsAddedCount = 0;
             productsRepeatCount = 0;
             productsMergeCount = 0;
+            Word.Application application = null;
             try
             {
                 isWork = true;
@@ -133,16 +138,12 @@ namespace PublicOrders.Processors
                 }
 
                 //Создаём новый Word.Application
-                Word.Application application = new Microsoft.Office.Interop.Word.Application();
+                application = new Microsoft.Office.Interop.Word.Application();
 
                 //Загружаем документ
                 Microsoft.Office.Interop.Word.Document doc = null;
 
                 object fileName = docPath;
-                object falseValue = false;
-                object trueValue = true;
-                object missing = Type.Missing;
-
                 doc = application.Documents.Open(ref fileName, ref missing, ref trueValue,
                 ref missing, ref missing, ref missing, ref missing, ref missing,
                 ref missing, ref missing, ref missing, ref missing, ref missing,
@@ -179,7 +180,8 @@ namespace PublicOrders.Processors
 
                 Word.Cell cell = tbl.Cell(4, 1);
                 int rowIndex = 4;
-                while (cell != null) {
+                while (cell != null)
+                {
                     try
                     {
                         string cellValue = cell.Range.Text.Trim();
@@ -194,7 +196,8 @@ namespace PublicOrders.Processors
                             if (freedomProperty == null) freedomProperty = new FreedomProperty();
                         }
 
-                        switch (cell.ColumnIndex) {
+                        switch (cell.ColumnIndex)
+                        {
                             case (2):
                                 // Название (--ПЕРВОЕ ЗНАЧЕНИЕ--)
                                 if (Globals.CleanWordCell(cellValue) == "") break;
@@ -232,22 +235,20 @@ namespace PublicOrders.Processors
                     {
                         break;
                     }
-                    finally {
+                    finally
+                    {
                         cell = cell.Next;
                     }
                 }
                 SaveProperty(product, freedomProperty);
                 SaveProduct(ddc, product, rubric, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
 
-                // Закрываем приложение
-                application.Quit(ref missing, ref missing, ref missing);
-                application = null;
+
 
                 ddc.Dispose();
 
                 return ResultType_enum.Done;
-        }
-
+            }
             catch (Exception ex)
             {
                 message = ex.Message + '\n' + ex.StackTrace;
@@ -255,7 +256,12 @@ namespace PublicOrders.Processors
             }
             finally
             {
-
+                if (application != null)
+                {
+                    // Закрываем приложение
+                    application.Quit(ref missing, ref missing, ref missing);
+                    application = null;
+                }
                 isWork = false;
             }
         }

@@ -13,6 +13,10 @@ namespace PublicOrders.Processors
 {
     class CommitteeProcessor
     {
+        object falseValue = false;
+        object trueValue = true;
+        object missing = Type.Missing;
+
         private bool isWork = false;
         Object missingObj = System.Reflection.Missing.Value;
 
@@ -128,6 +132,8 @@ namespace PublicOrders.Processors
             productsAddedCount = 0;
             productsRepeatCount = 0;
             productsMergeCount = 0;
+
+            Word.Application application = null;
             try
             {
                 isWork = true;
@@ -141,16 +147,12 @@ namespace PublicOrders.Processors
                 }
 
                 //Создаём новый Word.Application
-                Word.Application application = new Microsoft.Office.Interop.Word.Application();
+                application = new Microsoft.Office.Interop.Word.Application();
 
                 //Загружаем документ
                 Microsoft.Office.Interop.Word.Document doc = null;
 
                 object fileName = docPath;
-                object falseValue = false;
-                object trueValue = true;
-                object missing = Type.Missing;
-
                 doc = application.Documents.Open(ref fileName, ref missing, ref trueValue,
                 ref missing, ref missing, ref missing, ref missing, ref missing,
                 ref missing, ref missing, ref missing, ref missing, ref missing,
@@ -262,10 +264,6 @@ namespace PublicOrders.Processors
 
                 ddc.Dispose();
 
-                // Закрываем приложение
-                application.Quit(ref missing, ref missing, ref missing);
-                application = null;
-
                 return ResultType_enum.Done;
             }
             catch (Exception ex)
@@ -274,6 +272,12 @@ namespace PublicOrders.Processors
                 return ResultType_enum.Error;
             }
             finally {
+                if (application != null) {
+                    // Закрываем приложение
+                    application.Quit(ref missing, ref missing, ref missing);
+                    application = null;
+                }
+
                 isWork = false;
             }
         }

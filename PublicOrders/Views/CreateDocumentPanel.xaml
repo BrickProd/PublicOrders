@@ -66,8 +66,8 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <ComboBox x:Name="comboBox" FontSize="18" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" SelectedIndex="0" Grid.ColumnSpan="2"/>
-        <ComboBox x:Name="comboBox1" FontSize="18" Margin="5" Grid.Row="3" ItemsSource="{Binding Instructions}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name" Grid.ColumnSpan="2"/>
+                <ComboBox x:Name="comboBox" FontSize="18" Margin="5" Grid.Row="1" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=TemplateCollection}" SelectedItem="{Binding SelectedTemplate}" SelectedIndex="0" Grid.ColumnSpan="2"/>
+                <ComboBox x:Name="comboBox1" FontSize="18" Margin="5" Grid.Row="3" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=InstructionCollection}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name" Grid.ColumnSpan="2"/>
         <Button x:Name="button" FontSize="18" Content="Создать" HorizontalAlignment="Center" Grid.Row="4" Width="150" Command="{Binding CreateDocumentCommand}" Style="{StaticResource OKButtonStyle}" Grid.ColumnSpan="2" Height="25"/>
         <!--<DataGrid x:Name="dataGridSource" Margin="5,10,225,10" Grid.Row="2" ItemsSource="{Binding FilteredProducts.View}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>

@@ -37,9 +37,9 @@ namespace PublicOrders.ViewModels
         }
 
 
-
-        public ObservableCollection<string> Templates { get; set; }
-        public ObservableCollection<Product> Products { get; set; }
+        //public ObservableCollection<Product> Products { get; set; }
+        /*public ObservableCollection<string> Templates { get; set; }
+        public ObservableCollection<Product> Products { get; set; }*/
         public CollectionViewSource FilteredProducts { get; set; }
         public CollectionViewSource ProductsForDocumentGroped { get; set; }
         public ObservableCollection<Product> ProductsForDocument { get; set; }
@@ -59,7 +59,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public ObservableCollection<Instruction> Instructions { get; set; }
+        //public ObservableCollection<Instruction> Instructions { get; set; }
         public Instruction SelectedInstruction { get; set; }
 
         #region КОМАНДЫ
@@ -155,25 +155,28 @@ namespace PublicOrders.ViewModels
         {
             this.IsCreateInProcess = false;
 
-            if (mvm != null)
+            /*if (mvm != null)
             {
+
+
                 Templates = new ObservableCollection<string>(new List<string> {
                         "Комитет",
                         "Свобода",
                         "Форма 2"
                 }); ;
                 Products = mvm.ProductCollection;
-            }
-            
+            }*/
+
+            //Products = mvm.ProductCollection;
+            //Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
 
             ProductsForDocument = new ObservableCollection<Product>();
 
-            Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
             FilteredProducts = new CollectionViewSource();
 
 
 
-            FilteredProducts.Source = this.Products;
+            FilteredProducts.Source = mvm.ProductCollection;
             FilteredProducts.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
 
             FilteredProducts.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
@@ -183,7 +186,7 @@ namespace PublicOrders.ViewModels
             ProductsForDocumentGroped.Source = ProductsForDocument;
             ProductsForDocumentGroped.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
 
-            SelectedTemplate = Templates[1];
+            SelectedTemplate = mvm.TemplateCollection[0];
             FilteredProducts.View.Refresh();
         }
 
