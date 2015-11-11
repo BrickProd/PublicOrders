@@ -13,6 +13,7 @@ using System.Windows;
 using System.ComponentModel;
 using PublicOrders.Annotations;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using PublicOrders.Processors.Main;
 using System.Windows.Data;
 
@@ -66,6 +67,7 @@ namespace PublicOrders.ViewModels
         private DelegateCommand createDocumentCommand;
         private DelegateCommand chooseProductCommand;
         private DelegateCommand unchooseProductCommand;
+        private DelegateCommand choseProductsInRubricCommand;
 
         public ICommand CreateDocumentCommand
         {
@@ -102,7 +104,19 @@ namespace PublicOrders.ViewModels
                 return unchooseProductCommand;
             }
         }
+        public ICommand ChoseProductsInRubricCommand
+        {
+            get
+            {
 
+                if (choseProductsInRubricCommand == null)
+                {
+
+                    choseProductsInRubricCommand = new DelegateCommand(ChoseProductsInRubric);
+                }
+                return choseProductsInRubricCommand;
+            }
+        }
 
         private void CreateDocument(object param)
         {
@@ -132,8 +146,27 @@ namespace PublicOrders.ViewModels
         }
         private void ChooseProduct(object param)
         {
-            ProductsForDocument.Add(SelectedProduct);
+            var products = param as IEnumerable<object>;
+            products?.ToList().ForEach(m =>
+            {
+                var p = m as Product;
+
+                ProductsForDocument.Add(p);
+            });
             this.FilteredProducts.View.Refresh();
+        }
+        private void ChoseProductsInRubric(object param)
+        {
+            var listView = param as ListView;
+
+            if (listView != null)
+            {
+                var listSelectedProduct = listView.SelectedItem as Product;
+
+                var productsInRubric = FilteredProducts.View.Cast<Product>().ToList().Where(m => listSelectedProduct != null && m.Rubric == listSelectedProduct.Rubric);
+                listView.SelectedItems.Clear();
+                productsInRubric.ToList().ForEach(m => listView.SelectedItems.Add(m));
+            }
         }
         #endregion
 
@@ -162,20 +195,6 @@ namespace PublicOrders.ViewModels
         {
             this.IsCreateInProcess = false;
 
-            /*if (mvm != null)
-            {
-
-
-                Templates = new ObservableCollection<string>(new List<string> {
-                        "Комитет",
-                        "Свобода",
-                        "Форма 2"
-                }); ;
-                Products = mvm.ProductCollection;
-            }*/
-
-            //Products = mvm.ProductCollection;
-            //Instructions = new ObservableCollection<Instruction>(mvm.dc.Instructions);
 
             ProductsForDocument = new ObservableCollection<Product>();
 
