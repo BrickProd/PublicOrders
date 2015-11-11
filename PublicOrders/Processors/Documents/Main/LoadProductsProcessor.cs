@@ -20,10 +20,12 @@ namespace PublicOrders.Processors.Main
 
         private string documentPath = "";
         private string templateStr;
+        private Rubric rubric = null;
         LoadProductsDone_delegete done_del = null;
 
-        public LoadProductsProcessor(string _documentPath, string _templateStr, LoadProductsDone_delegete _done_del)
+        public LoadProductsProcessor(string _documentPath, string _templateStr, Rubric _rubric, LoadProductsDone_delegete _done_del)
         {
+            rubric = _rubric;
             documentPath = _documentPath;
             templateStr = _templateStr;
             done_del = _done_del;
@@ -42,19 +44,19 @@ namespace PublicOrders.Processors.Main
                 {
                     case ("свобода"):
                         FreedomProcessor freedomLoadProcessor = new FreedomProcessor();
-                        ResultType_enum = freedomLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
+                        ResultType_enum = freedomLoadProcessor.Learn(documentPath, rubric, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
                         done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, message);
                         return;
                     case ("форма 2"):
                         Form2Processor form2LoadProcessor = new Form2Processor();
-                        ResultType_enum = form2LoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
+                        ResultType_enum = form2LoadProcessor.Learn(documentPath, rubric, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         isWork = false;
                         done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, message);
                         return;
                     case ("комитет"):
                         CommitteeProcessor committeeLoadProcessor = new CommitteeProcessor();
-                        ResultType_enum = committeeLoadProcessor.Learn(documentPath, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
+                        ResultType_enum = committeeLoadProcessor.Learn(documentPath, rubric, out productsAddedCount, out productsRepeatCount, out productsMergeCount, out message);
                         done_del(ResultType_enum, templateStr, productsAddedCount, productsRepeatCount, productsMergeCount, message);
                         isWork = false;
                         return;

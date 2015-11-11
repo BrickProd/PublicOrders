@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PublicOrders.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,6 +15,7 @@ namespace PublicOrders
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
             if (mvm.cdProcessor != null) mvm.cdProcessor.Stop();
             if (mvm.csProcessor != null) mvm.csProcessor.Stop();
             if (mvm.cwProcessor != null) mvm.cwProcessor.Stop();

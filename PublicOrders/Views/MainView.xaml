@@ -61,9 +61,9 @@
                     <views:ProductEditorPanel x:Name="ProductEditorPanel"  ></views:ProductEditorPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8" >
+            <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8" Selector.Selected="LoadProductsTabItem_Selected">
                 <Grid>
-                    <views:LoadProductsPanel></views:LoadProductsPanel>
+                    <views:LoadProductsPanel x:Name="LoadProductsPanel"></views:LoadProductsPanel>
                 </Grid>
             </TabItem >
         </TabControl>

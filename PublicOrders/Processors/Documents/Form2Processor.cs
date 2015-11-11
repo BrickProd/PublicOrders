@@ -17,11 +17,10 @@ namespace PublicOrders.Processors
         Object missingObj = System.Reflection.Missing.Value;
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        private void SaveProduct(DocumentDbContext ddc, Product product, ref int productsAddedCount, ref int productsRepeatCount, ref int productsMergeCount) {
+        private void SaveProduct(DocumentDbContext ddc, Product product, Rubric rubric, ref int productsAddedCount, ref int productsRepeatCount, ref int productsMergeCount) {
             if (product != null)
             {
                 product.ModifiedDateTime = DateTime.Now;
-                Rubric rubric = ddc.Rubrics.FirstOrDefault(m => m.Name.ToLower() == "--без рубрики--");
 
                 // Проверка на повтор
                 // Если совпали название и товарный знак и значения по всем атрибутам, то это ПОВТОР
@@ -89,7 +88,7 @@ namespace PublicOrders.Processors
                     {
                         try
                         {
-                            product.Rubric = rubric;
+                            product.RubricId = rubric.RubricId;
 
                             /*foreach (Form2Property fp in product.Form2Properties) {
                                 mvm.dc.Form2Properties.Add(fp);
@@ -134,7 +133,7 @@ namespace PublicOrders.Processors
             }
         }
 
-        public ResultType_enum Learn(string docPath, out int productsAddedCount, out int productsRepeatCount, out int productsMergeCount, out string message)
+        public ResultType_enum Learn(string docPath, Rubric rubric, out int productsAddedCount, out int productsRepeatCount, out int productsMergeCount, out string message)
         {
             productsAddedCount = 0;
             productsRepeatCount = 0;
@@ -221,7 +220,7 @@ namespace PublicOrders.Processors
                                 if (Globals.CleanWordCell(cellValue) == "") break;
                                 if (product != null)
                                 {
-                                    SaveProduct(ddc, product, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+                                    SaveProduct(ddc, product, rubric, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
                                 }
 
                                 product = new Product();
@@ -275,7 +274,7 @@ namespace PublicOrders.Processors
                     }
                 }
                 SaveProperty(product, form2Property);
-                SaveProduct(ddc, product, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
+                SaveProduct(ddc, product, rubric, ref productsAddedCount, ref productsRepeatCount, ref productsMergeCount);
 
 
                 // Закрываем приложение

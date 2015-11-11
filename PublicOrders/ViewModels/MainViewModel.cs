@@ -5,6 +5,7 @@ using PublicOrders.Models;
 using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace PublicOrders
 {
@@ -16,9 +17,9 @@ namespace PublicOrders
             }
         }
 
-
-        #region Документы
-        public DocumentDbContext dc { get; set; }
+        // Глобальные коллекции
+        #region Глобальные коллекции
+        // Продукты
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> ProductCollection
         {
@@ -31,13 +32,46 @@ namespace PublicOrders
                 _products = value;
                 OnPropertyChanged("ProductsCollection");
             }
-
         }
+
+        // Рубрики
+        private ObservableCollection<Rubric> _rubrics;
+        public ObservableCollection<Rubric> RubricCollection
+        {
+            get
+            {
+                return _rubrics;
+            }
+            set
+            {
+                _rubrics = value;
+                OnPropertyChanged("RubricCollection");
+            }
+        }
+
+        // Шаблоны
+        private ObservableCollection<string> _templates;
+        public ObservableCollection<string> TemplateCollection
+        {
+            get
+            {
+                return _templates;
+            }
+            set
+            {
+                _templates = value;
+                OnPropertyChanged("TemplateCollection");
+            }
+        }
+        #endregion
+
+
+        #region Документы
+        public DocumentDbContext dc { get; set; }
         #endregion
 
         #region Победители
         public WinnersDbContext wc { get; set; }
-        //public ObservableCollection<Customer> CustomerCollection { get; set; }
         #endregion
 
         #region Пользователи
@@ -152,14 +186,24 @@ namespace PublicOrders
 		{
             // Документы
             dc = new DocumentDbContext();
-            ProductCollection = new ObservableCollection<Product>(dc.Products);
+            this.ProductCollection = new ObservableCollection<Product>(dc.Products);
+            this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
+            this.TemplateCollection = new ObservableCollection<string>(new List<string> {
+                        "Комитет",
+                        "Свобода",
+                        "Форма 2"
+                    });
 
             // Победители
             wc = new WinnersDbContext();
 
             CheckProductsRepetition();
         }
-		
+
+        public void RefreshRubrics() {
+            this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
+        }
+
         public void RefreshProducts()
         {
             this.ProductCollection = new ObservableCollection<Product>(dc.Products);

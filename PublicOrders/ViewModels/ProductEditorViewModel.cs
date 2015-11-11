@@ -229,7 +229,9 @@ namespace PublicOrders.ViewModels
             if (mvm != null)
             {
                 Products = new CollectionViewSource();
-                Products.Source = this.mvm.ProductCollection;
+                //this.mvm.ProductCollection =
+
+                Products.Source = new ObservableCollection<Product>(mvm.dc.Products);
                 Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;

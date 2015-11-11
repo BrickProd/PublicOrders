@@ -17,6 +17,7 @@ using Microsoft.Win32;
 using PublicOrders.Processors.Main;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Data;
 
 namespace PublicOrders.ViewModels
 {
@@ -27,7 +28,6 @@ namespace PublicOrders.ViewModels
         private string _docPath;
         private bool _isLoadInProcess;
         private ImageSource _selectedTemplateImage;
-        private string _selectedTemplate;
 
         public string DocPath
         {
@@ -48,8 +48,43 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public ObservableCollection<string> Templates { get; set; }
+        private ObservableCollection<Rubric> _rubrics;
+        public ObservableCollection<Rubric> Rubrics
+        {
+            get { return _rubrics; }
+            set
+            {
+                _rubrics = value;
+                OnPropertyChanged("Rubrics");
+            }
+        }
 
+        private Rubric _selectedRubric;
+        public Rubric SelectedRubric
+        {
+            get
+            {
+                return _selectedRubric;
+            }
+            set
+            {
+                _selectedRubric = value;
+                OnPropertyChanged("SelectedRubric");
+            }
+        }
+
+        private ObservableCollection<string> _templates;
+        public ObservableCollection<string> Templates
+        {
+            get { return _templates; }
+            set
+            {
+                _templates = value;
+                OnPropertyChanged("Templates");
+            }
+        }
+
+        private string _selectedTemplate;
         public string SelectedTemplate
         {
             get
@@ -153,7 +188,7 @@ namespace PublicOrders.ViewModels
             }
 
             LoadProductsDone_delegete done_del = new LoadProductsDone_delegete(LoadProductsDone_Proc);
-            mvm.lpProcessor = new LoadProductsProcessor(DocPath, SelectedTemplate, done_del);
+            mvm.lpProcessor = new LoadProductsProcessor(DocPath, SelectedTemplate, SelectedRubric, done_del);
             mvm.lpProcessor.Operate();
         }
 
@@ -226,14 +261,14 @@ namespace PublicOrders.ViewModels
 
         public LoadProductsViewModel()
         {
-            //this.IsLoadInProcess = false;
             this.DocPath = "";
 
-            Templates = new ObservableCollection<string>(new List<string> {
-                        "Комитет",
-                        "Свобода",
-                        "Форма 2"
-                    });
+            Rubrics = new ObservableCollection<Rubric>(mvm.RubricCollection);
+
+            Templates = mvm.TemplateCollection;
+            if ((Templates != null) && (Templates.Count > 0)) {
+                SelectedTemplate = Templates[0];
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -41,14 +41,32 @@ namespace PublicOrders
         {
             try
             {
-
-                //var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
+                var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
                 mvm.RefreshProducts();
-                //vm.Products.Source = mvm.ProductCollection;
-                //vm.Products.View.Refresh();
-                this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
+                vm.Products.Source = mvm.ProductCollection;
+                vm.Products.View.Refresh();
+                //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
+            }
+            catch (Exception ex)
+            {
+                //
+            }
+
+        }
+
+        private void LoadProductsTabItem_Selected(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var vm = this.LoadProductsPanel.DataContext as LoadProductsViewModel;
+                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+                mvm.RefreshRubrics();
+                vm.Rubrics = mvm.RubricCollection;
+
+                //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }
             catch (Exception ex)
             {
