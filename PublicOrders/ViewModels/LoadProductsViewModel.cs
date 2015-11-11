@@ -264,6 +264,9 @@ namespace PublicOrders.ViewModels
             this.DocPath = "";
 
             Rubrics = new ObservableCollection<Rubric>(mvm.RubricCollection);
+            if (SelectedRubric == null) {
+                SelectedRubric = Rubrics.FirstOrDefault(m => m.Name == "--Без рубрики--");
+            }
 
             Templates = mvm.TemplateCollection;
             if ((Templates != null) && (Templates.Count > 0)) {
