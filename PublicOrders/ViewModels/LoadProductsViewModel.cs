@@ -81,7 +81,7 @@ namespace PublicOrders.ViewModels
                     switch (_selectedTemplate)
                     {
                         //case "Комитет":
-                        //    yourImage = new BitmapImage(new Uri(Path.GetFullPath("Image/3.png")));
+                        //    yourImage = new BitmapImage(new Uri(Path.GetFullPath("..\\Image\\3.png")));
 
                         //    break;
                         //case "Свобода":

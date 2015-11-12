@@ -197,7 +197,7 @@
                                         </GroupStyle>
                                     </ListView.GroupStyle>
                                 </ListView>
-                                <ListBox x:Name="toRubricsListBox" Margin="450,0,-450,0" ItemsSource="{Binding Rubrics}" Width="400" BorderThickness="1 0 0 0"
+                                <ListBox x:Name="toRubricsListBox" Margin="450,0,-450,0" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=RubricCollection}" Width="400" BorderThickness="1 0 0 0"
 							ItemTemplate="{StaticResource ListBoxItemTemplate}"
                                          SelectedItem="{Binding SelectedRubric}"
                                  SelectionMode="Single"
