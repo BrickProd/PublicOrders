@@ -90,7 +90,6 @@ namespace PublicOrders.ViewModels
 
             var window = param as Window;
             window.Close();
-
         }
 
         private void Exit(object param)

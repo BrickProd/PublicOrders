@@ -12,6 +12,7 @@ using PublicOrders.Commands;
 using PublicOrders.Models;
 using System.Data.Entity;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace PublicOrders.ViewModels
@@ -125,6 +126,11 @@ namespace PublicOrders.ViewModels
         private DelegateCommand saveProductCommand;
         private DelegateCommand saveInstructionCommand;
 
+        private DelegateCommand choseProductsInRubricCommand;
+
+        private DelegateCommand sortProductsByNameCommand;
+        private DelegateCommand sortProductsByDateCommand;
+
         public ICommand AddProductCommand
         {
             get
@@ -228,6 +234,47 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        public ICommand ChoseProductsInRubricCommand
+        {
+            get
+            {
+
+                if (choseProductsInRubricCommand == null)
+                {
+
+                    choseProductsInRubricCommand = new DelegateCommand(ChoseProductsInRubric);
+                }
+                return choseProductsInRubricCommand;
+            }
+        }
+
+        public ICommand SortProductsByNameCommand
+        {
+            get
+            {
+
+                if (sortProductsByNameCommand == null)
+                {
+
+                    sortProductsByNameCommand = new DelegateCommand(SortProductsByName);
+                }
+                return sortProductsByNameCommand;
+            }
+        }
+        public ICommand SortProductsByDateCommand
+        {
+            get
+            {
+
+                if (sortProductsByDateCommand == null)
+                {
+
+                    sortProductsByDateCommand = new DelegateCommand(SortProductsByDate);
+                }
+                return sortProductsByDateCommand;
+            }
+        }
+
         #endregion
 
         public ProductEditorViewModel()
@@ -239,16 +286,19 @@ namespace PublicOrders.ViewModels
 
                 Products.Source = new ObservableCollection<Product>(mvm.dc.Products);
                 Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+                Products.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 Products.Filter += ProductFilter;
                 Products.View.Refresh();
 
                 CustomRubrics = new CollectionViewSource();
                 CustomRubrics.Source = mvm.RubricCollection.Where(m => m.RubricId != 1);
+                CustomRubrics.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 CustomRubrics.View.Refresh();
 
                 CustomInstructions = new CollectionViewSource();
                 CustomInstructions.Source = mvm.InstructionCollection.Where(m => m.InstructionId != 1);
+                CustomInstructions.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 CustomInstructions.View.Refresh();
 
                 mvm.CheckProductsRepetition();
@@ -440,6 +490,55 @@ namespace PublicOrders.ViewModels
             mvm.dc.Entry(SelectedInstruction).State = EntityState.Modified;
             mvm.dc.SaveChanges();
         }
+
+        private void ChoseProductsInRubric(object param)
+        {
+            var listView = param as ListView;
+
+            if (listView != null)
+            {
+                var listSelectedProduct = listView.SelectedItem as Product;
+
+                var productsInRubric = Products.View.Cast<Product>().ToList().Where(m => listSelectedProduct != null && m.Rubric == listSelectedProduct.Rubric);
+                listView.SelectedItems.Clear();
+                productsInRubric.ToList().ForEach(m => listView.SelectedItems.Add(m));
+            }
+        }
+
+        private void SortProductsByName(object param)
+        {
+            var mySort = Products.SortDescriptions.FirstOrDefault(m => m.PropertyName == "Name");
+            if (mySort.Direction == ListSortDirection.Ascending)
+            {
+                Products.SortDescriptions.Clear();
+                Products.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
+                Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+            }
+            else
+            {
+                Products.SortDescriptions.Clear();
+                Products.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
+                Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            }
+        }
+        private void SortProductsByDate(object param)
+        {
+            var mySort = Products.SortDescriptions.FirstOrDefault(m => m.PropertyName == "ModifiedDateTime");
+            if (mySort.Direction == ListSortDirection.Ascending)
+            {
+                Products.SortDescriptions.Clear();
+                Products.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
+                Products.SortDescriptions.Add(new SortDescription("ModifiedDateTime", ListSortDirection.Descending));
+            }
+            else
+            {
+                Products.SortDescriptions.Clear();
+                Products.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
+                Products.SortDescriptions.Add(new SortDescription("ModifiedDateTime", ListSortDirection.Ascending));
+            }
+        }
+
+
         #endregion
 
         #region INotifyPropertyChanged

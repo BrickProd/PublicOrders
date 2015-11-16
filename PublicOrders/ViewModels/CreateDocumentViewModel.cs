@@ -24,6 +24,8 @@ namespace PublicOrders.ViewModels
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
         private bool _isCreateInProcess;
+        private string _selectedTemplate = null;
+
 
         public bool IsCreateInProcess
         {
@@ -37,26 +39,18 @@ namespace PublicOrders.ViewModels
             }
         }
 
-
-        //public ObservableCollection<Product> Products { get; set; }
-        /*public ObservableCollection<string> Templates { get; set; }
-        public ObservableCollection<Product> Products { get; set; }*/
         public CollectionViewSource FilteredProducts { get; set; }
         public CollectionViewSource ProductsForDocumentGroped { get; set; }
         public ObservableCollection<Product> ProductsForDocument { get; set; }
         public Product SelectedProduct { get; set; }
 
-
-        private string _selectedTemplate = null;
         public string SelectedTemplate {
             get { return _selectedTemplate; }
             set {
                 _selectedTemplate = value;
                 OnPropertyChanged("SelectedTemplate");
                 ProductsForDocument.Clear();
-                this.FilteredProducts.View.Refresh();
-
-                
+                this.FilteredProducts.View.Refresh();      
             }
         }
 
@@ -141,7 +135,13 @@ namespace PublicOrders.ViewModels
         }
         private void UnchooseProduct(object param)
         {
-            ProductsForDocument.Remove(SelectedProduct);
+            var products = param as IEnumerable<object>;
+            products?.ToList().ForEach(m =>
+            {
+                var p = m as Product;
+
+                ProductsForDocument.Remove(p);
+            });
             this.FilteredProducts.View.Refresh();
         }
         private void ChooseProduct(object param)
@@ -204,13 +204,15 @@ namespace PublicOrders.ViewModels
 
             FilteredProducts.Source = mvm.ProductCollection;
             FilteredProducts.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
-
+            FilteredProducts.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
             FilteredProducts.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             FilteredProducts.Filter += ProductFilter;
 
             ProductsForDocumentGroped = new CollectionViewSource();
             ProductsForDocumentGroped.Source = ProductsForDocument;
             ProductsForDocumentGroped.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
+            ProductsForDocumentGroped.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
+            ProductsForDocumentGroped.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 
             SelectedTemplate = mvm.TemplateCollection[0];
             FilteredProducts.View.Refresh();

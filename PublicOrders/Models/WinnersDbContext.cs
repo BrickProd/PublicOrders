@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PublicOrders.Annotations;
 
 namespace PublicOrders.Models
 {
@@ -370,8 +372,10 @@ namespace PublicOrders.Models
         }
     }
 
-    public class Winner
+    public class Winner : INotifyPropertyChanged
     {
+        private bool _isChoosen;
+
         [Key]
         public long WinnerId { get; set; }
 
@@ -391,9 +395,25 @@ namespace PublicOrders.Models
         public long LotId { get; set; }
         virtual public Lot Lot { get; set; }
 
+        [NotMapped]
+        public bool IsChoosen
+        {
+            get { return _isChoosen; }
+            set { _isChoosen = value;
+                OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public Winner()
         {
-
+            IsChoosen = false;
         }
     }
 }

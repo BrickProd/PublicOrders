@@ -122,6 +122,43 @@
             </Setter>
         </Style>
 
+        <Style TargetType="Button" x:Key="MiniButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Gray"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <ContentPresenter x:Name="myCp" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"></ContentPresenter>
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!--<Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="myCp" Storyboard.TargetProperty="Foreground.Color" To="#FF007ACB" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="myCp" Storyboard.TargetProperty="Foreground.Color" To="Gray" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>-->
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="Button" x:Key="CancelButtonStyle">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="FontSize" Value="18"/>
@@ -551,7 +588,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Border x:Name="Item" BorderBrush="Transparent" Padding="10">
-                            <ContentPresenter Margin="10 0 10 0"/>
+                            <ContentPresenter x:Name="Content" Margin="10 0 10 0"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver"  Value="True">
@@ -560,13 +597,8 @@
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="Item" Property="Background" Value="#007ACB"/>
                                 <Setter TargetName="Item" Property="TextBlock.Foreground" Value="White"/>
+                                <Setter TargetName="Content" Property="TextBlock.Foreground" Value="White"/>
                             </Trigger>
-                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                <Setter Property="Background" Value="White"/>
-                            </Trigger>
-                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                                <Setter Property="Background" Value="#eeeeee"/>
-                            </Trigger>  
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

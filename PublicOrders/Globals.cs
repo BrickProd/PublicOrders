@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using System.Web;
 
 namespace PublicOrders.Models
 {
@@ -93,10 +94,8 @@ namespace PublicOrders.Models
 
         public static string DecodeInternetSymbs(string text)
         {
-            text = text.Replace("&#034;", "\"");
-            text = text.Replace("&amp;", "&");
-            text = text.Replace("&quot;", "\"");
-            text = text.Replace("&nbsp;", " ");
+            text = HttpUtility.UrlDecode(text);
+            text = HttpUtility.HtmlDecode(text);
             return text;
         }
 

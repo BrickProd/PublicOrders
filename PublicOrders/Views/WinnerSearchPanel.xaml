@@ -71,12 +71,12 @@
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Grid.Row="1" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" TextTrimming="WordEllipsis" ToolTip="{Binding SelectedWinner.Name}"/>
+            <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedWinner.Name}"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                 <TextBlock Grid.Row="1" Text="Email: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
-                <TextBlock Grid.Row="1" Text="{Binding SelectedWinner.Email}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+                <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Email}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
                 <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
-                <TextBlock Grid.Row="1" Text="{Binding SelectedWinner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+                <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedWinner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             </StackPanel>
             <TabControl Grid.Row="3" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
                 <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
@@ -84,34 +84,34 @@
                         <ScrollViewer>
                             <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
                                 <TextBlock Text="Название:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Цена:" FontSize="18"></TextBlock>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding SelectedWinner.Lot.LotPrice}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.LotPrice}" FontSize="16" FontStyle="Italic"></TextBox>
                                     <TextBlock Text=" -> " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBlock Text="{Binding SelectedWinner.Lot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBox>
                                     <TextBlock Text=" " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBlock Text="{Binding SelectedWinner.Lot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBlock>
+                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBox>
                                 </StackPanel>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Дата:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.DocumentDateTime}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.DocumentDateTime}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Закон:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.LawType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.LawType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Тип заказа:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.OrderType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.OrderType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
 
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Номер заказа:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Number}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Number}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
@@ -122,19 +122,19 @@
                         <ScrollViewer>
                             <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
                                 <TextBlock Text="ИНН:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.Vatin}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.Vatin}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
                                 
                                 <TextBlock Text="Название:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Адрес:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.Address}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.Address}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                                 <TextBlock Text="Уровень:" FontSize="18"></TextBlock>
-                                <TextBlock Text="{Binding SelectedWinner.Lot.Order.Customer.CustomerLevel.CustomerLevelCode}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBlock>
+                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.CustomerLevel.CustomerLevelCode}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
                                 <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
                             </StackPanel>
@@ -171,9 +171,6 @@
                 </Grid.RowDefinitions>
                 <Grid Margin="10 20" Grid.Row="0">
                     <TextBox x:Name="key" FontSize="18" Margin="0" KeyDown="OnKeyDownHandler">
-                        <!--<TextBox.InputBindings>
-                            <KeyBinding Key="Execute"  Command="{Binding CustomersSearchCommand}"/>
-                        </TextBox.InputBindings>-->
                         <TextBox.Template>
                             <ControlTemplate>
                                 <Grid>
@@ -191,13 +188,6 @@
                                                         <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
-                                                        <!--<MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsCustomersSearching}" Value="False" />
-                                                                <Condition Binding="{Binding IsWinnerLotsSearching}" Value="False" />
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </MultiDataTrigger>-->
                                                     </Style.Triggers>
                                                 </Style>
                                             </ProgressBar.Style>
@@ -346,7 +336,7 @@
                                         <DataTemplate>
                                             <StackPanel>
                                                 <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding Vatin}" FontSize="14" Foreground="Gray"/>
+                                                <TextBlock Text="{Binding Vatin}" FontSize="14" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
@@ -457,15 +447,29 @@
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
                                             <EventSetter Event="Control.MouseDoubleClick" Handler="WinnerDoubleClick"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Lot.Order.LawType.Name}" Value="223">
+                                                    <Setter Property="Background" Value="#0AD0F7"></Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Lot.Order.LawType.Name}" Value="44">
+                                                    <Setter Property="Background" Value="#E7E284"></Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Lot.Order.LawType.Name}" Value="94">
+                                                    <Setter Property="Background" Value="#E7E284"></Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding Lot.Name}" FontSize="14" Foreground="Gray" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding Email}" FontSize="14" Foreground="Gray"/>
-                                                <TextBlock Text="{Binding Phone}" FontSize="14" Foreground="Gray"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding IsChoosen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5"></CheckBox>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding Lot.Name}" FontSize="14" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding Email}" FontSize="14"/>
+                                                    <TextBlock Text="{Binding Phone}" FontSize="14"/>
+                                                </StackPanel>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>

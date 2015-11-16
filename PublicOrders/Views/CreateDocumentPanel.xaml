@@ -77,15 +77,15 @@
                 <MenuItem Header="Выделить товары рубрики" Command="{Binding ChoseProductsInRubricCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget}"></MenuItem>
                 <MenuItem Header="Отобрать" Command="{Binding ChooseProductCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItems}"></MenuItem>
             </ContextMenu>
-        </ListView.ContextMenu>
-        <ListBox.InputBindings>
-                <KeyBinding Key="Right" Command="{Binding ChooseProductCommand}"></KeyBinding>
+            </ListView.ContextMenu>
+            <ListBox.InputBindings>
+                <KeyBinding Key="Right" Command="{Binding ChooseProductCommand}" CommandParameter="{Binding ElementName= ProductsFromListView, Path=SelectedItems}"></KeyBinding>
             </ListBox.InputBindings>
             <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
-                                <TextBlock Text="{Binding TradeMark}" TextWrapping="Wrap" FontSize="14" Foreground="Gray"></TextBlock>
+                                <TextBlock Text="{Binding TradeMark}" TextWrapping="Wrap" FontSize="14"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -115,15 +115,15 @@
                     </ListView.GroupStyle>
                 </ListView>
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Развыбрать документ - стрелка влево" VerticalAlignment="Top" Grid.Column="1"/>
-                <ListView VirtualizingPanel.IsVirtualizingWhenGrouping="True" Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocumentGroped.View}" BorderThickness="1" FontSize="16" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Single" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
+        <ListView x:Name="ProductsToListView" VirtualizingPanel.IsVirtualizingWhenGrouping="True" Margin="5,25.96,5,5" Grid.Row="2" ItemsSource="{Binding ProductsForDocumentGroped.View}" BorderThickness="1" FontSize="16" Grid.Column="1" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" SelectionMode="Extended" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.InputBindings>
-                <KeyBinding Key="Left" Command="{Binding UnchooseProductCommand}"></KeyBinding>
+                        <KeyBinding Key="Left" Command="{Binding UnchooseProductCommand}" CommandParameter="{Binding ElementName=ProductsToListView, Path=SelectedItems}"></KeyBinding>
             </ListBox.InputBindings>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
-                                <TextBlock Text="{Binding TradeMark}" TextWrapping="Wrap" FontSize="14" Foreground="Gray"></TextBlock>
+                                <TextBlock Text="{Binding TradeMark}" TextWrapping="Wrap" FontSize="14" ></TextBlock>
                             </StackPanel>
                         </DataTemplate>
             </ListBox.ItemTemplate>

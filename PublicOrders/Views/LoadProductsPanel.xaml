@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" x:Class="PublicOrders.Views.LoadProductsPanel"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="600" Padding="20 0 20 0">
+             d:DesignHeight="700" d:DesignWidth="600" Padding="20 0 20 0">
     <UserControl.DataContext>
         <ViewModels:LoadProductsViewModel/>
     </UserControl.DataContext>
@@ -55,20 +55,20 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <StackPanel Margin="10,10,50,10" Width="500" HorizontalAlignment="Left">
-                <Grid Margin="0 10">
+            <StackPanel Margin="10">
+                <Grid Margin="0 10" Width="500">
                     <StackPanel>
                         <TextBlock Text="Шаблон" FontSize="18"/>
                         <ComboBox x:Name="comboBoxTemplate" FontSize="18" Grid.Column="1" Margin="0 5" Grid.Row="1" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=TemplateCollection}" SelectedItem="{Binding SelectedTemplate}"/>
                     </StackPanel>
                 </Grid>
-                <Grid Margin="0 10">
+                <Grid Margin="0 10" Width="500">
                     <StackPanel>
                         <TextBlock Text="Рубрика" FontSize="18"/>
                         <ComboBox x:Name="comboBoxRubric" FontSize="18" Margin="0 5" Grid.Column="1"  Grid.Row="1" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=RubricCollection}" SelectedItem="{Binding SelectedRubric}" DisplayMemberPath="Name"/>
                     </StackPanel>
                 </Grid>
-                <Grid Margin="0 10">
+                <Grid Margin="0 10" Width="500">
                     <StackPanel>
                         <TextBlock Text="Документ" FontSize="18"/>
                         <TextBox x:Name="textBox" FontSize="18" Grid.Column="1" Margin="0 5" Grid.Row="2" TextWrapping="Wrap">
@@ -83,7 +83,7 @@
                         </TextBox>
                     </StackPanel>
                 </Grid>
-                <Grid Margin="0 10">
+                <Grid Margin="0 10" Width="500">
                     <StackPanel>
                         <Button x:Name="button" Grid.Column="1" Padding="5" HorizontalAlignment="Center" Margin="0" Grid.Row="3" Width="150" Command="{Binding LoadCommand}" Content="Загрузить">
                             <Button.Style>
@@ -98,8 +98,24 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-                <Grid>
-                    <Image Source="{Binding SelectedTemplateImage}" Height="250" />
+                <Grid Margin="0 10">
+                    <Image Height="250">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedTemplate}" Value="Комитет">
+                                        <Setter Property="Source" Value="../Image/3.png"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedTemplate}" Value="Форма 2">
+                                        <Setter Property="Source" Value="../Image/2.png"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedTemplate}" Value="Свобода">
+                                        <Setter Property="Source" Value="../Image/1.png"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
                 </Grid>
             </StackPanel>
         </Border>

@@ -508,7 +508,7 @@ namespace PublicOrders.ViewModels
             }
 
             CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = new CreateWinnersDocumentDone_delegete(CreateWinnersDocumentDone_proc);
-            mvm.cwProcessor = new CreateWinnersDocProcessor (Winners.ToList(), createWinnersDocumentDone_delegete);
+            mvm.cwProcessor = new CreateWinnersDocProcessor (Winners.Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
             mvm.cwProcessor.Operate();
         }
 
