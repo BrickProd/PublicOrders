@@ -328,8 +328,121 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Range.Text = "ТРЕБОВАНИЯ К ТОВАРАМ, ИСПОЛЬЗУЕМЫМ ПРИ ВЫПОЛНЕНИИ РАБОТ";
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
+                    string dataString = "";
+                    // Заголовок
+                    dataString += "№ п/п\t";
+                    dataString += "Требования, установленные заказчиком\t";
+                    dataString += "\t";
+                    dataString += "Значение, предлагаемое участником\t";
+                    dataString += "\t";
+                    dataString += "Сведения о сертификации\n";
+                    dataString += "\t";
+                    dataString += "Наименование товара\t";
+                    dataString += "Требуемый параметр и требуемое значение\t";
+                    dataString += "Требуемый параметр и требуемое значение\t";
+                    dataString += "Указание на товарный знак (модель), производителя\t";
+                    dataString += "\n";
+                    dataString += "1\t";
+                    dataString += "2\t";
+                    dataString += "3\t";
+                    dataString += "4\t";
+                    dataString += "5\t";
+                    dataString += "6\n";
+
+                    // Строки
+                    int a = 0;
+                    foreach (Product product in products)
+                    {
+                        if (!isWork) break;
+                        if ((product == null) ||
+                            (product.FreedomProperties == null) ||
+                            (product.FreedomProperties.Count == 0))
+                            continue;
+
+                        a++;
+                        // <nnn> - новый параграф
+                        // <rrr> - /r
+                        // <nnn> - /n
+                        dataString += a + ".\t";
+                        dataString += product.Name.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.FreedomProperties[0].CustomerParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.FreedomProperties[0].MemberParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.TradeMark.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.Certification.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\n";
+                    }
+
+
+
+                    Word.Range wdRng = doc.Paragraphs[5].Range;
+                    wdRng.Text = dataString;
+
+                    object Separator = Word.WdTableFieldSeparator.wdSeparateByTabs;
+                    object Format = Word.WdTableFormat.wdTableFormatSimple1;
+                    object ApplyBorders = true;
+                    //object AutoFit = true;
+
+                    Object defaultTableBehavior =
+                        Word.WdDefaultTableBehavior.wdWord8TableBehavior;
+                    Object autoFitBehavior =
+                        Word.WdAutoFitBehavior.wdAutoFitFixed;
+
+                    Word.Table myTable = wdRng.ConvertToTable(ref Separator,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                    ref ApplyBorders, Type.Missing, Type.Missing, Format,
+                     Type.Missing, Type.Missing, Type.Missing,
+                     Type.Missing, Type.Missing, ref autoFitBehavior,
+                     defaultTableBehavior);
+
+                    // Замена <nnn> на параграф
+                    wdRng.Select();
+                    Word.Find findObject = wdRng.Find;
+                    findObject.ClearFormatting();
+                    findObject.Text = "<nnn>";
+                    //findObject.Replacement.ClearFormatting();
+                    findObject.Replacement.Text = "^p";//strB.Append("<w:br/>");
+
+                    object replaceAll = Word.WdReplace.wdReplaceAll;
+                    findObject.Execute(ref missing, ref missing, ref missing, ref missing, ref missing,
+                        ref missing, ref missing, ref missing, ref missing, ref missing,
+                        ref replaceAll, ref missing, ref missing, ref missing, ref missing);
+
+                    // Выравнивание
+                    myTable.Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                    myTable.Rows[1].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    myTable.Rows[2].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    myTable.Rows[3].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    // Стиль таблицы
+                    object styleTypeTable = Word.WdStyleType.wdStyleTypeTable;
+                    Word.Style styl = doc.Styles.Add
+                         ("New Table Style", ref styleTypeTable);
+
+                    styl.Font.Name = "Arial";
+                    styl.Font.Size = 11;
+                    Word.TableStyle stylTbl = styl.Table;
+                    stylTbl.Borders.Enable = 1;
+
+
+                    object objStyle = styl;
+                    myTable.Range.set_Style(ref objStyle);
+
+                    // Окраска строки
+                    object begCell = myTable.Cell(3, 1).Range.Start;
+                    object endCell = myTable.Cell(3, 6).Range.End;
+                    Word.Range wordcellrange = doc.Range(ref begCell, ref endCell);
+                    wordcellrange.Select();
+                    application.Selection.Shading.BackgroundPatternColor = Word.WdColor.wdColorGray10;
+
+                    // Объединение ячеек заголовка
+                    myTable.Cell(1, 1).Merge(myTable.Cell(2, 1));
+                    myTable.Cell(1, 6).Merge(myTable.Cell(2, 6));
+                    myTable.Cell(1, 2).Merge(myTable.Cell(1, 3));
+                    myTable.Cell(1, 3).Merge(myTable.Cell(1, 4));
+
+                    application.Visible = true;
+
                     // Инициализируем количество заполняемого товара
-                    int linesCount = 0;
+                    /*int linesCount = 0;
                     foreach (Product product in products ) {
                         if ((product == null) || (product.FreedomProperties == null) || (product.FreedomProperties.Count != 1)) continue;
                         linesCount++;
@@ -443,7 +556,7 @@ namespace PublicOrders.Processors
                         doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
                     }
 
-                    application.Visible = true;
+                    application.Visible = true;*/
                 }
 
                 catch (Exception er)

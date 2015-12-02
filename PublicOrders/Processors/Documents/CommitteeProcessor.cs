@@ -343,140 +343,133 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Range.Text = "СВЕДЕНИЯ О КАЧЕСТВЕ, ТЕХНИЧЕСКИХ ХАРАКТЕРИСТИКАХ ТОВАРА, ЕГО БЕЗОПАСНОСТИ, ФУНКЦИОНАЛЬНЫХ ХАРАКТЕРИСТИКАХ (ПОТРЕБИТЕЛЬСКИХ СВОЙСТВАХ) ТОВАРА, РАЗМЕРЕ, УПАКОВКЕ, ОТГРУЗКЕ ТОВАРА И ИНЫЕ СВЕДЕНИЯ О ТОВАРЕ, ПРЕДСТАВЛЕНИЕ КОТОРЫХ ПРЕДУСМОТРЕНО ДОКУМЕНТАЦИЕЙ ОБ АУКЦИОНЕ В ЭЛЕКТРОННОЙ ФОРМЕ";
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
+                    string dataString = "";
+                    // Заголовок
+                    dataString += "№ п/п\t";
+                    dataString += "Наименование товара\t";
+                    dataString += "Наименование показателя\t";
+                    dataString += "Минимальные значения показателей\t";
+                    dataString += "Максимальные значения показателей\t";
+                    dataString += "Значения показателей, которые не могут изменяться\t";
+                    dataString += "Значение, предлагаемое участником\t";
+                    dataString += "Единица измерения\t";
+                    dataString += "Указание на товарный знак (модель), производителя\n";
 
-                    // Подсчитываем количество строк у товара (потому что одно свойство товара занимает одну строку)
-                    int propertiesCount = 0;
+                    // Строки
+                    int a = 0;
                     foreach (Product product in products)
                     {
-                        if ((product == null) ||(product.CommitteeProperties == null)) continue;
-                        propertiesCount += product.CommitteeProperties.Count();
+                        if (!isWork) break;
+                        if ((product == null) ||
+                            (product.CommitteeProperties == null) ||
+                            (product.CommitteeProperties.Count == 0))
+                            continue;
+
+                        a++;
+                        // <nnn> - новый параграф
+                        // <rrr> - /r
+                        // <nnn> - /n
+                        dataString += a + ".\t";
+                        dataString += product.Name.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        // Атрибуты продукта
+                        // Первый атрибут
+                        dataString += product.CommitteeProperties[0].ParamName.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.CommitteeProperties[0].MinValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.CommitteeProperties[0].MaxValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.CommitteeProperties[0].VariableParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.CommitteeProperties[0].SpecificParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.CommitteeProperties[0].Measure.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+
+                        // Товарный знак
+                        dataString += product.TradeMark.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\n";
+                        // Остальные атрибуты
+                        int b = 0;
+                        for (int i = 1; i < product.CommitteeProperties.Count; i++)
+                        {
+                            dataString += "\t";
+                            dataString += "\t";
+                            dataString += product.CommitteeProperties[i].ParamName.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.CommitteeProperties[i].MinValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.CommitteeProperties[i].MaxValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.CommitteeProperties[i].VariableParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.CommitteeProperties[i].SpecificParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.CommitteeProperties[i].Measure.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += "\n";
+                            b++;
+                        }
                     }
+
+
+
+                    Word.Range wdRng = doc.Paragraphs[5].Range;
+                    wdRng.Text = dataString;
+
+                    object Separator = Word.WdTableFieldSeparator.wdSeparateByTabs;
+                    object Format = Word.WdTableFormat.wdTableFormatSimple1;
+                    object ApplyBorders = true;
+                    //object AutoFit = true;
 
                     Object defaultTableBehavior =
-                     Word.WdDefaultTableBehavior.wdWord9TableBehavior;
+                        Word.WdDefaultTableBehavior.wdWord8TableBehavior;
                     Object autoFitBehavior =
-                     Word.WdAutoFitBehavior.wdAutoFitWindow;
-                    Word.Table wordtable = doc.Tables.Add(doc.Paragraphs[5].Range, 1 + propertiesCount, 9,
-                      ref defaultTableBehavior, ref autoFitBehavior);
+                        Word.WdAutoFitBehavior.wdAutoFitFixed;
 
-                    // Заполнение заголовка
-                    doc.Tables[1].Cell(1, 1).Range.Text = "№ п/п";
-                    doc.Tables[1].Cell(1, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 2).Range.Text = "Наименование товара";
-                    doc.Tables[1].Cell(1, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 3).Range.Text = "Наименование показателя";
-                    doc.Tables[1].Cell(1, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 4).Range.Text = "Минимальные значения показателей";
-                    doc.Tables[1].Cell(1, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 5).Range.Text = "Максимальные значения показателей";
-                    doc.Tables[1].Cell(1, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 6).Range.Text = "Значения показателей, которые не могут изменяться";
-                    doc.Tables[1].Cell(1, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 7).Range.Text = "Конкретные показатели используемого товара, соответствующие значениям, установленным документацией, предлагаемые участником закупки";
-                    doc.Tables[1].Cell(1, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 8).Range.Text = "Единица измерения";
-                    doc.Tables[1].Cell(1, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 9).Range.Text = "Товарный знак";
-                    doc.Tables[1].Cell(1, 9).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    Word.Table myTable = wdRng.ConvertToTable(ref Separator,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                    ref ApplyBorders, Type.Missing, Type.Missing, Format,
+                     Type.Missing, Type.Missing, Type.Missing,
+                     Type.Missing, Type.Missing, ref autoFitBehavior,
+                     defaultTableBehavior);
+
+                    // Замена <nnn> на параграф
+                    wdRng.Select();
+                    Word.Find findObject = wdRng.Find;
+                    findObject.ClearFormatting();
+                    findObject.Text = "<nnn>";
+                    //findObject.Replacement.ClearFormatting();
+                    findObject.Replacement.Text = "^p";//strB.Append("<w:br/>");
+
+                    object replaceAll = Word.WdReplace.wdReplaceAll;
+                    findObject.Execute(ref missing, ref missing, ref missing, ref missing, ref missing,
+                        ref missing, ref missing, ref missing, ref missing, ref missing,
+                        ref replaceAll, ref missing, ref missing, ref missing, ref missing);
+
+                    // Выравнивание
+                    myTable.Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                    myTable.Rows[1].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    // Стиль таблицы
+                    object styleTypeTable = Word.WdStyleType.wdStyleTypeTable;
+                    Word.Style styl = doc.Styles.Add
+                         ("New Table Style", ref styleTypeTable);
+
+                    styl.Font.Name = "Arial";
+                    styl.Font.Size = 11;
+                    Word.TableStyle stylTbl = styl.Table;
+                    stylTbl.Borders.Enable = 1;
 
 
-                    // Заполнение товара
-                    int productIndexCompilator = 0;
-                    int propertyIndexCompilator = 0;
-                    for (int i = 0; i < propertiesCount; i++)
+                    object objStyle = styl;
+                    myTable.Range.set_Style(ref objStyle);
+
+                    // Объединение ячеек по продуктам
+                    int beginRowNum = 2;
+                    foreach (Product product in products)
                     {
                         if (!isWork) break;
-                        if ((products[productIndexCompilator] == null) ||
-                            (products[productIndexCompilator].CommitteeProperties == null) ||
-                            (products[productIndexCompilator].CommitteeProperties.Count == 0)) continue;
+                        if ((product == null) ||
+                            (product.CommitteeProperties == null) ||
+                            (product.CommitteeProperties.Count == 0))
+                            continue;
 
-                        if (propertyIndexCompilator == 0)
-                        {
-                            // Объединяем ячейки по товару
-                            // Номер
-                            object begCell = wordtable.Cell(i + 2, 1).Range.Start;
-                            object endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 1).Range.End;
-                            Word.Range wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
+                        myTable.Cell(beginRowNum, 1).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 1)); // Номер
+                        myTable.Cell(beginRowNum, 2).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 2)); // Наименование
+                        myTable.Cell(beginRowNum, 9).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 9)); // Товарный знак
 
-                            }
-
-                            // Название товара
-                            begCell = wordtable.Cell(i + 2, 2).Range.Start;
-                            endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 2).Range.End;
-                            wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
-
-                            }
-
-                            // Товарный знак
-                            begCell = wordtable.Cell(i + 2, 9).Range.Start;
-                            endCell = wordtable.Cell(i + 2 + products[productIndexCompilator].CommitteeProperties.Count() - 1, 9).Range.End;
-                            wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
-
-                            }
-
-                            doc.Tables[1].Cell(i + 2, 1).Range.Text = Convert.ToString(productIndexCompilator + 1) + '.';
-                            doc.Tables[1].Cell(i + 2, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-
-                            doc.Tables[1].Cell(i + 2, 2).Range.Text = products.ElementAt(productIndexCompilator).Name;
-                            doc.Tables[1].Cell(i + 2, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                            doc.Tables[1].Cell(i + 2, 9).Range.Text = products.ElementAt(productIndexCompilator).TradeMark;
-                            doc.Tables[1].Cell(i + 2, 9).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-                        }
-
-                        // Наименование показателя
-                        doc.Tables[1].Cell(i + 2, 3).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).ParamName;
-                        doc.Tables[1].Cell(i + 2, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Минимальные значения показателей
-                        doc.Tables[1].Cell(i + 2, 4).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MinValue;
-                        doc.Tables[1].Cell(i + 2, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Максимальные значения показателей
-                        doc.Tables[1].Cell(i + 2, 5).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).MaxValue;
-                        doc.Tables[1].Cell(i + 2, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Значения показателей, которые не могут изменяться
-                        doc.Tables[1].Cell(i + 2, 6).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).VariableParam;
-                        doc.Tables[1].Cell(i + 2, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Конкретные показатели
-                        doc.Tables[1].Cell(i + 2, 7).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).SpecificParam;
-                        doc.Tables[1].Cell(i + 2, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Единица измерения
-                        doc.Tables[1].Cell(i + 2, 8).Range.Text = products[productIndexCompilator].CommitteeProperties.ElementAt(propertyIndexCompilator).Measure;
-                        doc.Tables[1].Cell(i + 2, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        propertyIndexCompilator++;
-                        if (products[productIndexCompilator].CommitteeProperties.Count() == propertyIndexCompilator)
-                        {
-                            propertyIndexCompilator = 0;
-                            productIndexCompilator++;
-                        }
-
+                        beginRowNum = beginRowNum + product.CommitteeProperties.Count;
                     }
+
+                    application.Visible = true;
 
                 }
 

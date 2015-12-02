@@ -8,6 +8,7 @@ using System.IO;
 using Word = Microsoft.Office.Interop.Word;
 using System.Windows;
 using System.Collections.ObjectModel;
+using System.Windows.Documents;
 
 namespace PublicOrders.Processors
 {
@@ -353,210 +354,163 @@ namespace PublicOrders.Processors
                     doc.Paragraphs[4].Range.Text = "Форма 2. Сведения о качестве, технических характеристиках товара, его безопасности, функциональных характеристиках (потребительских свойствах) товара, размере и иные сведения о товаре, представление которых предусмотрено документацией об аукционе в электронной форме";
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                    // Подсчитываем количество строк у товара (потому что одно свойство товара занимает одну строку)
-                    int propertiesCount = 0;
-                    foreach (Product product in products)
-                    {
-                        if ((product == null) || (product.Form2Properties == null)) continue;
-                        propertiesCount += product.Form2Properties.Count();
+                    string dataString = "";
+                    // Заголовок
+                    dataString += "№ п/п\t";
+                    dataString += "Наименование товара\t";
+                    dataString += "Указание на товарный знак (модель), производителя\t";
+                    dataString += "Технические характеристики\t";
+                    dataString += "\t";
+                    dataString += "\t";
+                    dataString += "Единица измерения\t";
+                    dataString += "Сведения о сертификации\n";
+                    dataString += "\t";
+                    dataString += "\t";
+                    dataString += "\t";
+                    dataString += "Требуемый параметр\t";
+                    dataString += "Требуемое значение\t";
+                    dataString += "Значение, предлагаемое участником\t";
+                    dataString += "\t";
+                    dataString += "\n";
+                    dataString += "1\t";
+                    dataString += "2\t";
+                    dataString += "3\t";
+                    dataString += "4\t";
+                    dataString += "5\t";
+                    dataString += "6\t";
+                    dataString += "7\t";
+                    dataString += "8\n";
+
+                    // Строки
+                    int a = 0;
+                    foreach (Product product in products) {
+                        if (!isWork) break;
+                        if ((product == null) ||
+                            (product.Form2Properties == null) ||
+                            (product.Form2Properties.Count == 0))
+                            continue;
+
+                        a++;
+                        // <nnn> - новый параграф
+                        // <rrr> - /r
+                        // <nnn> - /n
+                        dataString += a + ".\t";
+                        dataString += product.Name.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.TradeMark.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        // Атрибуты продукта
+                        // Первый атрибут
+                        dataString += product.Form2Properties[0].RequiredParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.Form2Properties[0].RequiredValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.Form2Properties[0].OfferValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                        dataString += product.Form2Properties[0].Measure.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+
+                        // Сертификация (конец строки)
+                        dataString += product.Certification + "\n";
+                        // Остальные атрибуты
+                        int b = 0;
+                        for (int i = 1; i < product.Form2Properties.Count; i++) {
+                            dataString += "\t";
+                            dataString += "\t";
+                            dataString += "\t";
+                            dataString += product.Form2Properties[i].RequiredParam.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.Form2Properties[i].RequiredValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.Form2Properties[i].OfferValue.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += product.Form2Properties[i].Measure.Replace("\r\n", "<nnn>").Replace("\t", " ").Replace("\n", " ").Replace("\r", " ") + "\t";
+                            dataString += "\n";
+                            b++;
+                        }
                     }
 
+
+
+                    Word.Range wdRng = doc.Paragraphs[5].Range;
+                    wdRng.Text = dataString;
+
+                    object Separator = Word.WdTableFieldSeparator.wdSeparateByTabs;
+                    object Format = Word.WdTableFormat.wdTableFormatSimple1;
+                    object ApplyBorders = true;
+                    //object AutoFit = true;
+
                     Object defaultTableBehavior =
-                     Word.WdDefaultTableBehavior.wdWord9TableBehavior;
+                        Word.WdDefaultTableBehavior.wdWord8TableBehavior;
                     Object autoFitBehavior =
-                     Word.WdAutoFitBehavior.wdAutoFitWindow;
-                    Word.Table wordtable = doc.Tables.Add(doc.Paragraphs[5].Range, 3 + propertiesCount, 8,
-                      ref defaultTableBehavior, ref autoFitBehavior);
+                        Word.WdAutoFitBehavior.wdAutoFitFixed;
 
-                    // Объединение ячеек
-                    object begCell = wordtable.Cell(1, 1).Range.Start;
-                    object endCell = wordtable.Cell(2, 1).Range.End;
+                    Word.Table myTable = wdRng.ConvertToTable(ref Separator,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                    ref ApplyBorders, Type.Missing, Type.Missing, Format,
+                     Type.Missing, Type.Missing, Type.Missing,
+                     Type.Missing, Type.Missing, ref autoFitBehavior,
+                     defaultTableBehavior);
+
+                    // Замена <nnn> на параграф
+                    wdRng.Select();
+                    Word.Find findObject = wdRng.Find;
+                    findObject.ClearFormatting();
+                    findObject.Text = "<nnn>";
+                    //findObject.Replacement.ClearFormatting();
+                    findObject.Replacement.Text = "^p";//strB.Append("<w:br/>");
+
+                    object replaceAll = Word.WdReplace.wdReplaceAll;
+                    findObject.Execute(ref missing, ref missing, ref missing, ref missing, ref missing,
+                        ref missing, ref missing, ref missing, ref missing, ref missing,
+                        ref replaceAll, ref missing, ref missing, ref missing, ref missing);
+
+                    // Выравнивание
+                    myTable.Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
+                    myTable.Rows[1].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    myTable.Rows[2].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    myTable.Rows[3].Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    // Стиль таблицы
+                    object styleTypeTable = Word.WdStyleType.wdStyleTypeTable;
+                    Word.Style styl = doc.Styles.Add
+                         ("New Table Style", ref styleTypeTable);
+
+                    styl.Font.Name = "Arial";
+                    styl.Font.Size = 11;
+                    Word.TableStyle stylTbl = styl.Table;
+                    stylTbl.Borders.Enable = 1;
+
+
+                    object objStyle = styl;
+                    myTable.Range.set_Style(ref objStyle);
+
+                    // Объединение ячеек заголовка
+                    myTable.Cell(1, 1).Merge(myTable.Cell(2, 1));
+                    myTable.Cell(1, 2).Merge(myTable.Cell(2, 2));
+                    myTable.Cell(1, 3).Merge(myTable.Cell(2, 3));
+                    myTable.Cell(1, 4).Merge(myTable.Cell(1, 6));
+                    myTable.Cell(1, 5).Merge(myTable.Cell(2, 7));
+                    myTable.Cell(1, 6).Merge(myTable.Cell(2, 8));
+
+                    // Окраска строки
+                    object begCell = myTable.Cell(3, 1).Range.Start;
+                    object endCell = myTable.Cell(3, 8).Range.End;
                     Word.Range wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();
-
-                    begCell = wordtable.Cell(1, 2).Range.Start;
-                    endCell = wordtable.Cell(2, 2).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();
-
-                    begCell = wordtable.Cell(1, 3).Range.Start;
-                    endCell = wordtable.Cell(2, 3).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();
-
-                    begCell = wordtable.Cell(1, 4).Range.Start;
-                    endCell = wordtable.Cell(1, 6).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();
-
-                    begCell = wordtable.Cell(1, 5).Range.Start;
-                    endCell = wordtable.Cell(2, 7).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();
-
-                    begCell = wordtable.Cell(1, 6).Range.Start;
-                    endCell = wordtable.Cell(2, 8).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
-                    wordcellrange.Select();
-                    application.Selection.Cells.Merge();
-
-                    // Окраска строки с номерами
-                    begCell = wordtable.Cell(3, 1).Range.Start;
-                    endCell = wordtable.Cell(3, 8).Range.End;
-                    wordcellrange = doc.Range(ref begCell, ref endCell);
                     wordcellrange.Select();
                     application.Selection.Shading.BackgroundPatternColor = Word.WdColor.wdColorGray10;
 
-                    // Заполнение заголовка
-                    doc.Tables[1].Cell(1, 1).Range.Text = "№ п/п";
-                    doc.Tables[1].Cell(1, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 2).Range.Text = "Наименование материала";
-                    doc.Tables[1].Cell(1, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 3).Range.Text = "Указание на товарный знак (его словесное обозначение) (при наличии), знак обслуживания (при наличии), фирменное наименование (при наличии), патенты (при наличии), полезные модели (при наличии), промышленные образцы (при наличии), наименование страны происхождения товара";
-                    doc.Tables[1].Cell(1, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 4).Range.Text = "Технические характеристики";
-                    doc.Tables[1].Cell(1, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-
-                    doc.Tables[1].Cell(2, 4).Range.Text = "Требуемый параметр";
-                    doc.Tables[1].Cell(2, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(2, 5).Range.Text = "Требуемое значение";
-                    doc.Tables[1].Cell(2, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(2, 6).Range.Text = "Значение, предлагаемое участником";
-                    doc.Tables[1].Cell(2, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-
-                    doc.Tables[1].Cell(1, 5).Range.Text = "Единица измерения";
-                    doc.Tables[1].Cell(1, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(1, 6).Range.Text = "Сведения о сертификации";
-                    doc.Tables[1].Cell(1, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-
-                    doc.Tables[1].Cell(3, 1).Range.Text = "1";
-                    doc.Tables[1].Cell(3, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 2).Range.Text = "2";
-                    doc.Tables[1].Cell(3, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 3).Range.Text = "3";
-                    doc.Tables[1].Cell(3, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 4).Range.Text = "4";
-                    doc.Tables[1].Cell(3, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 5).Range.Text = "5";
-                    doc.Tables[1].Cell(3, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 6).Range.Text = "6";
-                    doc.Tables[1].Cell(3, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 7).Range.Text = "7";
-                    doc.Tables[1].Cell(3, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Tables[1].Cell(3, 8).Range.Text = "8";
-                    doc.Tables[1].Cell(3, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-
-
-
-                    // Заполняем товар
-                    int productIndexCompilator = 0;
-                    int propertyIndexCompilator = 0;
-                    for (int i = 0; i < propertiesCount; i++)
+                    // Объединение ячеек по продуктам
+                    int beginRowNum = 4;
+                    foreach (Product product in products)
                     {
                         if (!isWork) break;
-                        if ((products[productIndexCompilator] == null) ||
-                            (products[productIndexCompilator].Form2Properties == null) ||
-                            (products[productIndexCompilator].Form2Properties.Count == 0)) continue;
+                        if ((product == null) ||
+                            (product.Form2Properties == null) ||
+                            (product.Form2Properties.Count == 0))
+                            continue;
 
-                        if (propertyIndexCompilator == 0)
-                        {
-                            // Объединяем ячейки по товару (т.к. свойство занимает строку)
-                            begCell = wordtable.Cell(i + 4, 1).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 1).Range.End;
-                            wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
+                        myTable.Cell(beginRowNum, 1).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 1)); // Номер
+                        myTable.Cell(beginRowNum, 2).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 2)); // Наименование
+                        myTable.Cell(beginRowNum, 3).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 3)); // Товарный знак
+                        myTable.Cell(beginRowNum, 8).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 8)); // Сертификация
 
-                            }
-
-                            begCell = wordtable.Cell(i + 4, 2).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 2).Range.End;
-                            wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
-
-                            }
-
-                            begCell = wordtable.Cell(i + 4, 3).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 3).Range.End;
-                            wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
-
-                            }
-
-                            begCell = wordtable.Cell(i + 4, 8).Range.Start;
-                            endCell = wordtable.Cell(i + 4 + products[productIndexCompilator].Form2Properties.Count() - 1, 8).Range.End;
-                            wordcellrange = doc.Range(ref begCell, ref endCell);
-                            wordcellrange.Select();
-                            try
-                            {
-                                application.Selection.Cells.Merge();
-                            }
-                            catch
-                            {
-
-                            }
-
-                            doc.Tables[1].Cell(i + 4, 1).Range.Text = Convert.ToString(productIndexCompilator + 1) + '.';
-                            doc.Tables[1].Cell(i + 4, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-
-                            doc.Tables[1].Cell(i + 4, 2).Range.Text = products.ElementAt(productIndexCompilator).Name;
-                            doc.Tables[1].Cell(i + 4, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                            doc.Tables[1].Cell(i + 4, 3).Range.Text = products.ElementAt(productIndexCompilator).TradeMark;
-                            doc.Tables[1].Cell(i + 4, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                            doc.Tables[1].Cell(i + 4, 8).Range.Text = products.ElementAt(productIndexCompilator).Certification;
-                            doc.Tables[1].Cell(i + 4, 8).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-                        }
-
-                        // Требуемый параметр
-                        doc.Tables[1].Cell(i + 4, 4).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).RequiredParam;
-                        doc.Tables[1].Cell(i + 4, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Требуемое значение
-                        doc.Tables[1].Cell(i + 4, 5).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).RequiredValue;
-                        doc.Tables[1].Cell(i + 4, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Значение, предлагаемое участником
-                        doc.Tables[1].Cell(i + 4, 6).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).OfferValue;
-                        doc.Tables[1].Cell(i + 4, 6).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        // Единица измерения
-                        doc.Tables[1].Cell(i + 4, 7).Range.Text = products[productIndexCompilator].Form2Properties.ElementAt(propertyIndexCompilator).Measure;
-                        doc.Tables[1].Cell(i + 4, 7).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphJustify;
-
-                        propertyIndexCompilator++;
-                        if (products[productIndexCompilator].Form2Properties.Count() == propertyIndexCompilator)
-                        {
-                            propertyIndexCompilator = 0;
-                            productIndexCompilator++;
-                        }
-
+                        beginRowNum = beginRowNum + product.Form2Properties.Count;
                     }
-                }
 
+                    application.Visible = true;
+                }
                 catch (Exception er)
                 {
                     if (doc != null)
