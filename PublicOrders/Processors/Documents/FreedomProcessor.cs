@@ -384,7 +384,7 @@ namespace PublicOrders.Processors
                     Object defaultTableBehavior =
                         Word.WdDefaultTableBehavior.wdWord8TableBehavior;
                     Object autoFitBehavior =
-                        Word.WdAutoFitBehavior.wdAutoFitFixed;
+                        Word.WdAutoFitBehavior.wdAutoFitContent;
 
                     Word.Table myTable = wdRng.ConvertToTable(ref Separator,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing,
