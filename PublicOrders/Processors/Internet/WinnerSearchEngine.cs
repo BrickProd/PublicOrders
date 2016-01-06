@@ -198,10 +198,22 @@ namespace PublicOrders.Processors.Internet
                                         {
                                             case (1):
                                                 // Наименование организации
-                                                winnerName = Globals.DecodeInternetSymbs(tdNode.InnerHtml.Trim().Replace("<br>", " "));
+                                                if (tdNode.InnerHtml.IndexOf("<table") > -1)
+                                                {
+                                                    winnerName = Globals.DecodeInternetSymbs(tdNode.InnerHtml.
+                                                                                                Substring(0, tdNode.InnerHtml.IndexOf("<table")).
+                                                                                                Trim().
+                                                                                                Replace("<br>", " "));
+                                                }
+                                                else {
+                                                    winnerName = Globals.DecodeInternetSymbs(tdNode.InnerHtml.
+                                                                                                Trim().
+                                                                                                Replace("<br>", " "));
+                                                }
+
                                                 isWinner = true;
                                                 break;
-                                            case (6):
+                                            case (5):
                                                 // Телефон, электронная почта
                                                 string emailPhone = tdNode.InnerText.Trim();
                                                 if (emailPhone.IndexOf('\n') > -1)
@@ -341,18 +353,30 @@ namespace PublicOrders.Processors.Internet
                         text += "/td";
 
                         HtmlAgilityPack.HtmlNodeCollection winnerColl = doc.DocumentNode.SelectNodes(text);
-                        if ((winnerColl == null) || (winnerColl.Count != 10)) return ResultType_enum.NotSearch;
+                        if ((winnerColl == null) || (winnerColl.Count != 7)) return ResultType_enum.NotSearch;
 
                         Winner _94winner = new Winner();
                         try {
                             // Название победителя
-                            _94winner.Name = winnerColl[1].InnerText.Trim();
+                            if (winnerColl[1].InnerHtml.IndexOf("<table") > -1)
+                            {
+                                _94winner.Name = Globals.DecodeInternetSymbs(winnerColl[1].InnerHtml.
+                                                                            Substring(0, winnerColl[1].InnerHtml.IndexOf("<table")).
+                                                                            Trim().
+                                                                            Replace("<br>", " "));
+                            }
+                            else
+                            {
+                                _94winner.Name = Globals.DecodeInternetSymbs(winnerColl[1].InnerHtml.
+                                                                            Trim().
+                                                                            Replace("<br>", " "));
+                            }
 
                             // Телефон, email
-                            string telMailStr = winnerColl[6].InnerText.Trim();
+                            string telMailStr = winnerColl[5].InnerText.Trim();
                             if (telMailStr.IndexOf("\n") > -1)
                             {
-                                string[] telMailMas = winnerColl[6].InnerText.Trim().Split('\n');
+                                string[] telMailMas = winnerColl[5].InnerText.Trim().Split('\n');
                                 _94winner.Phone = telMailMas[0].Trim();
                                 _94winner.Email = telMailMas[1].Trim();
                             }
