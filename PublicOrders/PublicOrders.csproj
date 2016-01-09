@@ -123,6 +123,9 @@
     <Compile Include="Views\WinnerSearchPanel.xaml.cs">
       <DependentUpon>WinnerSearchPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WinnersPanel.xaml.cs">
+      <DependentUpon>WinnersPanel.xaml</DependentUpon>
+    </Compile>
     <Page Include="Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -166,6 +169,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\WinnerSearchPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WinnersPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
