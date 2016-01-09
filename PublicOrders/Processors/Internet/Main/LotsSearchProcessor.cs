@@ -136,26 +136,26 @@ namespace PublicOrders.Processors.Main
                     lotSearchProgress_delegate(customer, "Получение заказов из БД..", 0);
 
                     bool searchedFromDB = false;
-                    List<Order> orders = mvm.wc.Orders.Where(m => ((m.Customer.Vatin == customer.Vatin) && 
+                    List<Order> ordersDB = mvm.wc.Orders.Where(m => ((m.Customer.Vatin == customer.Vatin) && 
                                                                    (m.PublishDateTime < highPublishDate) && 
                                                                    (m.PublishDateTime > lowPublishDate))).ToList();
 
-                    if (orders != null) {
+                    if (ordersDB != null) {
                         switch (lawType_enum)
                         {
                             case (LawType_enum._44_94_223):
-                                orders = orders.Where(m => ((m.LawType.Name == "44") || (m.LawType.Name == "94") || (m.LawType.Name == "223"))).ToList();
+                                ordersDB = ordersDB.Where(m => ((m.LawType.Name == "44") || (m.LawType.Name == "94") || (m.LawType.Name == "223"))).ToList();
                                 break;
                             case (LawType_enum._44_94):
-                                orders = orders.Where(m => ((m.LawType.Name == "44") || (m.LawType.Name == "94"))).ToList();
+                                ordersDB = ordersDB.Where(m => ((m.LawType.Name == "44") || (m.LawType.Name == "94"))).ToList();
                                 break;
                             case (LawType_enum._223):
-                                orders = orders.Where(m => m.LawType.Name == "223").ToList();
+                                ordersDB = ordersDB.Where(m => m.LawType.Name == "223").ToList();
                                 break;
                         }
 
                         List<Lot> searchLots = null;
-                        foreach (Order searchOrder in orders)
+                        foreach (Order searchOrder in ordersDB)
                         {
                             searchLots = searchOrder.Lots.Where(m => ((m.LotPrice > lowPrice) && (m.LotPrice < highPrice))).ToList();
                             foreach (Lot searchLot in searchLots)
