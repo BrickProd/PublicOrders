@@ -3,18 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels"
              xmlns:local="clr-namespace:PublicOrders.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="500">
+             d:DesignHeight="500" d:DesignWidth="700" Padding="20 0 20 0" FontSize="18">
+    <UserControl.DataContext>
+        <ViewModels:WinnersViewModel></ViewModels:WinnersViewModel>
+    </UserControl.DataContext>
     <Grid>
-        <TabControl>
-            <TabItem Header="Избранное" Style="{StaticResource PanelContentStyleMini}">
-                <ListView Margin="10" BorderThickness="1 0 0 0">
+        <TabControl BorderThickness="0">
+            <TabItem Header="Для просмотра" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding ToView.View}">
+
+                </ListView>
+            </TabItem>
+            <TabItem Header="Избранное" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}">
                     
                 </ListView>
             </TabItem>
-            <TabItem Header="Чёрный список" Style="{StaticResource PanelContentStyleMini}">
-                <ListView Margin="10" BorderThickness="1 0 0 0">
+            <TabItem Header="Чёрный список" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding BlackList.View}">
                     
                 </ListView>
             </TabItem>

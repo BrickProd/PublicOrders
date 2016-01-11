@@ -409,14 +409,16 @@
         <!--табконтролы-->
         <Style x:Key="PanelContentStyle" TargetType="{x:Type TabItem}">
             <Setter Property="BorderThickness" Value="0"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Grid Name="Panel" Width="160">
+                        <Grid Name="Panel" Width="160" Height="68">
                             <!--<Path x:Name="CurrentTriangle" Width="32.667" Height="70" Stretch="Fill" Margin="0,0,0,0" Fill="White" HorizontalAlignment="Right" Data="F1 M 287.328,237.333L 319.344,255.818L 319.344,218.849L 287.328,237.333 Z " Visibility="Collapsed" />-->
                             <!--<Path x:Name="CurrentArrow" Data="M130,2 L162.5,2 162.5,70.25 130,70.25 162,35.5" Fill="White" HorizontalAlignment="Right" Height="70" Margin="0 -0.5" Stretch="Fill" VerticalAlignment="Stretch" Width="32.5" Visibility="Collapsed"/>-->
-                            <Path x:Name="CurrentArrow" Data="M-51,39.5 L-30.515625,39.5 -30.515625,78.5 -51,78.5 -33.16647,58.5" Fill="White" HorizontalAlignment="Right" Height="70" Margin="0 -1" Stretch="Fill" VerticalAlignment="Stretch" Width="20" Visibility="Collapsed"/>
+                            <!--<Path x:Name="CurrentArrow" Data="M-51,39.5 L-30.515625,39.5 -30.515625,78.5 -51,78.5 -33.16647,58.5" Fill="White" HorizontalAlignment="Right" Height="72" Margin="0" Stretch="Fill" VerticalAlignment="Stretch" Width="20" Visibility="Collapsed"/>-->
 
+                            <Path x:Name="CurrentArrow" Data="M0,0 L20,0 L20,20 L0,20 L20,10 z" Fill="White" HorizontalAlignment="Right" Height="71" Stretch="Fill" VerticalAlignment="Center" Width="30" Visibility="Collapsed"/>
                             <ContentPresenter x:Name="ContentSite"
                                               TextBlock.FontSize="18"
                                               TextBlock.FontWeight="Normal"
@@ -430,9 +432,6 @@
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="TextWrapping" Value="Wrap"></Setter>
                                         <Setter Property="TextAlignment" Value="Left"></Setter>
-                                        <Style.Triggers>
-
-                                        </Style.Triggers>
                                     </Style>
                                 </ContentPresenter.Resources>
 
@@ -440,7 +439,6 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <!--<Setter TargetName="CurrentTriangle" Property="Visibility" Value="Visible" />-->
                                 <Setter TargetName="CurrentArrow" Property="Visibility" Value="Visible" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">

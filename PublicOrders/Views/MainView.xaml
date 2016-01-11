@@ -61,7 +61,12 @@
             </TabItem>
             <TabItem Header="Редактор товара" x:Name="ProductEditorTabItem" Style="{StaticResource PanelContentStyle}" Selector.Selected="ProductEditorTabItem_Selected" >
                 <Grid>
-                    <views:ProductEditorPanel x:Name="ProductEditorPanel"  ></views:ProductEditorPanel>
+                    <views:ProductEditorPanel x:Name="ProductEditorPanel"></views:ProductEditorPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Проверка ГОСТ" Style="{StaticResource PanelContentStyle}" >
+                <Grid>
+                    <views:CheckGostPanel></views:CheckGostPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Загрузить товар"  Style="{StaticResource PanelContentStyle}" Background="#FFECD8D8" Selector.Selected="LoadProductsTabItem_Selected">
