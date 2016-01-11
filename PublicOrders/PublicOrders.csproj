@@ -98,8 +98,8 @@
     <Compile Include="Processors\Internet\Main\InternetRequestEngine.cs" />
     <Compile Include="Processors\Internet\Main\LotsSearchProcessor.cs" />
     <Compile Include="Processors\Internet\WinnerSearchEngine.cs" />
-    <Compile Include="Processors\Internet\_223CommissionDecision.cs" />
-    <Compile Include="Processors\Internet\_223WinnerChoice.cs" />
+    <Compile Include="Processors\Internet\223\_223CommissionDecision.cs" />
+    <Compile Include="Processors\Internet\223\_223WinnerChoice.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
