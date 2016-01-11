@@ -114,6 +114,12 @@
         	                FontSize="16"
         	                Click="AddNewRubricBtn_Click" Height="30" VerticalAlignment="Top"/>
 
+                        <Button x:Name="CheckGost" FontWeight="Bold" HorizontalAlignment="Left" Margin="146,10,0,0" Width="140"
+        	                Background="Transparent" BorderBrush="Transparent"
+        	                FontSize="16"
+                            Command="{Binding CheckGostCommand}"
+        	                Height="30" VerticalAlignment="Top" Content="Проверить ГОСТ"/>
+
                         <Border BorderBrush="Gray" Margin="10,45,10,51.167" BorderThickness="1">
                             <Grid>
                                 <TextBox x:Name="textBox" HorizontalAlignment="Stretch" Height="30" Margin="0,0,0,0" FontSize="18" TextWrapping="NoWrap"
