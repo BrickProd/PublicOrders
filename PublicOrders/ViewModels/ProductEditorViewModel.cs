@@ -115,6 +115,7 @@ namespace PublicOrders.ViewModels
 
         #region КОМАНДЫ
         private DelegateCommand addProductCommand;
+        private DelegateCommand checkGostCommand;
         private DelegateCommand addRubricCommand;
         private DelegateCommand addInstructionCommand;
         private DelegateCommand replaceProductsCommand;
@@ -140,6 +141,17 @@ namespace PublicOrders.ViewModels
                     addProductCommand = new DelegateCommand(AddProduct);
                 }
                 return addProductCommand;
+            }
+        }
+        public ICommand CheckGostCommand
+        {
+            get
+            {
+                if (checkGostCommand == null)
+                {
+                    checkGostCommand = new DelegateCommand(CheckGost);
+                }
+                return checkGostCommand;
             }
         }
         public ICommand AddRubricCommand
@@ -409,7 +421,10 @@ namespace PublicOrders.ViewModels
 
         }
 
-
+        private void CheckGost(object param)
+        {
+            ///////////////////////////////////////////////////////////////////////////////1/1/1/1/1//1/1/1//1/1/1/1/1//1/1/1/1/1/1/1//1
+        }
 
         private void DeleteProduct(object param)
         {

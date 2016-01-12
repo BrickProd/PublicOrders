@@ -70,6 +70,7 @@ namespace PublicOrders.Processors.Main
             try
             {
                 isWork = true;
+                isPause = false;
                 #region Запрос в интернет на получение заказов заказчика
                 orders = new ObservableCollection<Order>();
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();

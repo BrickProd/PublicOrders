@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 using PublicOrders.Annotations;
 
 namespace PublicOrders.Models
@@ -29,6 +31,8 @@ namespace PublicOrders.Models
         public DbSet<LawType> LawTypes { get; set; }
         public DbSet<Lot> Lots { get; set; }
         public DbSet<Winner> Winners { get; set; }
+        public DbSet<WinnerStatus> WinnerStatuses { get; set; }
+        public DbSet<WinnerNote> WinnerNotes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -87,11 +91,20 @@ namespace PublicOrders.Models
                 };
                 lawTypes.ForEach(m => context.LawTypes.Add(m));
 
+                var winnerStatuses = new List<WinnerStatus>
+                {
+                    new WinnerStatus{ Name = "Для просмотра" },
+                    new WinnerStatus{ Name = "Избранное" },
+                    new WinnerStatus{ Name = "Чёрный список" }
+                };
+                winnerStatuses.ForEach(m => context.WinnerStatuses.Add(m));
+
                 context.SaveChanges();
             }
         }
     }
 
+    // З А К А З Ч И К
     public class Customer
     {
         [Key]
@@ -145,6 +158,7 @@ namespace PublicOrders.Models
         }
     }
 
+    // Т И П   З А К А З Ч И К А
     public class CustomerType
     {
         [Key]
@@ -168,6 +182,7 @@ namespace PublicOrders.Models
         }
     }
 
+    // У Р О В Е Н Ь   З А К А З Ч И К А
     public class CustomerLevel
     {
         [Key]
@@ -190,6 +205,7 @@ namespace PublicOrders.Models
         }
     }
 
+    // З А К А З
     public class Order
     {
         [Key]
@@ -266,6 +282,7 @@ namespace PublicOrders.Models
         }
     }
 
+    //
     public class OrderPriceType
     {
         [Key]
@@ -372,8 +389,10 @@ namespace PublicOrders.Models
         }
     }
 
+    // П О Б Е Д И Т Е Л Ь
     public class Winner : INotifyPropertyChanged
     {
+        private ObservableCollection<WinnerNote> _winnerNotes;
         private bool _isChoosen;
 
         [Key]
@@ -403,17 +422,133 @@ namespace PublicOrders.Models
                 OnPropertyChanged(); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        [ForeignKey("WinnerStatus")]
+        public short? WinnerStatusId { get; set; }
+        virtual public WinnerStatus WinnerStatus { get; set; }
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        public virtual ObservableCollection<WinnerNote> WinnerNotes
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            get { return _winnerNotes ?? (_winnerNotes = new ObservableCollection<WinnerNote>(new HashSet<WinnerNote>())); }
+            set
+            {
+                _winnerNotes = value;
+                OnPropertyChanged();
+            }
+        } //поедители
 
         public Winner()
         {
             IsChoosen = false;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    // С Т А Т У С   П О Б Е Д И Т Е Л Я
+    public class WinnerStatus : INotifyPropertyChanged
+    {
+        private string _name;
+        private ObservableCollection<Winner> _winners;
+
+        [Key]
+        public short WinnerStatusId { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(256), Required]
+        [Index]
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public virtual ObservableCollection<Winner> Winners
+        {
+            get { return _winners ?? (_winners = new ObservableCollection<Winner>(new HashSet<Winner>())); }
+            set
+            {
+                _winners = value;
+                OnPropertyChanged();
+            }
+        } //поедители
+
+
+        public WinnerStatus()
+        {
+            
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    // З А М Е Т К А   Н А   П О Б Е Д И Т Е Л Я
+    public class WinnerNote : INotifyPropertyChanged
+    {
+        private string _name;
+        private string _text;
+
+        [Key]
+        public short WinnerNoteId { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(256), Required]
+        [Index]
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ForeignKey("Winner")]
+        public long WinnerId { get; set; }
+        virtual public Winner Winner { get; set; }
+
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                _text = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Index, Required]
+        public DateTime CreateDateTime { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(120)]
+        [Index]
+        public string UserName { get; set; }
+
+        public WinnerNote()
+        {
+
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

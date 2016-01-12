@@ -313,7 +313,9 @@ namespace PublicOrders.ViewModels
                     break;
             }
 
-            CustomersSearchDone_delegate customerSearchDone_delege = new CustomersSearchDone_delegate(CustomersSearchDone_proc);
+            AllCustomersSearched_delegete allCustomersSearched_delegete = new AllCustomersSearched_delegete(AllCustomersSearched_proc);
+            CustomerSearched_delegate customerSearched_delegate = new CustomerSearched_delegate(CustomerSearched_proc);
+            CustomerSearchProgress_delegate customerSearchProgress_delegate = new CustomerSearchProgress_delegate(CustomerSearchProgress_proc);
             mvm.csProcessor = new CustomersSearchProcessor(SearchInput,
                                                            customerType_enum,
                                                            Properties.Settings.Default.MinPrice,
@@ -321,8 +323,10 @@ namespace PublicOrders.ViewModels
                                                            Properties.Settings.Default.CustomerCity,
                                                            Properties.Settings.Default.MinPublicDate,
                                                            Properties.Settings.Default.MaxPublicDate,
-                                                           lawType_enum, 
-                                                           customerSearchDone_delege);
+                                                           lawType_enum,
+                                                           allCustomersSearched_delegete,
+                                                           customerSearched_delegate,
+                                                           customerSearchProgress_delegate);
             mvm.csProcessor.Operate();
 
             IsCustomersSearching = true;
@@ -330,32 +334,64 @@ namespace PublicOrders.ViewModels
         }
 
 
-
-        private void CustomersSearchDone_proc(ObservableCollection<Customer> serchedCustomers, ResultType_enum resultSearch, string message)
-        {
-            if (resultSearch == ResultType_enum.ErrorNetwork) {
+        private void AllCustomersSearched_proc(ResultType_enum resultType_enum, string message) {
+            if (resultType_enum != ResultType_enum.Done)
+            {
                 MessageBox.Show(message, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-            else {
+            /*else
+            {
                 if (serchedCustomers != null)
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         Customers = serchedCustomers;
                     }));
+            }*/
+
+            try
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SearchingProgress = 0;
+                    SearchingProgressText = "";
+                    IsCustomersSearching = false;
+                }));
+            }
+            catch {
+
             }
 
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SearchingProgress = 0;
-                SearchingProgressText = "";
-                IsCustomersSearching = false;
-            }));
-
-
-
-            //MessageBox.Show("Поиск заказчиков завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            //WinnerLotsSearch();
         }
+
+        private void CustomerSearched_proc(Customer customer) {
+            try
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Customers.Add(customer);
+                }));
+            }
+            catch {
+
+            }
+
+        }
+
+        private void CustomerSearchProgress_proc(string text, int intValue) {
+            /*try
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SearchingProgressText = text;
+                    SearchingProgress = intValue;
+                }));
+            }
+            catch
+            {
+
+            }*/
+        }
+
 
         private string currentCustomerSearching = "";
         private void WinnerLotsSearch(object param) {
@@ -481,11 +517,18 @@ namespace PublicOrders.ViewModels
 
         private void LotSearched_proc(Winner winner) {
             if (IsCustomersSearching) return;
-            if (winner.Name != "")
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    Winners.Add(winner);
-                }));
+            try
+            {
+                if (winner.Name != "")
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        Winners.Add(winner);
+                    }));
+            }
+            catch {
+
+            }
+
         }
 
         private void WinnerLotsSearchStop(object param) {
