@@ -394,6 +394,7 @@ namespace PublicOrders.Models
     {
         private ObservableCollection<WinnerNote> _winnerNotes;
         private bool _isChoosen;
+        private short _rating;
 
         [Key]
         public long WinnerId { get; set; }
@@ -435,6 +436,16 @@ namespace PublicOrders.Models
                 OnPropertyChanged();
             }
         } //поедители
+
+        public short Rating
+        {
+            get { return _rating; }
+            set
+            {
+                _rating = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Winner()
         {
