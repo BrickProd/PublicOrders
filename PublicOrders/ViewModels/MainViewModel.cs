@@ -6,6 +6,8 @@ using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
 using System.Linq;
 using System.Collections.Generic;
+using PublicOrders.Processors.Internet;
+using PublicOrders.Processors.Internet.Old;
 
 namespace PublicOrders
 {

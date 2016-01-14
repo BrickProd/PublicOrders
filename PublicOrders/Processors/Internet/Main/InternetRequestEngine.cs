@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using HtmlAgilityPack;
 
-namespace PublicOrders.Processors.Internet
+namespace PublicOrders.Processors.Internet.Main
 {
     public class InternetRequestEngine
     {
