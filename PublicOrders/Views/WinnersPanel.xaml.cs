@@ -13,6 +13,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PublicOrders.Data;
+using PublicOrders.ViewModels;
 
 namespace PublicOrders.Views
 {
@@ -77,6 +79,12 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
+            DataService.WinnersDbContextSaveChanges();
+
+            var vm = DataContext as WinnersViewModel;
+            vm.ToView.View.Refresh();
+            vm.Favorites.View.Refresh();
+            vm.BlackList.View.Refresh();
         }
     }
 }

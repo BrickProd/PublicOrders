@@ -58,6 +58,7 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
@@ -66,7 +67,7 @@
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedWinner.Name}"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                 <TextBlock Grid.Row="1" Text="Email: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
@@ -74,70 +75,9 @@
                 <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
                 <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedWinner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             </StackPanel>
-            <TabControl Grid.Row="3" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
-                <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <ScrollViewer>
-                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                <TextBlock Text="Название:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+            <ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId">
 
-                                <TextBlock Text="Цена:" FontSize="18"></TextBlock>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.LotPrice}" FontSize="16" FontStyle="Italic"></TextBox>
-                                    <TextBlock Text=" -> " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBox>
-                                    <TextBlock Text=" " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBox>
-                                </StackPanel>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Дата:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.DocumentDateTime}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Закон:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.LawType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Тип заказа:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.OrderType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Номер заказа:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Number}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
-
-                </TabItem>
-                <TabItem Header="Заказчик" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <ScrollViewer>
-                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                <TextBlock Text="ИНН:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.Vatin}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Название:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Адрес:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.Address}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                                <TextBlock Text="Уровень:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedWinner.Lot.Order.Customer.CustomerLevel.CustomerLevelCode}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
-                </TabItem>
-            </TabControl>
+            </ComboBox>
             <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <!--<Hyperlink NavigateUri="{Binding SelectedWinner.Lot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте
@@ -153,12 +93,16 @@
                 </ListView>
             </TabItem>
             <TabItem Header="Избранное" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
-                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}">
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
+                          ItemTemplate="{StaticResource WinnerDataTemplate}">
                     
                 </ListView>
             </TabItem>
             <TabItem Header="Чёрный список" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
-                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding BlackList.View}">
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding BlackList.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
+                          ItemTemplate="{StaticResource WinnerDataTemplate}">
                     
                 </ListView>
             </TabItem>
