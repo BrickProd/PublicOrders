@@ -14,6 +14,8 @@ using PublicOrders.Processors;
 using PublicOrders.Models;
 using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
+using PublicOrders.Processors.Internet;
+using PublicOrders.Processors.Internet.Old;
 
 namespace PublicOrders.ViewModels
 {

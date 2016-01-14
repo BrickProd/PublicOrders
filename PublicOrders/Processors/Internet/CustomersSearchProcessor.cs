@@ -11,8 +11,9 @@ using PublicOrders.Processors;
 using PublicOrders.Processors.Internet;
 using System.Text.RegularExpressions;
 using System.Web;
+using PublicOrders.Processors.Internet.Main;
 
-namespace PublicOrders.Processors.Main
+namespace PublicOrders.Processors.Internet
 {
     public delegate void AllCustomersSearched_delegete(ResultType_enum resultType_enum, string message);
     public delegate void CustomerSearched_delegate(Customer customer);

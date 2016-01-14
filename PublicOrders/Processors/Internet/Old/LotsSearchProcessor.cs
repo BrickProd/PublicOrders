@@ -9,8 +9,10 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using PublicOrders.Processors.Internet;
 using System.Web;
+using PublicOrders.Processors.Internet.Old._223;
+using PublicOrders.Processors.Internet.Main;
 
-namespace PublicOrders.Processors.Main
+namespace PublicOrders.Processors.Internet.Old
 {
     public delegate void AllLotsSearched_delegete(Customer customer, ResultType_enum ResultType_enum, string message);
     public delegate void LotSearched_delegate(Winner winner);
@@ -79,23 +81,17 @@ namespace PublicOrders.Processors.Main
                 switch (lawType_enum)
                 {
                     case (LawType_enum._44_94_223):
-                        lawTypeStr = "FZ_44%2CFZ_223%2CFZ_94";
+                        lawTypeStr = "fz223=on&fz94=on&fz44=on&";
                         break;
                     case (LawType_enum._44_94):
-                        lawTypeStr = "FZ_44%2CFZ_94";
+                        lawTypeStr = "fz94=on&fz44=on&";
                         break;
                     case (LawType_enum._223):
-                        lawTypeStr = "FZ_223";
+                        lawTypeStr = "fz223=on&";
                         break;
                 }
 
-                //lawTypeStr = "FZ_44%2CFZ_223%2CFZ_94";
-                //lawTypeStr = "FZ_94"; // !!! и 50 записей
-
-                /*switch (customerType_enum)
-                {
-                    case (CustomerType_enum.Customer):*/
-                text = @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
+                /*text = @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
                         text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&";
                         text += @"searchType=ORDERS&morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
                         text += @"deliveryAddress=&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&okdpWithSubElements=false&orderStages=PC&";
@@ -104,33 +100,21 @@ namespace PublicOrders.Processors.Main
                         text += @"selectedMatchingWordPlace223=NOTICE_AND_DOCS&matchingWordPlace94=NOTIFICATIONS&matchingWordPlace44=NOTIFICATIONS&searchAttachedFile=false&";
                         text += @"changeParameters=true&showLotsInfo=false&customer.code=&customer.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customer.fz223id=" + Convert.ToString(customer.Law_223_ID) + "&";
                         text += @"customer.title=" + customer.Name + "&customer.inn=" + customer.Vatin + "&";
-                        text += @"extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
+                        text += @"extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";*/
 
-                /*break;
-            case (CustomerType_enum.Organization):
-                // Запрос на организации
-                text += @"http://zakupki.gov.ru/epz/order/extendedsearch/search.html?sortDirection=false&";
-                text += @"sortBy=UPDATE_DATE&recordsPerPage=_500&pageNo=1&placeOfSearch=" + lawTypeStr + "&searchType=ORDERS&";
-                text += @"morphology=false&strictEqual=false&orderPriceFrom=" + lowPrice + "&orderPriceTo=" + highPrice + "&orderPriceCurrencyId=-1&";
-                text += @"deliveryAddress=Москва&orderPublishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&orderPublishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&";
-                text += @"okdpWithSubElements=false&orderStages=PC&headAgencyWithSubElements=false&smallBusinessSubject=I&";
-                text += @"rnpData=I&executionRequirement=I&penalSystemAdvantage=I&disabilityOrganizationsAdvantage=I&";
-                text += @"russianGoodsPreferences=I&orderPriceCurrencyId=-1&okvedWithSubElements=false&jointPurchase=false&";
-                text += @"byRepresentativeCreated=false&selectedMatchingWordPlace223=NOTICE_AND_DOCS&matchingWordPlace94=NOTIFICATIONS&";
-                text += @"matchingWordPlace44=NOTIFICATIONS&searchAttachedFile=false&changeParameters=true&showLotsInfo=false&";
-                text += @"agency.code=&agency.fz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&agency.title=" + customer.Name + "&";
-                text += @"agency.inn=&extendedAttributeSearchCriteria.searchByAttributes=NOTIFICATION&law44.okpd.withSubElements=false";
-                break;
-            default:
-                allLotsSearched_delegete(ResultType_enum.Error, "Неизвестный тип заказчика <" + customerType_enum.ToString() + ">");
-                return;
-        }*/
+
+                text = @"http://new.zakupki.gov.ru/epz/order/extendedsearch/results.html?searchString=&";
+                text += @"pageNumber=1&sortDirection=false&recordsPerPage=_500&showLotsInfoHidden=false&";
+                text += @"fz44=on&" + lawTypeStr + "priceFrom=" + lowPrice + "&priceTo=" + highPrice + "&currencyId=1&";
+                text += @"publishDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&publishDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&";
+                text += @"customerInn=" + customer.Vatin + "&customerCode=&customerFz223id=" + Convert.ToString(customer.Law_223_ID) + "&";
+                text += @"customerFz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customerTitle=" + customer.Name + "&pc=true&";
+                text += @"sortBy=RELEVANCE&openMode=USE_DEFAULT_PARAMS";
 
                 lotSearchProgress_delegate(customer, "Поиск заказов..", 0);
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
-                //resultTypeCheck = ResultType_enum.ErrorNetwork;
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
                     // Если нет подключения к интернету, то берем значения из БД
@@ -182,14 +166,14 @@ namespace PublicOrders.Processors.Main
                 }
 
 
-                text = "//div[@class=\"outerWrapper mainPage\"]";
+                text = "//div[@class=\"outerWrapper mainPage mainPage\"]";
                 text += "/div[@class=\"wrapper\"]";
                 text += "/div[@class=\"mainBox\"]";
-                text += "/div[@class=\"mainBox\"]";
-                text += "/div[@class=\"rightCol\"]";
-                text += "/div[@class=\"content\"]";
-                text += "/div[@id=\"exceedSphinxPageSizeDiv\"]";
-                text += "/div[@class=\"registerBox\"]";
+                text += "/div[@class=\"parametrs margBtm10\"]";
+                text += "/div[@class=\"registerBox margBtm20\"]";
+                //text += "/div[@class=\"content\"]";
+                //text += "/div[@id=\"exceedSphinxPageSizeDiv\"]";
+                //text += "/div[@class=\"registerBox\"]";
 
                 HtmlAgilityPack.HtmlNodeCollection orderCollection = doc.DocumentNode.SelectNodes(text);
                 if ((orderCollection == null) || (orderCollection.Count == 0)) {
@@ -224,8 +208,6 @@ namespace PublicOrders.Processors.Main
                     switch (orderResult)
                     {
                         case (ResultType_enum.Error):
-                            /*message = orderMessage;
-                            return ResultType.Error;*/
                             continue;
                         default:
                             break;
@@ -240,11 +222,6 @@ namespace PublicOrders.Processors.Main
                         mvm.wc.SaveChanges();
                     }
                     else {
-                        /*if ((repeatOrder.Price == 0) && (order.Price > 0)) {
-                            repeatOrder.Price = order.Price;
-                            mvm.wc.Entry(repeatOrder).State = System.Data.Entity.EntityState.Modified;
-                            mvm.wc.SaveChanges();
-                        }*/
                         order = repeatOrder;
                     }
 
@@ -346,8 +323,8 @@ namespace PublicOrders.Processors.Main
                 {
                     if (!node.Attributes.Contains("class"))
                     {
-                        text = ".//a";
-                        string orderNameStr = Globals.DecodeInternetSymbs(node.SelectSingleNode(text).Attributes["title"].Value).Trim();
+                        //text = ".//a";
+                        string orderNameStr = Globals.DecodeInternetSymbs(node.InnerText.Trim()).Trim();
                         if (orderNameStr.Length > 400)
                         {
                             orderNameStr = orderNameStr.Substring(0, 398) + "..";
@@ -364,38 +341,37 @@ namespace PublicOrders.Processors.Main
 
                 text = ".//table";
                 text += "/tr";
-                text += "/td[@class=\"amountTenderTd \"]";
-                text += "/p";
+                text += "/td[@class=\"tenderTd\"]";
+                text += "/span";
                 text += "/span";
 
                 lowTypeColl = orderNode.SelectNodes(text);
-                if (nodeTmp == null)
+                /*if (lowTypeColl == null)
                 {
                     text = ".//table";
                     text += "/tr";
-                    text += "/td[@class=\"amountTenderTd\"]";
-                    text += "/p";
+                    text += "/td[@class=\"tenderTd\"]";
+                    text += "/span";
                     text += "/span";
 
                     lowTypeColl = orderNode.SelectNodes(text);
-                }
+                }*/
 
                 bool searched = false;
                 foreach (HtmlAgilityPack.HtmlNode lowTypeNode in lowTypeColl)
                 {
-                    if (lowTypeNode.Attributes.Contains("class"))
-                    {
-                        switch (lowTypeNode.Attributes["class"].Value.Trim())
+
+                        switch (lowTypeNode.InnerText.Trim().ToLower())
                         {
-                            case ("fz94"):
+                            case ("94-фз"):
                                 searched = true;
                                 order.LawType = mvm.wc.LawTypes.FirstOrDefault(m => m.Name == "94");
                                 break;
-                            case ("fz44"):
+                            case ("44-фз"):
                                 searched = true;
                                 order.LawType = mvm.wc.LawTypes.FirstOrDefault(m => m.Name == "44");
                                 break;
-                            case ("fz223"):
+                            case ("223-фз"):
                                 searched = true;
                                 order.LawType = mvm.wc.LawTypes.FirstOrDefault(m => m.Name == "223");
                                 break;
@@ -403,7 +379,7 @@ namespace PublicOrders.Processors.Main
                                 order.LawType = mvm.wc.LawTypes.FirstOrDefault(m => m.Name == "None");
                                 break;
                         }
-                    }
+
                     if (searched) break;
                 }
 
@@ -429,7 +405,6 @@ namespace PublicOrders.Processors.Main
                             // Поиск ID для ссылки protocols.html?noticeId
                             order.HrefId = hrefNode.Attributes["href"].Value.Trim();
                             order.HrefId = order.HrefId.Substring(order.HrefId.IndexOf("?source=epz&notificationId=") + 27, order.HrefId.Length - (order.HrefId.IndexOf("?source=epz&notificationId=") + 27));
-                            //order.HrefId = order.HrefId.Substring(order.HrefId.IndexOf(".html?noticeId") + 15, order.HrefId.IndexOf("&epz=true") - (order.HrefId.IndexOf(".html?noticeId") + 15));
                         }
                         break;
                     case ("223"):
@@ -457,15 +432,15 @@ namespace PublicOrders.Processors.Main
                 // Цена и валюта
                 text = ".//table";
                 text += "/tr";
-                text += "/td[@class=\"amountTenderTd \"]";
-                text += "/dl";
-                HtmlAgilityPack.HtmlNode priceNode = orderNode.SelectSingleNode(text);
+                text += "/td[@class=\"tenderTd\"]";
+                text += "/dd";
+                HtmlAgilityPack.HtmlNodeCollection priceNodes = orderNode.SelectNodes(text);
 
-                foreach (HtmlAgilityPack.HtmlNode dtddNode in priceNode.ChildNodes)
+                foreach (HtmlAgilityPack.HtmlNode dtddNode in priceNodes[1].ChildNodes)
                 {
                     switch (dtddNode.Name.Trim().ToLower())
                     {
-                        case ("dt"):
+                        case ("strong"):
                             // Цена
                             string orderPriceStr = dtddNode.InnerText.Trim().Replace(" ", "").ToLower();
                             if (orderPriceStr != "нескольколотов")
@@ -491,7 +466,7 @@ namespace PublicOrders.Processors.Main
                                 order.OrderPrice = 0;
                             }
                             break;
-                        case ("dd"):
+                        case ("span"):
                             // Валюта
                             string orderPriceTypeStr = dtddNode.InnerText.Trim();
 
@@ -513,14 +488,15 @@ namespace PublicOrders.Processors.Main
                 // Дата публикации
                 text = ".//table";
                 text += "/tr";
-                text += "/td[@class=\"publishingTd\"]";
-                text += "/ul[@class=\"publishing\"]";
+                text += "/td[@class=\"amountTenderTd\"]";
+                text += "/ul";
                 text += "/li";
 
                 HtmlAgilityPack.HtmlNodeCollection publishingColl = orderNode.SelectNodes(text);
                 if (publishingColl.Count > 1)
                 {
-                    order.PublishDateTime = Convert.ToDateTime(publishingColl[1].InnerText.Trim());
+                    string timeTextTmp = publishingColl[0].InnerText.Trim();
+                    order.PublishDateTime = Convert.ToDateTime(timeTextTmp.Substring(timeTextTmp.IndexOf(':') + 1, timeTextTmp.Length - (timeTextTmp.IndexOf(':') + 1)) .Trim());
                 }
                 else
                 {

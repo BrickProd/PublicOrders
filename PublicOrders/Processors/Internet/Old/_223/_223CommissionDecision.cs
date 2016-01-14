@@ -1,4 +1,5 @@
 ﻿using PublicOrders.Models;
+using PublicOrders.Processors.Internet.Main;
 using PublicOrders.Processors.Main;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PublicOrders.Processors.Internet
+namespace PublicOrders.Processors.Internet.Old._223
 {
     class _223CommissionDecision
     {

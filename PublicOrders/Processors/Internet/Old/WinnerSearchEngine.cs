@@ -7,8 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Text.RegularExpressions;
+using PublicOrders.Processors.Internet.Main;
 
-namespace PublicOrders.Processors.Internet
+namespace PublicOrders.Processors.Internet.Old._223
 {
     class WinnerSearchEngine
     {

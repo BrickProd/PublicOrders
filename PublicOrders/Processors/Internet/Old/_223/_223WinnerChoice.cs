@@ -1,4 +1,6 @@
 ﻿using PublicOrders.Models;
+using PublicOrders.Processors.Internet.Main;
+using PublicOrders.Processors.Internet.Old;
 using PublicOrders.Processors.Main;
 using System;
 using System.Collections.Generic;
