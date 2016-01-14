@@ -33,6 +33,8 @@ namespace PublicOrders.ViewModels
         public CollectionViewSource Favorites { get; set; }
         public CollectionViewSource BlackList { get; set; }
 
+        public ObservableCollection<WinnerStatus> WinnerStatuses { get; set; } 
+
         public Winner SelectedWinner
         {
             get { return _selectedWinner; }
@@ -51,6 +53,7 @@ namespace PublicOrders.ViewModels
                 new Winner { Name = "Победитель 1" , Email = "sdsd", Phone = "23322", Rating = 0, WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1) }
             });
 
+            WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
 
             ToView = new CollectionViewSource();
             ToView.Source = Winners;
