@@ -149,8 +149,7 @@ namespace PublicOrders.Processors.Internet
                     if (!isWork) break;
 
                     string customerMessage = "";
-                    customer = new Customer();
-                    ResultType_enum customerResult = FillCustomer(customer, node, internetRequestEngine,
+                    ResultType_enum customerResult = FillCustomer(out customer, node, internetRequestEngine,
                                                                       out customerMessage);
 
                     if (customerResult == ResultType_enum.Error) continue;
@@ -187,11 +186,12 @@ namespace PublicOrders.Processors.Internet
             }
         }
 
-        public ResultType_enum FillCustomer(Customer customer, HtmlAgilityPack.HtmlNode customerNode, InternetRequestEngine internetRequestEngine,
+        public ResultType_enum FillCustomer(out Customer customer, HtmlAgilityPack.HtmlNode customerNode, InternetRequestEngine internetRequestEngine,
                                out string message)
         {
             try
             {
+                customer = new Customer();
                 message = "";
                 HtmlAgilityPack.HtmlNode nodeTmp = null;
 
@@ -228,6 +228,14 @@ namespace PublicOrders.Processors.Internet
                     switch (lawType)
                     {
                         case (LawType_enum._44_94):
+                            string org44Id = match.Value.Substring(match.Value.IndexOf("&organizationId=") + 16, match.Value.Length - (match.Value.IndexOf("&organizationId=") + 16));
+                            Customer customerRepeat = mvm.wc.Customers.ToList().FirstOrDefault(m => (m.Internet44Id == org44Id));
+                            if (customerRepeat != null)
+                            {
+                                customer = customerRepeat;
+                                return ResultType_enum.Done;
+                            }
+                            customer.Internet44Id = org44Id;
                             customer.Law_44_94_ID = lawID;
                             if ((customer.Name.Trim().Substring(0, 3) == "...") || 
                                 (customer.Name.Trim().Substring(customer.Name.Trim().Length - 3, 3) == "..."))
@@ -358,6 +366,7 @@ namespace PublicOrders.Processors.Internet
             }
             catch (Exception ex)
             {
+                customer = null;
                 message = ex.Message + "\n\n" + ex.StackTrace;
                 return ResultType_enum.Error;
             }

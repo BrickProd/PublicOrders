@@ -517,14 +517,14 @@ namespace PublicOrders.ViewModels
             //MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void LotSearched_proc(Winner winner) {
+        private void LotSearched_proc(Lot lot) {
             if (IsCustomersSearching) return;
             try
             {
-                if (winner.Name != "")
+                if (lot.Winner.Name != "")
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        Winners.Add(winner);
+                        Winners.Add(lot.Winner);
                     }));
             }
             catch {

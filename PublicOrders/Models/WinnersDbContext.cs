@@ -118,6 +118,10 @@ namespace PublicOrders.Models
         [Index]
         public string Name { get; set; }
 
+        [Column(TypeName = "varchar"), MaxLength(100)]
+        [Index]
+        public string Internet44Id { get; set; }
+
         [Column(TypeName = "varchar"), MaxLength(100), Required]
         [Index]
         public string Vatin { get; set; }
@@ -345,6 +349,10 @@ namespace PublicOrders.Models
         public long WinnerId { get; set; }
         virtual public Winner Winner { get; set; }
 
+        [Column(TypeName = "varchar"), MaxLength(100), Required]
+        [Index]
+        public string ContractNumber { get; set; }
+
         [Index]
         public long LotPrice { get; set; }
 
@@ -365,22 +373,16 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
-        [NotMapped]
-        private ObservableCollection<Winner> _winners;
-        public ObservableCollection<Winner> Winners
-        {
-            get { return _winners ?? (_winners = new ObservableCollection<Winner> ()); } // Try HashSet<N>
-            set { _winners = value; }
-        }
-
         public Lot()
         {
 
         }
     }
 
-    // П О Б Е Д И Т Е Л Ь
-    public class Winner : INotifyPropertyChanged
+
+
+        // П О Б Е Д И Т Е Л Ь
+        public class Winner : INotifyPropertyChanged
     {
         private ObservableCollection<WinnerNote> _winnerNotes;
         private bool _isChoosen;
@@ -392,10 +394,6 @@ namespace PublicOrders.Models
         [Column(TypeName = "varchar"), MaxLength(400), Required]
         [Index]
         public string Name { get; set; }
-
-        [Column(TypeName = "varchar"), MaxLength(100), Required]
-        [Index]
-        public string ContractNumber { get; set; }
 
         [Column(TypeName = "varchar"), MaxLength(100)]
         [Index]

@@ -11,7 +11,7 @@ using System.Windows;
 namespace PublicOrders.Processors.Internet
 {
     public delegate void AllWinersSearched_delegete(Customer customer, ResultType_enum resultType_enum, string message);
-    public delegate void WinnerSearched_delegate(Winner winner);
+    public delegate void WinnerSearched_delegate(Lot lot);
     public delegate void WinnerSearchProgress_delegate(Customer customer, string text, int intValue);
 
     public class WinnersSearchProcessor
@@ -58,8 +58,10 @@ namespace PublicOrders.Processors.Internet
         }
 
         private ResultType_enum AnalizeContract(Customer customer, HtmlAgilityPack.HtmlNode contractNode, InternetRequestEngine internetRequestEngine,
-                                                out Winner winner, out string contractMessage)
+                                                out Lot lot, out string contractMessage)
         {
+            int infoAboutContractEdit = 0;
+
             contractMessage = "";
             HtmlAgilityPack.HtmlNode nodeTmp = null;
             HtmlAgilityPack.HtmlNodeCollection nodesTmp = null;
@@ -82,10 +84,12 @@ namespace PublicOrders.Processors.Internet
                     contractNumber = nodeTmp.InnerText.Trim();
                 }
 
-                winner = mvm.wc.Winners.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
-                if (winner != null) {
+                lot = mvm.wc.Lots.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
+                if (lot != null) {
                     return ResultType_enum.Done;
                 }
+                lot = new Lot();
+                lot.ContractNumber = contractNumber;
 
                 string contractLink = @"http://new.zakupki.gov.ru" + nodeTmp.Attributes["href"].Value.Trim();
                 #endregion
@@ -96,13 +100,16 @@ namespace PublicOrders.Processors.Internet
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
-                    winner = null;
+                    lot = null;
                     return ResultType_enum.Error;
                 }
 
+                if (doc.DocumentNode.InnerText.IndexOf("Информация об изменении контракта") > -1) {
+                    infoAboutContractEdit = 1;
+                }
+
                 #region П О Б Е Д И Т Е Л Ь
-                winner = new Winner();
-                winner.ContractNumber = contractNumber;
+                Winner winner = new Winner();
                 #region Название и ИНН
                 text = "//div[@class=\"cardWrapper\"]";
                 text += "/div[@class=\"wrapper\"]";
@@ -123,11 +130,20 @@ namespace PublicOrders.Processors.Internet
 
                     // ИНН победителя
                     nodesTmp = winnerTrs.ElementAt(2).SelectNodes(".//td/table/tr");
-                    nodesTmp = nodesTmp.ElementAt(1).SelectNodes(".//td");
-                    winner.Vatin = nodesTmp.ElementAt(1).InnerText.Trim();
+                    foreach (HtmlAgilityPack.HtmlNode n in nodesTmp)
+                    {
+                        if (n.ChildNodes.ElementAt(1).InnerText.IndexOf("ИНН") > -1) {
+                            winner.Vatin = n.ChildNodes.ElementAt(3).InnerText.Trim();
+                            break;
+                        }
+                    }
                 }
                 else {
                     winner.Name = winnerName;
+                }
+
+                if (winner.Name.Length > 400) {
+                    winner.Name = winner.Name.Substring(0, 398) + "..";
                 }
                 #endregion
 
@@ -137,8 +153,8 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Телефон, электронная почта
-                nodesTmp = winnerTrs.ElementAt(2).SelectNodes(".//td");
-                string telEmail = nodesTmp[8].InnerHtml.Trim();
+                nodesTmp = winnerTrs.ElementAt(2).SelectNodes("./td");
+                string telEmail = nodesTmp[4].InnerHtml.Trim();
                 string[] telEmailMas = null;
                 if (telEmail.IndexOf("<br>") > -1) {
                     telEmailMas = telEmail.Split(new string[] { "<br>" }, StringSplitOptions.None);
@@ -156,8 +172,15 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Л О Т (сайт контракта)
-                Lot lot = new Lot();
-                lot.Winner = winner;
+                Winner repeatWinner = mvm.wc.Winners.FirstOrDefault(m => (m.Name == winner.Name && m.Vatin == winner.Vatin));
+                if (repeatWinner != null)
+                {
+                    lot.Winner = repeatWinner;
+                }
+                else {
+                    lot.Winner = winner;
+                }
+
                 #region Дата заключения контракта
                 text = "//div[@class=\"cardWrapper\"]";
                 text += "/div[@class=\"wrapper\"]";
@@ -167,7 +190,7 @@ namespace PublicOrders.Processors.Internet
                 text += "/div[@class=\"noticeTabBoxWrapper\"]";
 
                 nodesTmp = doc.DocumentNode.SelectNodes(text);
-                HtmlAgilityPack.HtmlNodeCollection lotTrs = nodesTmp.ElementAt(2).SelectNodes(".//table/tr");
+                HtmlAgilityPack.HtmlNodeCollection lotTrs = nodesTmp.ElementAt(2 + infoAboutContractEdit).SelectNodes(".//table/tr");
 
                 lot.DocumentDateTime = Convert.ToDateTime(lotTrs.ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim());
 
@@ -175,14 +198,21 @@ namespace PublicOrders.Processors.Internet
 
                 #region Цена контракта
                 string priceStr = lotTrs.ElementAt(3).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
-                if (priceStr.IndexOf(',') > -1)
+                try
                 {
-                    lot.DocumentPrice = Convert.ToInt64(priceStr.Substring(0, priceStr.IndexOf(',')));
+                    if (priceStr.IndexOf(',') > -1)
+                    {
+                        lot.DocumentPrice = Convert.ToInt64(priceStr.Substring(0, priceStr.IndexOf(',')));
+                    }
+                    else
+                    {
+                        lot.DocumentPrice = Convert.ToInt64(priceStr);
+                    }
                 }
-                else
-                {
-                    lot.DocumentPrice = Convert.ToInt64(priceStr);
+                catch {
+                    lot.DocumentPrice = 0;
                 }
+
                 #endregion
 
                 #region Валюта
@@ -232,18 +262,31 @@ namespace PublicOrders.Processors.Internet
 
                 HtmlAgilityPack.HtmlNodeCollection templates2Nodes = doc.DocumentNode.SelectNodes(text);
                 lot.Name = templates2Nodes.ElementAt(0).SelectSingleNode(".//table/tr/td/span").InnerText.Trim();
+
+                if (lot.Name.Length > 400)
+                {
+                    lot.Name = lot.Name.Substring(0, 398) + "..";
+                }
+
                 #endregion
 
                 #region Максимальная цена
                 priceStr = templates2Nodes.ElementAt(4).SelectNodes(".//table/tr").ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
-                if (priceStr.IndexOf(',') > -1)
+                try
                 {
-                    lot.LotPrice = Convert.ToInt64(priceStr.Substring(0, priceStr.IndexOf(',')));
+                    if (priceStr.IndexOf(',') > -1)
+                    {
+                        lot.LotPrice = Convert.ToInt64(priceStr.Substring(0, priceStr.IndexOf(',')));
+                    }
+                    else
+                    {
+                        lot.LotPrice = Convert.ToInt64(priceStr);
+                    }
                 }
-                else
-                {
-                    lot.LotPrice = Convert.ToInt64(priceStr);
+                catch {
+                    lot.LotPrice = 0;
                 }
+
                 #endregion
 
                 #region Ссылка на заказ
@@ -310,7 +353,7 @@ namespace PublicOrders.Processors.Internet
             catch (Exception ex)
             {
                 contractMessage = ex.Message + '\n' + ex.StackTrace;
-                winner = null;
+                lot = null;
                 return ResultType_enum.Error;
             }
         }
@@ -381,10 +424,10 @@ namespace PublicOrders.Processors.Internet
                             searchLots = searchOrder.Lots.Where(m => ((m.LotPrice > lowPrice) && (m.LotPrice < highPrice))).ToList();
                             foreach (Lot searchLot in searchLots)
                             {
-                                if ((searchLot.Winners != null) && (searchLot.Winners.Count() > 0))
+                                if (searchLot.Winner != null)
                                 {
                                     searchedFromDB = true;
-                                    winnerSearched_delegate(searchLot.Winners.ElementAt(0));
+                                    winnerSearched_delegate(searchLot);
                                 }
                             }
                         }
@@ -422,10 +465,11 @@ namespace PublicOrders.Processors.Internet
                 double contractInterval = 100 / Convert.ToDouble(contractCollection.Count());
                 int currentInterval = 0;
 
-                int contractNum = 1;
-                Winner winner = null;
+                int contractNum = 0;
+                Lot lot = null;
                 foreach (HtmlAgilityPack.HtmlNode nodeContract in contractCollection)
                 {
+                    contractNum++;
                     currentInterval = Convert.ToInt32(contractNum * contractInterval);
                     winnerSearchProgress_delegate(customer, "Обработка победителя.. [" + contractNum + "\\" + contractCollection.Count() + "]", currentInterval);
 
@@ -438,60 +482,11 @@ namespace PublicOrders.Processors.Internet
                     #region Анализ контракта с победителем
                     string contractMessage = "";
                     ResultType_enum contractResult = AnalizeContract(customer, nodeContract, internetRequestEngine,
-                                                             out winner, out contractMessage);
+                                                             out lot, out contractMessage);
 
                     if (contractResult == ResultType_enum.Error) continue;
 
-                    // Проверить на повтор и записать в БД
-                    /*Order repeatOrder = mvm.wc.Orders.ToList().FirstOrDefault(m => (m.Number == order.Number));
-                    if (repeatOrder == null)
-                    {
-                        order.CreateDateTime = DateTime.Now;
-                        mvm.wc.Orders.Add(order);
-                        mvm.wc.SaveChanges();
-                    }
-                    else
-                    {
-                        order = repeatOrder;
-                    }
-
-                    //orders.Add(order);
-                    contractNum++;
-                    #endregion
-
-                    #region Поиск победителей по заказу
-                    var lots = mvm.wc.Lots.Where(p => p.Order.Number.Trim().ToLower() == order.Number.Trim().ToLower()).ToList();
-                    // В БД уже есть лоты на заказ (лот заполняется вместе с его победителем, поэтому выводим эти лоты)
-                    if ((lots != null) && (lots.Count() > 0))
-                    {
-                        //var winner = null;
-                        foreach (var lot in lots)
-                        {
-                            var winner = mvm.wc.Winners.ToList().FirstOrDefault(m => m.Lot == lot);
-                            if ((winner != null) && (winner.Name.Trim() != ""))
-                                lotSearched_delegate(winner);
-                        }
-                    }
-                    // Начинаем поиск победителей в интернете
-                    else
-                    {
-                        // Ищем победителей, если у заказа прошла неделя с момента поиска победителей
-                        if ((order.WinnersSearchDateTime == null) || ((DateTime.Now - order.WinnersSearchDateTime) > TimeSpan.FromDays(7)))
-                        {
-                            string winnerEngineMessage = "";
-                            ResultType_enum resultSearch = winnerSearchEngine.FillWinners(order, internetRequestEngine, lotSearched_delegate, out winnerEngineMessage);
-
-                            if ((resultSearch != ResultType_enum.Error) &&
-                                (resultSearch != ResultType_enum.ErrorNetwork) &&
-                                (resultSearch != ResultType_enum.ReglamentaWork))
-                            {
-                                // Сохраняем дату поиска победителей
-                                order.WinnersSearchDateTime = DateTime.Now;
-                                mvm.wc.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                                mvm.wc.SaveChanges();
-                            }
-                        }
-                    }*/
+                    winnerSearched_delegate(lot);
                     #endregion
                 }
 
