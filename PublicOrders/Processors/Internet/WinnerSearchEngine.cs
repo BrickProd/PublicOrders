@@ -498,12 +498,12 @@ namespace PublicOrders.Processors.Internet
                             if (winnerProtocolNode == null) continue;
 
                             #region Решение комиссии
-                            if ((winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("протокол подведения итогов") > -1) ||
-                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("подведению итогов") > -1) ||
-                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("оценки и сопоставления заявок") > -1) ||
-                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("победител") > -1) ||
-                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("протокол основного этапа закупки") > -1) ||
-                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("запрос предложений о цене договора") > -1))
+                            if ((winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("протокол подведения итогов", StringComparison.OrdinalIgnoreCase) > -1) ||
+                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("подведению итогов", StringComparison.OrdinalIgnoreCase) > -1) ||
+                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("оценки и сопоставления заявок", StringComparison.OrdinalIgnoreCase) > -1) ||
+                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("победител", StringComparison.OrdinalIgnoreCase) > -1) ||
+                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("протокол основного этапа закупки", StringComparison.OrdinalIgnoreCase) > -1) ||
+                                (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("запрос предложений о цене договора", StringComparison.OrdinalIgnoreCase) > -1))
                             {
                                 string commissionDecisionMessage = "";
                                 _223commissionDecision.Work(order, internetRequestEngine, winnerProtocolNode, lotSearched_delegate, out commissionDecisionMessage, out isWinner);
@@ -511,7 +511,7 @@ namespace PublicOrders.Processors.Internet
                             }
                             #endregion
                             #region Выбор победителя
-                            if (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("протокол запроса котировок") > -1)
+                            if (winnerProtocolNode.InnerText.Trim().ToLower().IndexOf("протокол запроса котировок", StringComparison.OrdinalIgnoreCase) > -1)
                             {
                                 string winnerChoiceMessage = "";
                                 // Доделать
