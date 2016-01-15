@@ -22,9 +22,11 @@ namespace PublicOrders.Processors.Documents.Main
 
         private bool isWork = false;
         List<Winner> winners = null;
+        Customer customer = null;
         CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = null;
-        public CreateWinnersDocProcessor(List<Winner> _winners, CreateWinnersDocumentDone_delegete _createWinnersDocumentDone_delegete) {
+        public CreateWinnersDocProcessor(Customer _customer, List<Winner> _winners, CreateWinnersDocumentDone_delegete _createWinnersDocumentDone_delegete) {
             winners = _winners;
+            customer = _customer;
             createWinnersDocumentDone_delegete = _createWinnersDocumentDone_delegete;
         }
 
@@ -72,9 +74,9 @@ namespace PublicOrders.Processors.Documents.Main
                     doc.Paragraphs[2].Range.Font.Bold = 1;
 
 
-                    doc.Paragraphs[3].Range.Text = winners.ElementAt(0).Lot.Order.Customer.Name.ToUpper();
+                    doc.Paragraphs[3].Range.Text =customer.Name.ToUpper();
                     doc.Paragraphs[3].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    doc.Paragraphs[4].Range.Text = "ИНН : " + winners.ElementAt(0).Lot.Order.Customer.Vatin.Trim();
+                    doc.Paragraphs[4].Range.Text = "ИНН : " + customer.Vatin.Trim();
                     doc.Paragraphs[4].Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
 
@@ -145,18 +147,18 @@ namespace PublicOrders.Processors.Documents.Main
                         doc.Tables[1].Cell(i + 3, 1).Range.Text = Convert.ToString(i + 1) + '.';
                         doc.Tables[1].Cell(i + 3, 1).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                        doc.Tables[1].Cell(i + 3, 2).Range.Text = winners[i].Lot.Name.Trim();
+                        doc.Tables[1].Cell(i + 3, 2).Range.Text = winners[i].Lots.ElementAt(0).Name.Trim();
                         doc.Tables[1].Cell(i + 3, 2).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                        doc.Tables[1].Cell(i + 3, 3).Range.Text = winners[i].Lot.LotPrice + " >> " +
-                                                                  winners[i].Lot.DocumentPrice + " (" +
-                                                                  winners[i].Lot.LotPriceType.Name.Trim() + ")";
+                        doc.Tables[1].Cell(i + 3, 3).Range.Text = winners[i].Lots.ElementAt(0).LotPrice + " >> " +
+                                                                  winners[i].Lots.ElementAt(0).DocumentPrice + " (" +
+                                                                  winners[i].Lots.ElementAt(0).LotPriceType.Name.Trim() + ")";
                         doc.Tables[1].Cell(i + 3, 3).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                        doc.Tables[1].Cell(i + 3, 4).Range.Text = winners[i].Lot.Order.LawType.Name.Trim();
+                        doc.Tables[1].Cell(i + 3, 4).Range.Text = winners[i].Lots.ElementAt(0).Order.LawType.Name.Trim();
                         doc.Tables[1].Cell(i + 3, 4).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
-                        doc.Tables[1].Cell(i + 3, 5).Range.Text = winners[i].Lot.Order.PublishDateTime.ToString("dd.MM.yyyy");
+                        doc.Tables[1].Cell(i + 3, 5).Range.Text = winners[i].Lots.ElementAt(0).Order.PublishDateTime.ToString("dd.MM.yyyy");
                         doc.Tables[1].Cell(i + 3, 5).Range.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
 
                         doc.Tables[1].Cell(i + 3, 6).Range.Text = winners[i].Name;

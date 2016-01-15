@@ -25,7 +25,7 @@ namespace PublicOrders.Models
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<CustomerLevel> CustomerLevels { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderPriceType> OrderPriceTypes { get; set; }
+        //public DbSet<OrderPriceType> OrderPriceTypes { get; set; }
         public DbSet<LotPriceType> LotPriceTypes { get; set; }
         public DbSet<OrderType> OrderTypes { get; set; }
         public DbSet<LawType> LawTypes { get; set; }
@@ -138,17 +138,17 @@ namespace PublicOrders.Models
         public DateTime CreateDateTime { get; set; }
 
         // Транзакционные таблицы
-        private ICollection<CustomerType> _сustomerTypes;
-        public virtual ICollection<CustomerType> CustomerTypes
+        private ObservableCollection<CustomerType> _сustomerTypes;
+        public virtual ObservableCollection<CustomerType> CustomerTypes
         {
-            get { return _сustomerTypes ?? (_сustomerTypes = new HashSet<CustomerType>()); } // Try HashSet<N>
+            get { return _сustomerTypes ?? (_сustomerTypes = new ObservableCollection<CustomerType>(new  HashSet<CustomerType>())); } // Try HashSet<N>
             set { _сustomerTypes = value; }
         }
 
-        private ICollection<Order> _orders;
-        public virtual ICollection<Order> Orders
+        private ObservableCollection<Order> _orders;
+        public virtual ObservableCollection<Order> Orders
         {
-            get { return _orders ?? (_orders = new HashSet<Order>()); } // Try HashSet<N>
+            get { return _orders ?? (_orders = new ObservableCollection<Order>(new HashSet< Order >())); } // Try HashSet<N>
             set { _orders = value; }
         }
 
@@ -211,16 +211,16 @@ namespace PublicOrders.Models
         [Key]
         public long OrderId { get; set; }
 
-        [Column(TypeName = "varchar"), MaxLength(400), Required]
+        /*[Column(TypeName = "varchar"), MaxLength(400), Required]
         [Index]
-        public string Name { get; set; }
+        public string Name { get; set; }*/
 
-        [Index]
-        public long OrderPrice { get; set; }
+        /*[Index]
+        public long OrderPrice { get; set; }*/
 
-        [ForeignKey("OrderPriceType")]
+        /*[ForeignKey("OrderPriceType")]
         public int? OrderPriceTypeId { get; set; }
-        virtual public OrderPriceType OrderPriceType { get; set; }
+        virtual public OrderPriceType OrderPriceType { get; set; }*/
 
         /*[Index]
         public long MaxLotPrice { get; set; }*/
@@ -241,9 +241,9 @@ namespace PublicOrders.Models
         [Index]
         public string Number { get; set; }
 
-        [Column(TypeName = "varchar"), MaxLength(50), Required]
+        /*[Column(TypeName = "varchar"), MaxLength(50), Required]
         [Index]
-        public string HrefId { get; set; }
+        public string HrefId { get; set; }*/
 
         [Index, Required]
         public DateTime PublishDateTime { get; set; }
@@ -251,30 +251,15 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
-        [Index]
-        public DateTime? WinnersSearchDateTime { get; set; }
+        /*[Index]
+        public DateTime? WinnersSearchDateTime { get; set; }*/
 
-        private ICollection<Lot> _lots;
-        public virtual ICollection<Lot> Lots
+        private ObservableCollection<Lot> _lots;
+        public virtual ObservableCollection<Lot> Lots
         {
-            get { return _lots ?? (_lots = new HashSet<Lot>()); } // Try HashSet<N>
+            get { return _lots ?? (_lots = new ObservableCollection<Lot> (new HashSet<Lot>())); } // Try HashSet<N>
             set { _lots = value; }
         }
-        // Транзакционные таблицы
-        /*private ICollection<Customer> _customers;
-        public virtual ICollection<Customer> Customers
-        {
-            get { return _customers ?? (_customers = new HashSet<Customer>()); } // Try HashSet<N>
-            set { _customers = value; }
-        }*/
-
-        // Транзакционные таблицы
-        /*private ICollection<Lot> _lots;
-        public virtual ICollection<Lot> Lots
-        {
-            get { return _lots ?? (_lots = new HashSet<Lot>()); } // Try HashSet<N>
-            set { _lots = value; }
-        }*/
 
         public Order()
         {
@@ -283,7 +268,7 @@ namespace PublicOrders.Models
     }
 
     //
-    public class OrderPriceType
+    /*public class OrderPriceType
     {
         [Key]
         public int OrderPriceTypeId { get; set; }
@@ -296,7 +281,7 @@ namespace PublicOrders.Models
         {
 
         }
-    }
+    }*/
 
     public class LotPriceType
     {
@@ -356,6 +341,10 @@ namespace PublicOrders.Models
         public long OrderId { get; set; }
         virtual public Order Order { get; set; }
 
+        [ForeignKey("Winner")]
+        public long WinnerId { get; set; }
+        virtual public Winner Winner { get; set; }
+
         [Index]
         public long LotPrice { get; set; }
 
@@ -376,10 +365,11 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
-        private ICollection<Winner> _winners;
-        public virtual ICollection<Winner> Winners
+        [NotMapped]
+        private ObservableCollection<Winner> _winners;
+        public ObservableCollection<Winner> Winners
         {
-            get { return _winners ?? (_winners = new HashSet<Winner>()); } // Try HashSet<N>
+            get { return _winners ?? (_winners = new ObservableCollection<Winner> ()); } // Try HashSet<N>
             set { _winners = value; }
         }
 
@@ -403,6 +393,18 @@ namespace PublicOrders.Models
         [Index]
         public string Name { get; set; }
 
+        [Column(TypeName = "varchar"), MaxLength(100), Required]
+        [Index]
+        public string ContractNumber { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(100)]
+        [Index]
+        public string Vatin { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(500), Required]
+        [Index]
+        public string Address { get; set; }
+
         [Column(TypeName = "varchar"), MaxLength(100)]
         [Index]
         public string Email { get; set; }
@@ -411,9 +413,12 @@ namespace PublicOrders.Models
         [Index]
         public string Phone { get; set; }
 
-        [ForeignKey("Lot")]
-        public long LotId { get; set; }
-        virtual public Lot Lot { get; set; }
+        private ObservableCollection<Lot> _lots;
+        public virtual ObservableCollection<Lot> Lots
+        {
+            get { return _lots ?? (_lots = new ObservableCollection<Lot>( new HashSet<Lot>())); } // Try HashSet<N>
+            set { _lots = value; }
+        }
 
         [NotMapped]
         public bool IsChoosen

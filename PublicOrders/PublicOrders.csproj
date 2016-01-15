@@ -92,10 +92,6 @@
     <Compile Include="Processors\Documents\Main\LoadProductsProcessor.cs" />
     <Compile Include="Processors\Internet\CustomersSearchProcessor.cs" />
     <Compile Include="Processors\Internet\Main\InternetRequestEngine.cs" />
-    <Compile Include="Processors\Internet\Old\LotsSearchProcessor.cs" />
-    <Compile Include="Processors\Internet\Old\WinnerSearchEngine.cs" />
-    <Compile Include="Processors\Internet\Old\_223\_223CommissionDecision.cs" />
-    <Compile Include="Processors\Internet\Old\_223\_223WinnerChoice.cs" />
     <Compile Include="Processors\Internet\WinnersSearchProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

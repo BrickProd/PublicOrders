@@ -15,7 +15,6 @@ using PublicOrders.Models;
 using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
 using PublicOrders.Processors.Internet;
-using PublicOrders.Processors.Internet.Old;
 
 namespace PublicOrders.ViewModels
 {
@@ -268,9 +267,9 @@ namespace PublicOrders.ViewModels
             }
 
             // Останавливаем поиск победителей
-            if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
+            if ((mvm.wsProcessor != null) && (mvm.wsProcessor.isWorking()))
             {
-                mvm.lsProcessor.Stop();
+                mvm.wsProcessor.Stop();
             }
 
             // Останавливаем поиск заказчиков
@@ -420,9 +419,9 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
+            if ((mvm.wsProcessor != null) && (mvm.wsProcessor.isWorking()))
             {
-                mvm.lsProcessor.Stop();
+                mvm.wsProcessor.Stop();
             }
 
 
@@ -460,21 +459,22 @@ namespace PublicOrders.ViewModels
                     break;
             }
 
-            AllLotsSearched_delegete allLotsSearched_delegete = new AllLotsSearched_delegete(AllLotsSearched_proc);
-            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched_proc);
-            LotSearchProgress_delegate lotSearchProgress_delegate = new LotSearchProgress_delegate(LotSearchProgress_proc);
-            mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer,
-                                                      customerType_enum,
-                                                      lawType_enum,
-                                                      Properties.Settings.Default.MinPrice,
-                                                      Properties.Settings.Default.MaxPrice,
-                                                      Properties.Settings.Default.MinPublicDate,
-                                                      Properties.Settings.Default.MaxPublicDate,
-                                                      lotSearched_delegate,
-                                                      allLotsSearched_delegete,
-                                                      lotSearchProgress_delegate
-                                                      );
-            mvm.lsProcessor.Operate();
+            AllWinersSearched_delegete allWinersSearched_delegete = new AllWinersSearched_delegete(AllLotsSearched_proc);
+            WinnerSearched_delegate winnerSearched_delegate = new WinnerSearched_delegate(LotSearched_proc);
+            WinnerSearchProgress_delegate winnerSearchProgress_delegate = new WinnerSearchProgress_delegate(LotSearchProgress_proc);
+            mvm.wsProcessor = new WinnersSearchProcessor(SelectedCustomer,
+                                          customerType_enum,
+                                          lawType_enum,
+                                          Properties.Settings.Default.MinPrice,
+                                          Properties.Settings.Default.MaxPrice,
+                                          Properties.Settings.Default.MinPublicDate,
+                                          Properties.Settings.Default.MaxPublicDate,
+                                          allWinersSearched_delegete,
+                                          winnerSearched_delegate,
+                                          winnerSearchProgress_delegate
+                                          );
+            mvm.wsProcessor.Operate();
+
 
             IsWinnerLotsSearchingPause = false;
             IsWinnerLotsSearching = true;
@@ -535,13 +535,13 @@ namespace PublicOrders.ViewModels
 
         private void WinnerLotsSearchStop(object param) {
             IsWinnerLotsSearchingPause = false;
-            mvm.lsProcessor.Stop();
+            mvm.wsProcessor.Stop();
         }
 
         private void WinnerLotsSearchPausePlay(object param)
         {
             IsWinnerLotsSearchingPause = !IsWinnerLotsSearchingPause;
-            mvm.lsProcessor.PausePlay();
+            mvm.wsProcessor.PausePlay();
         }
 
         private void CreateReport(object param)
@@ -553,7 +553,7 @@ namespace PublicOrders.ViewModels
             }
 
             CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = new CreateWinnersDocumentDone_delegete(CreateWinnersDocumentDone_proc);
-            mvm.cwProcessor = new CreateWinnersDocProcessor (Winners.Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
+            mvm.cwProcessor = new CreateWinnersDocProcessor (SelectedCustomer, Winners.Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
             mvm.cwProcessor.Operate();
         }
 
