@@ -126,7 +126,7 @@ namespace PublicOrders.Processors.Internet
 
                 HtmlAgilityPack.HtmlNodeCollection customerCollection = doc.DocumentNode.SelectNodes(text);
                 if ((customerCollection == null) || (customerCollection.Count == 0)) {
-                    allCustomersSearched_delegete(ResultType_enum.NotSearch, "");
+                    allCustomersSearched_delegete(ResultType_enum.NotSearch, "Заказчики не найдены!");
                     return;
                 }
 
@@ -206,7 +206,7 @@ namespace PublicOrders.Processors.Internet
                 nodeTmp = customerNode.SelectSingleNode(text);
 
                 // Название заказчика
-                customer.Name = nodeTmp.InnerText.Trim();
+                customer.Name = Globals.DecodeInternetSymbs(nodeTmp.InnerText.Trim());
 
                 // Определение ID 94 и 223 законов
                 // Если существует атрибут <href>, значит указана одна ссылка на один закон

@@ -126,7 +126,7 @@ namespace PublicOrders.Processors.Internet
                 string winnerName = winnerTrs.ElementAt(2).SelectSingleNode(".//td").InnerHtml.Trim();
                 if (winnerName.IndexOf("<table") > -1)
                 {
-                    winner.Name = winnerName.Substring(0, winnerName.IndexOf("<table")).Trim();
+                    winner.Name = Globals.DecodeInternetSymbs(winnerName.Substring(0, winnerName.IndexOf("<table")).Trim());
 
                     // ИНН победителя
                     nodesTmp = winnerTrs.ElementAt(2).SelectNodes(".//td/table/tr");
@@ -139,7 +139,7 @@ namespace PublicOrders.Processors.Internet
                     }
                 }
                 else {
-                    winner.Name = winnerName;
+                    winner.Name = Globals.DecodeInternetSymbs(winnerName);
                 }
 
                 if (winner.Name.Length > 400) {
@@ -148,8 +148,8 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Адрес
-                nodesTmp = winnerTrs.ElementAt(2).SelectNodes(".//td");
-                winner.Address = nodesTmp[6].InnerText.Trim();
+                nodesTmp = winnerTrs.ElementAt(2).SelectNodes("./td");
+                winner.Address = nodesTmp[2].InnerText.Trim();
                 #endregion
 
                 #region Телефон, электронная почта
@@ -261,7 +261,7 @@ namespace PublicOrders.Processors.Internet
                 text += "/div[@class=\"noticeTabBoxWrapper\"]";
 
                 HtmlAgilityPack.HtmlNodeCollection templates2Nodes = doc.DocumentNode.SelectNodes(text);
-                lot.Name = templates2Nodes.ElementAt(0).SelectSingleNode(".//table/tr/td/span").InnerText.Trim();
+                lot.Name = Globals.DecodeInternetSymbs(templates2Nodes.ElementAt(0).SelectSingleNode(".//table/tr/td/span").InnerText.Trim());
 
                 if (lot.Name.Length > 400)
                 {
@@ -271,7 +271,7 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Максимальная цена
-                priceStr = templates2Nodes.ElementAt(4).SelectNodes(".//table/tr").ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
+                priceStr = templates2Nodes.ElementAt(3).SelectNodes(".//table/tr").ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
                 try
                 {
                     if (priceStr.IndexOf(',') > -1)
