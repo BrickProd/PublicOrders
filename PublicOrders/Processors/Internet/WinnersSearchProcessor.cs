@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml;
 
 namespace PublicOrders.Processors.Internet
 {
@@ -57,7 +59,7 @@ namespace PublicOrders.Processors.Internet
             winnerSearchProgress_delegate = _winnerSearchProgress_delegate;
         }
 
-        private ResultType_enum AnalizeContract(Customer customer, HtmlAgilityPack.HtmlNode contractNode, InternetRequestEngine internetRequestEngine,
+        private ResultType_enum AnalizeContract(Customer customer, XmlNode contractNode, InternetRequestEngine internetRequestEngine,
                                                 out Lot lot, out string contractMessage)
         {
             int infoAboutContractEdit = 0;
@@ -69,20 +71,8 @@ namespace PublicOrders.Processors.Internet
             try
             {
                 #region Определение номера контракта (возможно победитель есть в БД) и ссылки
-                string contractNumber = "";
-                text = ".//table";
-                text += "/tr";
-                text += "/td[@class=\"descriptTenderTd\"]";
-                text += "/dl";
-                text += "/dt";
-                text += "/a";
-
-                nodeTmp = contractNode.SelectSingleNode(text);
-                if (nodeTmp.InnerText.IndexOf('№') > -1) {
-                    contractNumber = nodeTmp.InnerText.Remove(nodeTmp.InnerText.IndexOf('№'), 1).Trim();
-                } else {
-                    contractNumber = nodeTmp.InnerText.Trim();
-                }
+                string contractNumber = contractNode.InnerText.Substring(contractNode.InnerText.IndexOf("?reestrNumber=") + 14, contractNode.InnerText.Length - (contractNode.InnerText.IndexOf("?reestrNumber=") + 14));
+                string contractLink = @"http://new.zakupki.gov.ru" + contractNode.InnerText;
 
                 lot = mvm.wc.Lots.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
                 if (lot != null) {
@@ -90,8 +80,6 @@ namespace PublicOrders.Processors.Internet
                 }
                 lot = new Lot();
                 lot.ContractNumber = contractNumber;
-
-                string contractLink = @"http://new.zakupki.gov.ru" + nodeTmp.Attributes["href"].Value.Trim();
                 #endregion
 
                 // Переходим по ссылке контракта
@@ -381,20 +369,23 @@ namespace PublicOrders.Processors.Internet
                         break;
                 }
 
-                text =  @"http://new.zakupki.gov.ru/epz/contract/extendedsearch/results.html?searchString=&";
+                text =  @"http://new.zakupki.gov.ru/epz/contract/extendedsearch/rss?searchString=&";
                 text += @"pageNumber=1&sortDirection=false&recordsPerPage=_500&sortBy=PO_DATE_OBNOVLENIJA&";
                 text += lawTypeStr + @"customerInn=" + customer.Vatin + "&customerCode=&customerFz223id=" + Convert.ToString(customer.Law_223_ID) + "&";
-                text += @"customerFz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customerTitle=" + customer.Name + "&";
+                text += @"customerFz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customerTitle=" + /*customer.Name*/@"АДМИНИСТРАЦИЯ%20РЫБАЛОВСКОГО%20СЕЛЬСКОГО%20ПОСЕЛЕНИЯ" + "&";
                 text += @"ec=true&priceFrom=" + lowPrice + "&priceTo=" + highPrice + "&contractDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&";
                 text += @"contractDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&budgetaryFunds=on&extraBudgetaryFunds=on&openMode=DEFAULT_SAVED_SETTING";
 
-
                 winnerSearchProgress_delegate(customer, "Поиск контрактов заказчика..", 0);
-                doc = internetRequestEngine.GetHtmlDoc(text);
-                string checkMessage = "";
-                ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
-                if (resultTypeCheck != ResultType_enum.Done)
+                XmlDocument xmlConditions = null;
+                XmlNodeList nodes = null;
+                try
                 {
+                    xmlConditions = new XmlDocument();
+                    xmlConditions.Load(text);
+                    nodes = xmlConditions.SelectNodes("/rss/channel/item/link");
+                }
+                catch {
                     #region Если нет подключения к интернету, то берем значения из БД
                     winnerSearchProgress_delegate(customer, "Получение заказов из БД..", 0);
 
@@ -447,14 +438,7 @@ namespace PublicOrders.Processors.Internet
                 }
 
 
-                text = "//div[@class=\"outerWrapper mainPage mainPage\"]";
-                text += "/div[@class=\"wrapper\"]";
-                text += "/div[@class=\"mainBox\"]";
-                text += "/div[@class=\"parametrs margBtm10\"]";
-                text += "/div[@class=\"registerBox margBtm20\"]";
-
-                HtmlAgilityPack.HtmlNodeCollection contractCollection = doc.DocumentNode.SelectNodes(text);
-                if ((contractCollection == null) || (contractCollection.Count == 0))
+                if ((nodes == null) || (nodes.Count == 0))
                 {
                     allWinersSearched_delegete(customer, ResultType_enum.NotSearch, "");
                     return;
@@ -462,16 +446,16 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
 
-                double contractInterval = 100 / Convert.ToDouble(contractCollection.Count());
+                double contractInterval = 100 / Convert.ToDouble(nodes.Count);
                 int currentInterval = 0;
 
                 int contractNum = 0;
                 Lot lot = null;
-                foreach (HtmlAgilityPack.HtmlNode nodeContract in contractCollection)
+                foreach (XmlNode nodeContract in nodes)
                 {
                     contractNum++;
                     currentInterval = Convert.ToInt32(contractNum * contractInterval);
-                    winnerSearchProgress_delegate(customer, "Обработка победителя.. [" + contractNum + "\\" + contractCollection.Count() + "]", currentInterval);
+                    winnerSearchProgress_delegate(customer, "Обработка победителя.. [" + contractNum + "\\" + nodes.Count + "]", currentInterval);
 
                     while (isPause)
                     {
