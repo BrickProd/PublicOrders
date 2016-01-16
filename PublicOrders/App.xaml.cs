@@ -20,7 +20,8 @@ namespace PublicOrders
             if (mvm.csProcessor != null) mvm.csProcessor.Stop();
             if (mvm.cwProcessor != null) mvm.cwProcessor.Stop();
             if (mvm.lpProcessor != null) mvm.lpProcessor.Stop();
-            if (mvm.lsProcessor != null) mvm.lsProcessor.Stop();
+            if (mvm.wsProcessor != null) mvm.wsProcessor.Stop();
+            if (mvm.gcProcessor != null) mvm.gcProcessor.Stop();
         }
     }
 }

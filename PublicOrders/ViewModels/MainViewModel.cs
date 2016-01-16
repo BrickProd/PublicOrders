@@ -6,6 +6,7 @@ using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
 using System.Linq;
 using System.Collections.Generic;
+using PublicOrders.Processors.Internet;
 
 namespace PublicOrders
 {
@@ -109,7 +110,9 @@ namespace PublicOrders
         public CreateWinnersDocProcessor cwProcessor = null;
         // Победители
         public CustomersSearchProcessor csProcessor = null;
-        public LotsSearchProcessor lsProcessor = null;
+        public WinnersSearchProcessor wsProcessor = null;
+        // ГОСТ
+        public GOSTsCheckProcessor gcProcessor = null;
         #endregion
 
         #region Фильтр

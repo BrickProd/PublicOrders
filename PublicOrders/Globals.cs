@@ -229,6 +229,14 @@ namespace PublicOrders.Models
                     message = "Не удается подключиться к сети";
                     return ResultType_enum.ErrorNetwork;
                 }
+
+                // Неверный адрес
+                if (doc.DocumentNode.InnerText.IndexOf("апрашиваемая страница не существует") > -1)
+                {
+                    message = "Неверный адрес";
+                    return ResultType_enum.ErrorNetwork;
+                }
+
                 //Не удается отобразить эту страницу
                 if (doc.DocumentNode.InnerText.IndexOf("Не удается отобразить эту страницу") > -1)
                 {

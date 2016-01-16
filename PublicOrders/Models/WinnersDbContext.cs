@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 using PublicOrders.Annotations;
 
 namespace PublicOrders.Models
@@ -23,12 +25,14 @@ namespace PublicOrders.Models
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<CustomerLevel> CustomerLevels { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderPriceType> OrderPriceTypes { get; set; }
+        //public DbSet<OrderPriceType> OrderPriceTypes { get; set; }
         public DbSet<LotPriceType> LotPriceTypes { get; set; }
         public DbSet<OrderType> OrderTypes { get; set; }
         public DbSet<LawType> LawTypes { get; set; }
         public DbSet<Lot> Lots { get; set; }
         public DbSet<Winner> Winners { get; set; }
+        public DbSet<WinnerStatus> WinnerStatuses { get; set; }
+        public DbSet<WinnerNote> WinnerNotes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -87,11 +91,20 @@ namespace PublicOrders.Models
                 };
                 lawTypes.ForEach(m => context.LawTypes.Add(m));
 
+                var winnerStatuses = new List<WinnerStatus>
+                {
+                    new WinnerStatus{ Name = "Для просмотра" },
+                    new WinnerStatus{ Name = "Избранное" },
+                    new WinnerStatus{ Name = "Чёрный список" }
+                };
+                winnerStatuses.ForEach(m => context.WinnerStatuses.Add(m));
+
                 context.SaveChanges();
             }
         }
     }
 
+    // З А К А З Ч И К
     public class Customer
     {
         [Key]
@@ -104,6 +117,10 @@ namespace PublicOrders.Models
         [Column(TypeName = "varchar"), MaxLength(400), Required]
         [Index]
         public string Name { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(100)]
+        [Index]
+        public string Internet44Id { get; set; }
 
         [Column(TypeName = "varchar"), MaxLength(100), Required]
         [Index]
@@ -125,17 +142,17 @@ namespace PublicOrders.Models
         public DateTime CreateDateTime { get; set; }
 
         // Транзакционные таблицы
-        private ICollection<CustomerType> _сustomerTypes;
-        public virtual ICollection<CustomerType> CustomerTypes
+        private ObservableCollection<CustomerType> _сustomerTypes;
+        public virtual ObservableCollection<CustomerType> CustomerTypes
         {
-            get { return _сustomerTypes ?? (_сustomerTypes = new HashSet<CustomerType>()); } // Try HashSet<N>
+            get { return _сustomerTypes ?? (_сustomerTypes = new ObservableCollection<CustomerType>(new  HashSet<CustomerType>())); } // Try HashSet<N>
             set { _сustomerTypes = value; }
         }
 
-        private ICollection<Order> _orders;
-        public virtual ICollection<Order> Orders
+        private ObservableCollection<Order> _orders;
+        public virtual ObservableCollection<Order> Orders
         {
-            get { return _orders ?? (_orders = new HashSet<Order>()); } // Try HashSet<N>
+            get { return _orders ?? (_orders = new ObservableCollection<Order>(new HashSet< Order >())); } // Try HashSet<N>
             set { _orders = value; }
         }
 
@@ -145,6 +162,7 @@ namespace PublicOrders.Models
         }
     }
 
+    // Т И П   З А К А З Ч И К А
     public class CustomerType
     {
         [Key]
@@ -168,6 +186,7 @@ namespace PublicOrders.Models
         }
     }
 
+    // У Р О В Е Н Ь   З А К А З Ч И К А
     public class CustomerLevel
     {
         [Key]
@@ -190,21 +209,22 @@ namespace PublicOrders.Models
         }
     }
 
+    // З А К А З
     public class Order
     {
         [Key]
         public long OrderId { get; set; }
 
-        [Column(TypeName = "varchar"), MaxLength(400), Required]
+        /*[Column(TypeName = "varchar"), MaxLength(400), Required]
         [Index]
-        public string Name { get; set; }
+        public string Name { get; set; }*/
 
-        [Index]
-        public long OrderPrice { get; set; }
+        /*[Index]
+        public long OrderPrice { get; set; }*/
 
-        [ForeignKey("OrderPriceType")]
+        /*[ForeignKey("OrderPriceType")]
         public int? OrderPriceTypeId { get; set; }
-        virtual public OrderPriceType OrderPriceType { get; set; }
+        virtual public OrderPriceType OrderPriceType { get; set; }*/
 
         /*[Index]
         public long MaxLotPrice { get; set; }*/
@@ -225,9 +245,9 @@ namespace PublicOrders.Models
         [Index]
         public string Number { get; set; }
 
-        [Column(TypeName = "varchar"), MaxLength(50), Required]
+        /*[Column(TypeName = "varchar"), MaxLength(50), Required]
         [Index]
-        public string HrefId { get; set; }
+        public string HrefId { get; set; }*/
 
         [Index, Required]
         public DateTime PublishDateTime { get; set; }
@@ -235,30 +255,15 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
-        [Index]
-        public DateTime? WinnersSearchDateTime { get; set; }
+        /*[Index]
+        public DateTime? WinnersSearchDateTime { get; set; }*/
 
-        private ICollection<Lot> _lots;
-        public virtual ICollection<Lot> Lots
+        private ObservableCollection<Lot> _lots;
+        public virtual ObservableCollection<Lot> Lots
         {
-            get { return _lots ?? (_lots = new HashSet<Lot>()); } // Try HashSet<N>
+            get { return _lots ?? (_lots = new ObservableCollection<Lot> (new HashSet<Lot>())); } // Try HashSet<N>
             set { _lots = value; }
         }
-        // Транзакционные таблицы
-        /*private ICollection<Customer> _customers;
-        public virtual ICollection<Customer> Customers
-        {
-            get { return _customers ?? (_customers = new HashSet<Customer>()); } // Try HashSet<N>
-            set { _customers = value; }
-        }*/
-
-        // Транзакционные таблицы
-        /*private ICollection<Lot> _lots;
-        public virtual ICollection<Lot> Lots
-        {
-            get { return _lots ?? (_lots = new HashSet<Lot>()); } // Try HashSet<N>
-            set { _lots = value; }
-        }*/
 
         public Order()
         {
@@ -266,7 +271,8 @@ namespace PublicOrders.Models
         }
     }
 
-    public class OrderPriceType
+    //
+    /*public class OrderPriceType
     {
         [Key]
         public int OrderPriceTypeId { get; set; }
@@ -279,7 +285,7 @@ namespace PublicOrders.Models
         {
 
         }
-    }
+    }*/
 
     public class LotPriceType
     {
@@ -339,6 +345,14 @@ namespace PublicOrders.Models
         public long OrderId { get; set; }
         virtual public Order Order { get; set; }
 
+        [ForeignKey("Winner")]
+        public long WinnerId { get; set; }
+        virtual public Winner Winner { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(100), Required]
+        [Index]
+        public string ContractNumber { get; set; }
+
         [Index]
         public long LotPrice { get; set; }
 
@@ -359,22 +373,20 @@ namespace PublicOrders.Models
         [Index, Required]
         public DateTime CreateDateTime { get; set; }
 
-        private ICollection<Winner> _winners;
-        public virtual ICollection<Winner> Winners
-        {
-            get { return _winners ?? (_winners = new HashSet<Winner>()); } // Try HashSet<N>
-            set { _winners = value; }
-        }
-
         public Lot()
         {
 
         }
     }
 
-    public class Winner : INotifyPropertyChanged
+
+
+        // П О Б Е Д И Т Е Л Ь
+        public class Winner : INotifyPropertyChanged
     {
+        private ObservableCollection<WinnerNote> _winnerNotes;
         private bool _isChoosen;
+        private short _rating;
 
         [Key]
         public long WinnerId { get; set; }
@@ -385,15 +397,26 @@ namespace PublicOrders.Models
 
         [Column(TypeName = "varchar"), MaxLength(100)]
         [Index]
+        public string Vatin { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(500), Required]
+        [Index]
+        public string Address { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(100)]
+        [Index]
         public string Email { get; set; }
 
         [Column(TypeName = "varchar"), MaxLength(50)]
         [Index]
         public string Phone { get; set; }
 
-        [ForeignKey("Lot")]
-        public long LotId { get; set; }
-        virtual public Lot Lot { get; set; }
+        private ObservableCollection<Lot> _lots;
+        public virtual ObservableCollection<Lot> Lots
+        {
+            get { return _lots ?? (_lots = new ObservableCollection<Lot>( new HashSet<Lot>())); } // Try HashSet<N>
+            set { _lots = value; }
+        }
 
         [NotMapped]
         public bool IsChoosen
@@ -403,17 +426,143 @@ namespace PublicOrders.Models
                 OnPropertyChanged(); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        [ForeignKey("WinnerStatus")]
+        public short? WinnerStatusId { get; set; }
+        virtual public WinnerStatus WinnerStatus { get; set; }
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        public virtual ObservableCollection<WinnerNote> WinnerNotes
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return _winnerNotes ?? (_winnerNotes = new ObservableCollection<WinnerNote>(new HashSet<WinnerNote>())); }
+            set
+            {
+                _winnerNotes = value;
+                OnPropertyChanged();
+            }
+        } //поедители
+
+        public short Rating
+        {
+            get { return _rating; }
+            set
+            {
+                _rating = value;
+                OnPropertyChanged();
+            }
         }
 
         public Winner()
         {
             IsChoosen = false;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    // С Т А Т У С   П О Б Е Д И Т Е Л Я
+    public class WinnerStatus : INotifyPropertyChanged
+    {
+        private string _name;
+        private ObservableCollection<Winner> _winners;
+
+        [Key]
+        public short WinnerStatusId { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(256), Required]
+        [Index]
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public virtual ObservableCollection<Winner> Winners
+        {
+            get { return _winners ?? (_winners = new ObservableCollection<Winner>(new HashSet<Winner>())); }
+            set
+            {
+                _winners = value;
+                OnPropertyChanged();
+            }
+        } //поедители
+
+
+        public WinnerStatus()
+        {
+            
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    // З А М Е Т К А   Н А   П О Б Е Д И Т Е Л Я
+    public class WinnerNote : INotifyPropertyChanged
+    {
+        private string _name;
+        private string _text;
+
+        [Key]
+        public short WinnerNoteId { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(256), Required]
+        [Index]
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ForeignKey("Winner")]
+        public long WinnerId { get; set; }
+        virtual public Winner Winner { get; set; }
+
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                _text = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Index, Required]
+        public DateTime CreateDateTime { get; set; }
+
+        [Column(TypeName = "varchar"), MaxLength(120)]
+        [Index]
+        public string UserName { get; set; }
+
+        public WinnerNote()
+        {
+
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

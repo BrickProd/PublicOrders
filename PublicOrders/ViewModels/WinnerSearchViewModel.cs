@@ -14,6 +14,7 @@ using PublicOrders.Processors;
 using PublicOrders.Models;
 using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
+using PublicOrders.Processors.Internet;
 
 namespace PublicOrders.ViewModels
 {
@@ -266,9 +267,9 @@ namespace PublicOrders.ViewModels
             }
 
             // Останавливаем поиск победителей
-            if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
+            if ((mvm.wsProcessor != null) && (mvm.wsProcessor.isWorking()))
             {
-                mvm.lsProcessor.Stop();
+                mvm.wsProcessor.Stop();
             }
 
             // Останавливаем поиск заказчиков
@@ -313,7 +314,9 @@ namespace PublicOrders.ViewModels
                     break;
             }
 
-            CustomersSearchDone_delegate customerSearchDone_delege = new CustomersSearchDone_delegate(CustomersSearchDone_proc);
+            AllCustomersSearched_delegete allCustomersSearched_delegete = new AllCustomersSearched_delegete(AllCustomersSearched_proc);
+            CustomerSearched_delegate customerSearched_delegate = new CustomerSearched_delegate(CustomerSearched_proc);
+            CustomerSearchProgress_delegate customerSearchProgress_delegate = new CustomerSearchProgress_delegate(CustomerSearchProgress_proc);
             mvm.csProcessor = new CustomersSearchProcessor(SearchInput,
                                                            customerType_enum,
                                                            Properties.Settings.Default.MinPrice,
@@ -321,8 +324,10 @@ namespace PublicOrders.ViewModels
                                                            Properties.Settings.Default.CustomerCity,
                                                            Properties.Settings.Default.MinPublicDate,
                                                            Properties.Settings.Default.MaxPublicDate,
-                                                           lawType_enum, 
-                                                           customerSearchDone_delege);
+                                                           lawType_enum,
+                                                           allCustomersSearched_delegete,
+                                                           customerSearched_delegate,
+                                                           customerSearchProgress_delegate);
             mvm.csProcessor.Operate();
 
             IsCustomersSearching = true;
@@ -330,32 +335,64 @@ namespace PublicOrders.ViewModels
         }
 
 
-
-        private void CustomersSearchDone_proc(ObservableCollection<Customer> serchedCustomers, ResultType_enum resultSearch, string message)
-        {
-            if (resultSearch == ResultType_enum.ErrorNetwork) {
+        private void AllCustomersSearched_proc(ResultType_enum resultType_enum, string message) {
+            if (resultType_enum != ResultType_enum.Done)
+            {
                 MessageBox.Show(message, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-            else {
+            /*else
+            {
                 if (serchedCustomers != null)
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         Customers = serchedCustomers;
                     }));
+            }*/
+
+            try
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SearchingProgress = 0;
+                    SearchingProgressText = "";
+                    IsCustomersSearching = false;
+                }));
+            }
+            catch {
+
             }
 
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SearchingProgress = 0;
-                SearchingProgressText = "";
-                IsCustomersSearching = false;
-            }));
-
-
-
-            //MessageBox.Show("Поиск заказчиков завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            //WinnerLotsSearch();
         }
+
+        private void CustomerSearched_proc(Customer customer) {
+            try
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Customers.Add(customer);
+                }));
+            }
+            catch {
+
+            }
+
+        }
+
+        private void CustomerSearchProgress_proc(string text, int intValue) {
+            /*try
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SearchingProgressText = text;
+                    SearchingProgress = intValue;
+                }));
+            }
+            catch
+            {
+
+            }*/
+        }
+
 
         private string currentCustomerSearching = "";
         private void WinnerLotsSearch(object param) {
@@ -382,9 +419,9 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            if ((mvm.lsProcessor != null) && (mvm.lsProcessor.isWorking()))
+            if ((mvm.wsProcessor != null) && (mvm.wsProcessor.isWorking()))
             {
-                mvm.lsProcessor.Stop();
+                mvm.wsProcessor.Stop();
             }
 
 
@@ -422,21 +459,22 @@ namespace PublicOrders.ViewModels
                     break;
             }
 
-            AllLotsSearched_delegete allLotsSearched_delegete = new AllLotsSearched_delegete(AllLotsSearched_proc);
-            LotSearched_delegate lotSearched_delegate = new LotSearched_delegate(LotSearched_proc);
-            LotSearchProgress_delegate lotSearchProgress_delegate = new LotSearchProgress_delegate(LotSearchProgress_proc);
-            mvm.lsProcessor = new LotsSearchProcessor(SelectedCustomer,
-                                                      customerType_enum,
-                                                      lawType_enum,
-                                                      Properties.Settings.Default.MinPrice,
-                                                      Properties.Settings.Default.MaxPrice,
-                                                      Properties.Settings.Default.MinPublicDate,
-                                                      Properties.Settings.Default.MaxPublicDate,
-                                                      lotSearched_delegate,
-                                                      allLotsSearched_delegete,
-                                                      lotSearchProgress_delegate
-                                                      );
-            mvm.lsProcessor.Operate();
+            AllWinersSearched_delegete allWinersSearched_delegete = new AllWinersSearched_delegete(AllLotsSearched_proc);
+            WinnerSearched_delegate winnerSearched_delegate = new WinnerSearched_delegate(LotSearched_proc);
+            WinnerSearchProgress_delegate winnerSearchProgress_delegate = new WinnerSearchProgress_delegate(LotSearchProgress_proc);
+            mvm.wsProcessor = new WinnersSearchProcessor(SelectedCustomer,
+                                          customerType_enum,
+                                          lawType_enum,
+                                          Properties.Settings.Default.MinPrice,
+                                          Properties.Settings.Default.MaxPrice,
+                                          Properties.Settings.Default.MinPublicDate,
+                                          Properties.Settings.Default.MaxPublicDate,
+                                          allWinersSearched_delegete,
+                                          winnerSearched_delegate,
+                                          winnerSearchProgress_delegate
+                                          );
+            mvm.wsProcessor.Operate();
+
 
             IsWinnerLotsSearchingPause = false;
             IsWinnerLotsSearching = true;
@@ -479,24 +517,31 @@ namespace PublicOrders.ViewModels
             //MessageBox.Show("Поиск завершен!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void LotSearched_proc(Winner winner) {
+        private void LotSearched_proc(Lot lot) {
             if (IsCustomersSearching) return;
-            if (winner.Name != "")
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    Winners.Add(winner);
-                }));
+            try
+            {
+                if (lot.Winner.Name != "")
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        Winners.Add(lot.Winner);
+                    }));
+            }
+            catch {
+
+            }
+
         }
 
         private void WinnerLotsSearchStop(object param) {
             IsWinnerLotsSearchingPause = false;
-            mvm.lsProcessor.Stop();
+            mvm.wsProcessor.Stop();
         }
 
         private void WinnerLotsSearchPausePlay(object param)
         {
             IsWinnerLotsSearchingPause = !IsWinnerLotsSearchingPause;
-            mvm.lsProcessor.PausePlay();
+            mvm.wsProcessor.PausePlay();
         }
 
         private void CreateReport(object param)
@@ -508,7 +553,7 @@ namespace PublicOrders.ViewModels
             }
 
             CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = new CreateWinnersDocumentDone_delegete(CreateWinnersDocumentDone_proc);
-            mvm.cwProcessor = new CreateWinnersDocProcessor (Winners.Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
+            mvm.cwProcessor = new CreateWinnersDocProcessor (SelectedCustomer, Winners.Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
             mvm.cwProcessor.Operate();
         }
 

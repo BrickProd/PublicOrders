@@ -99,6 +99,10 @@ namespace PublicOrders.Models
         [Column(TypeName = "ntext")]
         public string Certification { get; set; }
 
+        [Index, Required]
+        [Column(TypeName = "smallint")]
+        public Int16 IsNotActualCert { get; set; }
+
         [ForeignKey("Rubric")]
         public int? RubricId { get; set; }
         public virtual Rubric Rubric { get; set; }

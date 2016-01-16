@@ -79,11 +79,7 @@
     </ApplicationDefinition>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
-    <Compile Include="Migrations\201511061009004_InitialCreate.cs" />
-    <Compile Include="Migrations\201511061009004_InitialCreate.Designer.cs">
-      <DependentUpon>201511061009004_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Data\DataService.cs" />
     <Compile Include="Models\AutenDbContext.cs" />
     <Compile Include="Models\DocumentDbContext.cs" />
     <Compile Include="Globals.cs" />
@@ -94,12 +90,10 @@
     <Compile Include="Processors\Documents\FreedomProcessor.cs" />
     <Compile Include="Processors\Documents\Main\CreateWinnersDocProcessor.cs" />
     <Compile Include="Processors\Documents\Main\LoadProductsProcessor.cs" />
-    <Compile Include="Processors\Internet\Main\CustomersSearchProcessor.cs" />
+    <Compile Include="Processors\Internet\CustomersSearchProcessor.cs" />
+    <Compile Include="Processors\Internet\GOSTsCheckProcessor.cs" />
     <Compile Include="Processors\Internet\Main\InternetRequestEngine.cs" />
-    <Compile Include="Processors\Internet\Main\LotsSearchProcessor.cs" />
-    <Compile Include="Processors\Internet\WinnerSearchEngine.cs" />
-    <Compile Include="Processors\Internet\_223CommissionDecision.cs" />
-    <Compile Include="Processors\Internet\_223WinnerChoice.cs" />
+    <Compile Include="Processors\Internet\WinnersSearchProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -111,6 +105,10 @@
     <Compile Include="ViewModels\LoadProductsViewModel.cs" />
     <Compile Include="ViewModels\WinnerSearchViewModel.cs" />
     <Compile Include="ViewModels\CreateDocumentViewModel.cs" />
+    <Compile Include="ViewModels\WinnersViewModel.cs" />
+    <Compile Include="Views\CheckGostPanel.xaml.cs">
+      <DependentUpon>CheckGostPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CreateDocumentPanel.xaml.cs">
       <DependentUpon>CreateDocumentPanel.xaml</DependentUpon>
     </Compile>
@@ -156,6 +154,10 @@
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\CheckGostPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CreateDocumentPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -216,11 +218,6 @@
     <Resource Include="Image\3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201511061009004_InitialCreate.resx">
-      <DependentUpon>201511061009004_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath32)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

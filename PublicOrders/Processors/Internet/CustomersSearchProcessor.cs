@@ -11,11 +11,13 @@ using PublicOrders.Processors;
 using PublicOrders.Processors.Internet;
 using System.Text.RegularExpressions;
 using System.Web;
+using PublicOrders.Processors.Internet.Main;
 
-namespace PublicOrders.Processors.Main
+namespace PublicOrders.Processors.Internet
 {
-    public delegate void CustomersSearchDone_delegate(ObservableCollection<Customer> customers, ResultType_enum ResultType_enum, string message);
-
+    public delegate void AllCustomersSearched_delegete(ResultType_enum resultType_enum, string message);
+    public delegate void CustomerSearched_delegate(Customer customer);
+    public delegate void CustomerSearchProgress_delegate(string text, int intValue);
 
     public class CustomersSearchProcessor
     {
@@ -26,6 +28,7 @@ namespace PublicOrders.Processors.Main
         private InternetRequestEngine internetRequestEngine  = null;
 
         private bool isWork = false;
+        private bool isPause = false;
 
         private string customerName = "";
         private decimal priceMin = 0;
@@ -35,13 +38,17 @@ namespace PublicOrders.Processors.Main
         private DateTime publishDateMax;
         private CustomerType_enum customerType_enum;
         private LawType_enum lawType_enum;
-        private CustomersSearchDone_delegate customersSearchDone_delegate = null;
 
-        private ObservableCollection<Customer> customers;
+        private AllCustomersSearched_delegete allCustomersSearched_delegete = null;
+        private CustomerSearched_delegate customerSearched_delegate = null;
+        private CustomerSearchProgress_delegate customerSearchProgress_delegate = null;
 
         public CustomersSearchProcessor(string _customerName, CustomerType_enum _customerType_enum, decimal _priceMin, decimal _priceMax, string _town,
                                DateTime _publishDateMin, DateTime _publishDateMax,
-                               LawType_enum _lawType_enum, CustomersSearchDone_delegate _customersSearchDone_delegate)
+                               LawType_enum _lawType_enum, 
+                               AllCustomersSearched_delegete _allCustomersSearched_delegete,
+                               CustomerSearched_delegate _customerSearched_delegate,
+                               CustomerSearchProgress_delegate _customerSearchProgress_delegate)
         {
             customerName = _customerName;
             customerType_enum = _customerType_enum;
@@ -51,17 +58,21 @@ namespace PublicOrders.Processors.Main
             publishDateMin = _publishDateMin;
             publishDateMax = _publishDateMax;
             lawType_enum = _lawType_enum;
-            customersSearchDone_delegate = _customersSearchDone_delegate;
+            allCustomersSearched_delegete = _allCustomersSearched_delegete;
+            customerSearched_delegate = _customerSearched_delegate;
+            customerSearchProgress_delegate = _customerSearchProgress_delegate;
         }
 
         private void SearchCustomers_proc()
         {
             try
             {
-                customers = new ObservableCollection<Customer>();
+                isWork = true;
+                isPause = false;
+
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
                 if (customerName == "") {
-                    customersSearchDone_delegate(customers, ResultType_enum.NullSearchText, "");
+                    allCustomersSearched_delegete(ResultType_enum.NullSearchText, "");
                     return;
                 } 
 
@@ -69,144 +80,80 @@ namespace PublicOrders.Processors.Main
                 switch (lawType_enum)
                 {
                     case (LawType_enum._44_94):
-                        lawTypeStr = "FZ_44";
+                        lawTypeStr = "fz94=on&registered94=on&";
                         break;
                     case (LawType_enum._223):
-                        lawTypeStr = "FZ_223";
+                        lawTypeStr = "fz223=on&registered94=on&registered223=on&inn=&ogrn=&kpp=&okvedIds=&ppoIds=&";
                         break;
                     case (LawType_enum._44_94_223):
-                        lawTypeStr = "EVERYWHERE";
-                        break;
-                }
-                //lawTypeStr = "EVERYWHERE";
-
-                string customerTypeStr = "";
-                switch (customerType_enum)
-                {
-                    case (CustomerType_enum.Customer):
-                        customerTypeStr = "CUSTOMER";
-                        break;
-                    case (CustomerType_enum.Organization):
-                        customerTypeStr = "REPRESENTATIVE_ORGANIZATION";
+                        lawTypeStr = "fz94=on&fz223=on&";
                         break;
                 }
 
-                text = @"http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?sortDirection=true&";
-                text += @"organizationSimpleSorting=PO_NAZVANIYU&recordsPerPage=_100&pageNumber=1&searchText=" + HttpUtility.UrlEncode(customerName) + "&";
-                text += @"strictEqual=false&morphology=false&placeOfSearch=" + lawTypeStr + "&registrationStatusType=ANY&";
-                text += @"kpp=&custLev=F%2CS%2CM%2CNOT_FSM&organizationRoleList=" + /*customerTypeStr*/"" + "&";
-                text += @"okvedCode=&okvedWithSubElements=false&districtIds=&regionIds=&cityIds=&organizationTypeList=&";
-                text += @"spz=&withBlocked=false&customerIdentifyCode=&headAgencyCode=&headAgencyWithSubElements=false&";
-                text += @"organizationsWithBranches=false&legalEntitiesTypeList=&ppoWithSubElements=false&ppoCode=&";
-                text += @"address=" + town + "&town=&publishedOrderClause=true&unpublishedOrderClause=true&bik=&bankRegNum=&";
-                text += @"bankIdCode=";
+                text = @"http://new.zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=" + HttpUtility.UrlEncode(customerName) + "&pageNumber=1&";
+                text += @"sortDirection=false&recordsPerPage=_50&sortBy=PO_NAZVANIYU&" + lawTypeStr + "address=" + town + "&";
+                text += @"openMode=DEFAULT_SAVED_SETTING";
 
                 #region Получение заказчиков, заполнение их параметров
+
+                customerSearchProgress_delegate("Поиск заказчиков..", 0);
                 doc = internetRequestEngine.GetHtmlDoc(text);
                 string checkMessage = "";
                 ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
-                //resultTypeCheck = ResultType_enum.ErrorNetwork;
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
-                    customers = new ObservableCollection<Customer>(mvm.wc.Customers.Where(m => ((m.Name.Contains(customerName)) || (m.Vatin.Contains(customerName)))).ToList());
+                    customerSearchProgress_delegate("Получение заказчиков из БД..", 0);
+                    ObservableCollection<Customer> customers = new ObservableCollection<Customer>(mvm.wc.Customers.Where(m => ((m.Name.Contains(customerName)) || (m.Vatin.Contains(customerName)))).ToList());
 
                     if (customers.Count() > 0)
                     {
-                        customersSearchDone_delegate(customers, ResultType_enum.Done, "Соединение с сервером отсутствует!");
+                        allCustomersSearched_delegete(ResultType_enum.Done, "Соединение с сервером отсутствует!");
                     }
                     else {
-                        customersSearchDone_delegate(customers, ResultType_enum.ErrorNetwork, "Соединение с сервером отсутствует!\nПобедители в БД не найдены!");
+                        allCustomersSearched_delegete(ResultType_enum.ErrorNetwork, "Соединение с сервером отсутствует!\nПобедители в БД не найдены!");
                     }
 
                     return;
                 }
 
-                // Если заказчики не найдены
-                text = "//div[@class=\"outerWrapper mainPage\"]";
+                text = "//div[@class=\"outerWrapper mainPage mainPage\"]";
                 text += "/div[@class=\"wrapper\"]";
                 text += "/div[@class=\"mainBox\"]";
-                text += "/div[@class=\"rightCol\"]";
-                text += "/div[@class=\"content\"]";
-                text += "/div[@class=\"paginator\"]";
-
-                HtmlAgilityPack.HtmlNode htmlNode = doc.DocumentNode.SelectSingleNode(text);
-                if (htmlNode == null)
-                {
-                    customersSearchDone_delegate(customers, ResultType_enum.ErrorNetwork, "Заказчики не найдены!");
-                    return;
-                }
-                if (htmlNode.InnerText.Trim() == "Поиск не дал результатов")
-                {
-                    customersSearchDone_delegate(customers, ResultType_enum.NotSearch, "");
-                    return;
-                }
-
-                // Определение количества страниц заказчиков
-                int pageCustomersCount = 0;
-                text = "//div[@class=\"outerWrapper mainPage\"]";
-                text += "/div[@class=\"wrapper\"]";
-                text += "/div[@class=\"mainBox\"]";
-                text += "/div[@class=\"rightCol\"]";
-                text += "/div[@class=\"content\"]";
-                text += "/div[@class=\"paginator\"]";
-                text += "/ul[@class=\"paging\"]/li";
-
-                HtmlAgilityPack.HtmlNodeCollection liCollection = doc.DocumentNode.SelectNodes(text);
-                if (liCollection == null)
-                {
-                    pageCustomersCount = 1;
-                }
-                else
-                {
-                    bool nextTagIsCount = false;
-                    foreach (HtmlAgilityPack.HtmlNode node in liCollection)
-                    {
-                        if (nextTagIsCount)
-                        {
-                            pageCustomersCount = Convert.ToInt32(node.InnerText);
-                            break;
-                        }
-
-                        if (node.InnerText.ToLower() == "из")
-                        {
-                            nextTagIsCount = true;
-                        }
-                    }
-                }
-
-
-
-                text = "//div[@class=\"outerWrapper mainPage\"]";
-                text += "/div[@class=\"wrapper\"]";
-                text += "/div[@class=\"mainBox\"]";
-                text += "/div[@class=\"rightCol\"]";
+                text += "/div[@class=\"parametrs margBtm10\"]";
                 text += "/div[@class=\"content\"]";
                 text += "/div[@id=\"exceedSphinxPageSizeDiv\"]";
-                text += "/div[@class=\"registerBox\"]";
+                text += "/div[@class=\"registerBox margBtm20\"]";
 
                 HtmlAgilityPack.HtmlNodeCollection customerCollection = doc.DocumentNode.SelectNodes(text);
                 if ((customerCollection == null) || (customerCollection.Count == 0)) {
-                    customersSearchDone_delegate(customers, ResultType_enum.NotSearch, "");
+                    allCustomersSearched_delegete(ResultType_enum.NotSearch, "Заказчики не найдены!");
                     return;
                 }
 
                 // Получение параметров заказчиков
+                double customerInterval = 100 / Convert.ToDouble(customerCollection.Count());
+                int currentInterval = 0;
+
                 int customerNum = 1;
                 Customer customer = null;
                 foreach (HtmlAgilityPack.HtmlNode node in customerCollection)
                 {
-                    string customerMessage = "";
-                    customer = new Customer();
-                    ResultType_enum customerResult = FillCustomer(customer, node, internetRequestEngine,
-                                                                      out customerMessage);
-                    switch (customerResult)
+
+                    currentInterval = Convert.ToInt32(customerNum * customerInterval);
+                    customerSearchProgress_delegate("Обработка заказчика.. [" + customerNum + "\\" + customerCollection.Count() + "]", currentInterval);
+
+                    while (isPause)
                     {
-                        case (ResultType_enum.Error):
-                            customersSearchDone_delegate(customers, ResultType_enum.Error, customerMessage);
-                            return;
-                        default:
-                            break;
+                        Thread.Sleep(300);
                     }
+                    if (!isWork) break;
+
+                    string customerMessage = "";
+                    ResultType_enum customerResult = FillCustomer(out customer, node, internetRequestEngine,
+                                                                      out customerMessage);
+
+                    if (customerResult == ResultType_enum.Error) continue;
+
                     // Проверить на повтор и записать в БД
                     Customer repeatCustomer = mvm.wc.Customers.FirstOrDefault(m => (m.Name == customer.Name && m.Vatin == customer.Vatin));
                     if (repeatCustomer != null)
@@ -224,32 +171,32 @@ namespace PublicOrders.Processors.Main
                         mvm.wc.SaveChanges();
                     }
 
-                    customers.Add(customer);
+                    customerSearched_delegate(customer);
 
                     customerNum++;
                 }
                 #endregion
                 //return ResultType.Done;
-                customersSearchDone_delegate(customers, ResultType_enum.Done, "");
+                allCustomersSearched_delegete(ResultType_enum.Done, "");
             }
             catch (Exception ex)
             {
-                customersSearchDone_delegate(customers, ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
+                allCustomersSearched_delegete(ResultType_enum.Error, ex.Message + '\n' + ex.StackTrace);
                 return;
             }
         }
 
-        public ResultType_enum FillCustomer(Customer customer, HtmlAgilityPack.HtmlNode customerNode, InternetRequestEngine internetRequestEngine,
+        public ResultType_enum FillCustomer(out Customer customer, HtmlAgilityPack.HtmlNode customerNode, InternetRequestEngine internetRequestEngine,
                                out string message)
         {
             try
             {
+                customer = new Customer();
                 message = "";
                 HtmlAgilityPack.HtmlNode nodeTmp = null;
 
                 #region Определение параметров
                 text = ".//table";
-                //text += "/tbody"; !!!newBrowser
                 text += "/tr";
                 text += "/td[@class=\"descriptTenderTd\"]";
                 text += "/dl";
@@ -259,11 +206,10 @@ namespace PublicOrders.Processors.Main
                 nodeTmp = customerNode.SelectSingleNode(text);
 
                 // Название заказчика
-                if (nodeTmp.Attributes.Contains("title"))
-                    customer.Name = Globals.DecodeInternetSymbs(nodeTmp.Attributes["title"].Value.Trim());
+                customer.Name = Globals.DecodeInternetSymbs(nodeTmp.InnerText.Trim());
 
                 // Определение ID 94 и 223 законов
-                // Есди существует атрибут <href>, значит указана одна ссылка на один закон
+                // Если существует атрибут <href>, значит указана одна ссылка на один закон
                 LawType_enum lawType = LawType_enum.None;
                 Regex regex = new Regex(@"http://.*?Id=\d*");
                 MatchCollection matchColl = null;
@@ -282,21 +228,84 @@ namespace PublicOrders.Processors.Main
                     switch (lawType)
                     {
                         case (LawType_enum._44_94):
+                            string org44Id = match.Value.Substring(match.Value.IndexOf("&organizationId=") + 16, match.Value.Length - (match.Value.IndexOf("&organizationId=") + 16));
+                            Customer customerRepeat = mvm.wc.Customers.ToList().FirstOrDefault(m => (m.Internet44Id == org44Id));
+                            if (customerRepeat != null)
+                            {
+                                customer = customerRepeat;
+                                return ResultType_enum.Done;
+                            }
+                            customer.Internet44Id = org44Id;
                             customer.Law_44_94_ID = lawID;
+                            if ((customer.Name.Trim().Substring(0, 3) == "...") || 
+                                (customer.Name.Trim().Substring(customer.Name.Trim().Length - 3, 3) == "..."))
+                            {
+                                // Определяем полное наименование организации по 44, 94 закону
+                                doc = internetRequestEngine.GetHtmlDoc(match.Value);
+                                string checkMessage = "";
+                                ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+
+                                if (resultTypeCheck == ResultType_enum.Done)
+                                {
+                                    regex = new Regex("Полное наименование</span></td><td><span>(.*?)</span>");
+                                    Match fullNameMatch = regex.Match(doc.DocumentNode.InnerHtml);
+                                    if ((fullNameMatch.Groups.Count > 1) && (fullNameMatch.Groups[1].Value.Trim() != "")) {
+                                        customer.Name = Globals.DecodeInternetSymbs(fullNameMatch.Groups[1].Value.Trim());
+                                    }
+
+                                }
+                            }
+
                             break;
                         case (LawType_enum._223):
                             customer.Law_223_ID = lawID;
+                            if ((customer.Name.Trim().Substring(0, 3) == "...") ||
+                                (customer.Name.Trim().Substring(customer.Name.Trim().Length - 3, 3) == "..."))
+                            {
+                                // Определяем полное наименование организации по 223 закону
+                                doc = internetRequestEngine.GetHtmlDoc(match.Value);
+                                string checkMessage = "";
+                                ResultType_enum resultTypeCheck = Globals.CheckDocResult(doc, out checkMessage);
+
+                                if (resultTypeCheck == ResultType_enum.Done)
+                                {
+                                    text = "//div[@class=\"cardWrapper\"]";
+                                    text += "/div[@class=\"wrapper\"]";
+                                    text += "/div[@class=\"mainBox\"]";
+                                    text += "/div[@class=\"contentTabBoxBlock\"]";
+                                    text += "/div[@class=\"noticeTabBox padBtm20\"]";
+                                    text += "/div[@class=\"noticeTabBoxWrapper\"]";
+                                    text += "/table";
+                                    text += "/tr";
+                                    text += "/td";
+
+                                    HtmlAgilityPack.HtmlNodeCollection customer223NameTdNodes = doc.DocumentNode.SelectNodes(text);
+
+                                    bool nextNodeIsName = false;
+                                    foreach (HtmlAgilityPack.HtmlNode customer223NameTdNode in customer223NameTdNodes) {
+
+                                        if (nextNodeIsName)
+                                        {
+                                            customer.Name = Globals.DecodeInternetSymbs(customer223NameTdNode.InnerText.Trim());
+                                            break;
+                                        }
+
+                                        if (customer223NameTdNode.InnerText.Trim().ToLower() == "полное наименование организации") {
+                                            nextNodeIsName = true;
+                                        }
+
+                                    }
+                                }
+                            }
+
                             break;
                         default:
                             break;
                     }
-
-                    //break;
                 }
 
                 // Уровень организации
                 text = ".//table";
-                //text += "/tbody"; !!!newBrowser
                 text += "/tr";
                 text += "/td[@class=\"tenderTd\"]";
                 text += "/dl";
@@ -324,27 +333,22 @@ namespace PublicOrders.Processors.Main
 
                 // ИНН (VATIN)
                 text = ".//table";
-                //text += "/tbody"; !!!newBrowser
                 text += "/tr";
                 text += "/td[@class=\"descriptTenderTd\"]";
                 text += "/dl";
-                text += "/dd[@class=\"nameOrganization\"]";
-                text += "/span";
+                text += "/dd[@class=\"nameOrganization margTop10 grayText\"]";
 
-                HtmlAgilityPack.HtmlNodeCollection collectionVatin = customerNode.SelectNodes(text);
-                foreach (HtmlAgilityPack.HtmlNode nodeVatin in collectionVatin)
-                {
-                    int vatinIntPos = nodeVatin.InnerText.IndexOf("ИНН:");
-                    if (vatinIntPos > -1)
-                    {
-                        customer.Vatin = nodeVatin.InnerText.Substring(vatinIntPos + 4, nodeVatin.InnerText.Length - (vatinIntPos + 4)).Trim();
-                        break;
+                HtmlAgilityPack.HtmlNode vatinNode = customerNode.SelectSingleNode(text);
+                if (vatinNode != null) {
+                    Regex regexVatin = new Regex("ИНН\\:\\s{0,2}(\\d*)", RegexOptions.IgnoreCase);
+                    Match match = regexVatin.Match(vatinNode.InnerText);
+                    if (match.Groups.Count > 1) {
+                        customer.Vatin = match.Groups[1].Value;
                     }
                 }
 
                 // Адрес
                 text = ".//table";
-                //text += "/tbody"; !!!newBrowser
                 text += "/tr";
                 text += "/td[@class=\"descriptTenderTd\"]";
                 text += "/dl";
@@ -362,6 +366,7 @@ namespace PublicOrders.Processors.Main
             }
             catch (Exception ex)
             {
+                customer = null;
                 message = ex.Message + "\n\n" + ex.StackTrace;
                 return ResultType_enum.Error;
             }
@@ -420,9 +425,22 @@ namespace PublicOrders.Processors.Main
             return isWork;
         }
 
+        public void PausePlay()
+        {
+            if (isPause)
+            {
+                isPause = false;
+            }
+            else
+            {
+                isPause = true;
+            }
+        }
+
         public void Stop()
         {
             isWork = false;
+            isPause = false;
         }
     }
 }

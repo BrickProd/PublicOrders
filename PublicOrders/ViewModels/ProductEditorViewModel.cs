@@ -14,6 +14,7 @@ using System.Data.Entity;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using PublicOrders.Processors.Internet;
 
 namespace PublicOrders.ViewModels
 {
@@ -115,6 +116,7 @@ namespace PublicOrders.ViewModels
 
         #region КОМАНДЫ
         private DelegateCommand addProductCommand;
+        private DelegateCommand checkGostCommand;
         private DelegateCommand addRubricCommand;
         private DelegateCommand addInstructionCommand;
         private DelegateCommand replaceProductsCommand;
@@ -140,6 +142,17 @@ namespace PublicOrders.ViewModels
                     addProductCommand = new DelegateCommand(AddProduct);
                 }
                 return addProductCommand;
+            }
+        }
+        public ICommand CheckGostCommand
+        {
+            get
+            {
+                if (checkGostCommand == null)
+                {
+                    checkGostCommand = new DelegateCommand(CheckGost);
+                }
+                return checkGostCommand;
             }
         }
         public ICommand AddRubricCommand
@@ -333,6 +346,10 @@ namespace PublicOrders.ViewModels
 
 
         #region МЕТОДЫ
+        private void CheckProductGOSTs(object param) {
+
+        }
+
         private void AddProduct(object param)
         {
             var newProduct = new Product
@@ -409,7 +426,25 @@ namespace PublicOrders.ViewModels
 
         }
 
+        private void AllGOSTsChecked_proc(ResultType_enum resultType_enum, string message) {
 
+        }
+
+        private void GOSTCheckProgress_proc(string text, int intValue) {
+
+        }
+
+        private void CheckGost(object param)
+        {
+            if ((mvm.gcProcessor != null) && (mvm.gcProcessor.isWorking()))
+            {
+                mvm.gcProcessor.Stop();
+            }
+            AllGOSTsChecked_delegete allGOSTsChecked_delegete = new AllGOSTsChecked_delegete(AllGOSTsChecked_proc);
+            GOSTCheckProgress_delegate gostCheckProgress_delegate = new GOSTCheckProgress_delegate(GOSTCheckProgress_proc);
+            mvm.gcProcessor = new GOSTsCheckProcessor(allGOSTsChecked_delegete, gostCheckProgress_delegate);
+            mvm.gcProcessor.Operate();
+        }
 
         private void DeleteProduct(object param)
         {
