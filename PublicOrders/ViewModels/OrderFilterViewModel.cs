@@ -126,9 +126,9 @@ namespace PublicOrders.ViewModels
         public OrderFilterViewModel()
         {
             LawTypes = new ObservableCollection<LT>( new List<LT> {
-                new LT (){ name = "№44(№94), №223", value="_44_94_223"  },
-                new LT (){ name = "№44(№94)", value="_44_94"  },
-                new LT (){ name = "№223", value="_223"  }
+                //new LT (){ name = "№44(№94), №223", value="_44_94_223"  },
+                new LT (){ name = "№44(№94)", value="_44_94"  }
+                //new LT (){ name = "№223", value="_223"  }
             });
 
             CustomerTypes = new ObservableCollection<CT>(new List<CT> {

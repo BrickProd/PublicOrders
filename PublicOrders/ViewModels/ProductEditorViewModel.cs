@@ -436,14 +436,21 @@ namespace PublicOrders.ViewModels
 
         private void CheckGost(object param)
         {
-            if ((mvm.gcProcessor != null) && (mvm.gcProcessor.isWorking()))
+            var products = param as List<Product>;
+            if (products != null && products.Any())
             {
-                mvm.gcProcessor.Stop();
+                if ((mvm.gcProcessor != null) && (mvm.gcProcessor.isWorking()))
+                {
+                    mvm.gcProcessor.Stop();
+                }
+                AllGOSTsChecked_delegete allGOSTsChecked_delegete = new AllGOSTsChecked_delegete(AllGOSTsChecked_proc);
+                GOSTCheckProgress_delegate gostCheckProgress_delegate = new GOSTCheckProgress_delegate(GOSTCheckProgress_proc);
+                mvm.gcProcessor = new GOSTsCheckProcessor(allGOSTsChecked_delegete, gostCheckProgress_delegate);
+                mvm.gcProcessor.Operate();
             }
-            AllGOSTsChecked_delegete allGOSTsChecked_delegete = new AllGOSTsChecked_delegete(AllGOSTsChecked_proc);
-            GOSTCheckProgress_delegate gostCheckProgress_delegate = new GOSTCheckProgress_delegate(GOSTCheckProgress_proc);
-            mvm.gcProcessor = new GOSTsCheckProcessor(allGOSTsChecked_delegete, gostCheckProgress_delegate);
-            mvm.gcProcessor.Operate();
+
+
+            
         }
 
         private void DeleteProduct(object param)
