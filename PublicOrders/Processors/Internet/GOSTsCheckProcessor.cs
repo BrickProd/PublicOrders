@@ -28,12 +28,15 @@ namespace PublicOrders.Processors.Internet
         private AllGOSTsChecked_delegete allGOSTsChecked_delegete = null;
         private GOSTCheckProgress_delegate gostCheckProgress_delegate = null;
 
+        private List<Product> products { get; set; } 
+
         public GOSTsCheckProcessor(AllGOSTsChecked_delegete _allGOSTsChecked_delegete,
-                                   GOSTCheckProgress_delegate _gostCheckProgress_delegate)
+                                   GOSTCheckProgress_delegate _gostCheckProgress_delegate, List<Product> products)
 
         {
             allGOSTsChecked_delegete = _allGOSTsChecked_delegete;
             gostCheckProgress_delegate = _gostCheckProgress_delegate;
+            this.products = products;
         }
 
         // 0 - ГОСТ актуален
@@ -75,7 +78,7 @@ namespace PublicOrders.Processors.Internet
                 isPause = false;
 
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
-                List<Product> products = mvm.dc.Products.ToList();
+                //List<Product> products = mvm.dc.Products.ToList();
                 Regex regex = new Regex("гост.*?\\d*-{0,1}\\d{2,4}", RegexOptions.IgnoreCase);
                 MatchCollection mColl = null;
                 Int16 checkResult = -1;

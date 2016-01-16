@@ -445,7 +445,7 @@ namespace PublicOrders.ViewModels
                 }
                 AllGOSTsChecked_delegete allGOSTsChecked_delegete = new AllGOSTsChecked_delegete(AllGOSTsChecked_proc);
                 GOSTCheckProgress_delegate gostCheckProgress_delegate = new GOSTCheckProgress_delegate(GOSTCheckProgress_proc);
-                mvm.gcProcessor = new GOSTsCheckProcessor(allGOSTsChecked_delegete, gostCheckProgress_delegate);
+                mvm.gcProcessor = new GOSTsCheckProcessor(allGOSTsChecked_delegete, gostCheckProgress_delegate, products);
                 mvm.gcProcessor.Operate();
             }
 
