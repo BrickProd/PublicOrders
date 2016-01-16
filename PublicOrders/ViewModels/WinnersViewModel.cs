@@ -19,7 +19,7 @@ namespace PublicOrders.ViewModels
         private Winner _selectedWinner;
 
 
-        private ObservableCollection<Winner> Winners
+        public ObservableCollection<Winner> Winners
         {
             get { return _winners; }
             set
@@ -47,11 +47,8 @@ namespace PublicOrders.ViewModels
 
         public WinnersViewModel()
         {
-            //Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);з-----------------------------------------------11111111111111111111
-            Winners = new ObservableCollection<Winner>(new List<Winner>()
-            {
-                new Winner { Name = "Победитель 1" , Email = "sdsd", Phone = "23322", Rating = 0, WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1) }
-            });
+            //Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
+            Winners = new ObservableCollection<Winner>(new List<Winner>() { new Winner() {Name = "Jnbbui", WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1), Rating = 2} });
 
             WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
 

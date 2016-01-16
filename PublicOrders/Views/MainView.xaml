@@ -34,8 +34,8 @@
                     <views:WinnerSearchPanel Background="Transparent"></views:WinnerSearchPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Победители" Style="{StaticResource PanelContentStyle}">
-                <views:WinnersPanel></views:WinnersPanel>
+            <TabItem Header="Победители" Style="{StaticResource PanelContentStyle}" Selector.Selected="Selector_OnSelected">
+                <views:WinnersPanel x:Name="WinnersPanel"></views:WinnersPanel>
             </TabItem>
             <TabItem Header="Фильтр заказов" IsEnabled="{Binding SecretTabIsEnabled}">
                 <TabItem.Style>

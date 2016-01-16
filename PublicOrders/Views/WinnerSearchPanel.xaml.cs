@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using PublicOrders.ViewModels;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
+using PublicOrders.Data;
 
 namespace PublicOrders.Views
 {
@@ -132,6 +133,8 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
+            MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+            mvm.wc.SaveChanges();
         }
 
         private void CustomersSide_MouseLeave(object sender, MouseEventArgs e)

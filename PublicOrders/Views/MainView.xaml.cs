@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using PublicOrders.Models;
 using System.Linq;
+using PublicOrders.Data;
 
 namespace PublicOrders
 {
@@ -134,5 +135,17 @@ namespace PublicOrders
                 mvm.dc.SaveChanges();
             }
         }
-    }
+
+	    private void Selector_OnSelected(object sender, RoutedEventArgs e)
+	    {
+	        //var vm=  WinnersPanel.DataContext as WinnersViewModel;
+         //   vm.Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
+	        //vm.ToView.Source = vm.Winners;
+         //   vm.ToView.View.Refresh();
+	        //vm.Favorites.Source = vm.Winners;
+         //   vm.Favorites.View.Refresh();
+	        //vm.BlackList.Source = vm.Winners;
+         //   vm.BlackList.View.Refresh();
+	    }
+	}
 }
