@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PublicOrders.Data;
+using PublicOrders.Models;
 using PublicOrders.ViewModels;
 
 namespace PublicOrders.Views
@@ -51,6 +52,11 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
             this.WinnerInfoPanel.Visibility = Visibility.Visible;
+
+            var vm = DataContext as WinnersViewModel;
+
+            ListViewItem listViewItem = sender as ListViewItem;
+            vm.SelectedWinner = listViewItem.DataContext as Winner;;
         }
 
         //закрыть панель победителя 

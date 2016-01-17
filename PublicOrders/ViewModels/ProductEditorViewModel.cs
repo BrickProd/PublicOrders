@@ -45,6 +45,17 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private bool _gostCheckInProcess;
+        public bool GostCheckInProcess
+        {
+            get { return _gostCheckInProcess; }
+            set
+            {
+                _gostCheckInProcess = value;
+                OnPropertyChanged("GostCheckInProcess");
+            }
+        }
+
         private Product _selectedProduct;
         public Product SelectedProduct
         {
@@ -426,17 +437,26 @@ namespace PublicOrders.ViewModels
 
         }
 
-        private void AllGOSTsChecked_proc(ResultType_enum resultType_enum, string message) {
+        private void AllGOSTsChecked_proc(ResultType_enum resultType_enum, string message)
+        {
+            GostCheckInProcess = false;
+
+
 
         }
 
-        private void GOSTCheckProgress_proc(string text, int intValue) {
+    private void GOSTCheckProgress_proc(string text, int intValue) {
 
         }
 
         private void CheckGost(object param)
         {
-            var products = param as List<Product>;
+            var obj = param as IEnumerable<object>;
+            var products = obj.Select(m =>
+            {
+                var p = m as Product;
+                return p;
+            }).ToList();
             if (products != null && products.Any())
             {
                 if ((mvm.gcProcessor != null) && (mvm.gcProcessor.isWorking()))
@@ -447,6 +467,8 @@ namespace PublicOrders.ViewModels
                 GOSTCheckProgress_delegate gostCheckProgress_delegate = new GOSTCheckProgress_delegate(GOSTCheckProgress_proc);
                 mvm.gcProcessor = new GOSTsCheckProcessor(allGOSTsChecked_delegete, gostCheckProgress_delegate, products);
                 mvm.gcProcessor.Operate();
+
+                GostCheckInProcess = true;
             }
 
 

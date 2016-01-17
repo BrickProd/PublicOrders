@@ -83,6 +83,28 @@
 
             </ComboBox>
             <telerik:RadRating Grid.Column="1" Grid.Row="4" Margin="10" NumberOfItemsToGenerate="5" Value="{Binding SelectedWinner.Rating, Mode=TwoWay}" VerticalAlignment="Center"></telerik:RadRating>
+            
+            <TabControl Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
+                <TabItem Header="Заметки" Style="{StaticResource PanelContentStyleMini}">
+                    <Grid>
+                        <ScrollViewer>
+                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                </TabItem>
+                <TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="22*"/>
+                        </Grid.RowDefinitions>
+                        
+                    </Grid>
+                </TabItem>
+            </TabControl>
             <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <!--<Hyperlink NavigateUri="{Binding SelectedWinner.Lot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте

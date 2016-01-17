@@ -118,7 +118,18 @@
         	                Background="Transparent" BorderBrush="Transparent"
         	                FontSize="16"
                             Command="{Binding CheckGostCommand}" CommandParameter="{Binding ElementName=ProductsListView, Path=SelectedItems}"
-        	                Height="30" VerticalAlignment="Top" Content="Проверить ГОСТ"/>
+        	                Height="30" VerticalAlignment="Top" Content="Проверить ГОСТ">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding GostCheckInProcess}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            
+                        </Button>
 
                         <Border BorderBrush="Gray" Margin="10,45,10,51.167" BorderThickness="1">
                             <Grid>
@@ -165,6 +176,18 @@
                                                 <TextBlock FontSize="14" Text="{Binding Svoboda}" Grid.Column="1" VerticalAlignment="Center" Foreground="#17364B" FontWeight="Bold"/>
                                                 <TextBlock FontSize="14" Text="{Binding Form2}" Grid.Column="2" VerticalAlignment="Center" Foreground="#005B98" FontWeight="Bold"/>
                                                 <StackPanel Grid.Column="4">
+                                                    <TextBlock Text=" - ГОСТ НЕДЕЙСТВИТЕЛЕН - " Foreground="DarkRed" FontWeight="Black" >
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsNotActualCert}" Value="1">
+                                                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
                                                     <TextBlock TextWrapping="Wrap" Text="{Binding Name}" FontSize="16">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
