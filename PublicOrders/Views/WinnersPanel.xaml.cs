@@ -85,6 +85,8 @@ namespace PublicOrders.Views
             vm.ToView.View.Refresh();
             vm.Favorites.View.Refresh();
             vm.BlackList.View.Refresh();
+
+            DataService.WinnersDbContext.SaveChanges();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -133,8 +134,13 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
-            MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-            mvm.wc.SaveChanges();
+            var vm = DataContext as WinnerSearchViewModel;
+
+
+            DataService.WinnersDbContext.Winners.Find(vm.SelectedLot.Winner.WinnerId).WinnerStatus =
+                vm.SelectedLot.Winner.WinnerStatus;
+
+            DataService.WinnersDbContextSaveChanges();
         }
 
         private void CustomersSide_MouseLeave(object sender, MouseEventArgs e)

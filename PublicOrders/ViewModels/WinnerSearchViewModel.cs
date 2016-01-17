@@ -588,11 +588,11 @@ namespace PublicOrders.ViewModels
         {
             IsWinnerLotsSearchingPause = false;
             //Winners = new ObservableCollection<object>(база);
-            //Lots = new ObservableCollection<Lot>();
-            Lots = new ObservableCollection<Lot>(new List<Lot>()
-            {
-                new Lot() { Name = "LotName", ContractNumber = "394030", DocumentPrice = 10, LotPrice=234, Winner = new Winner() {Name = "WinnerName", Address = "Address", Email = "mail", Phone = "phone", Vatin = "inn"}}
-            });
+            Lots = new ObservableCollection<Lot>();
+            //Lots = new ObservableCollection<Lot>(new List<Lot>()
+            //{
+            //    new Lot() { Name = "LotName", ContractNumber = "394030", DocumentPrice = 10, LotPrice=234, Winner = new Winner() {Name = "WinnerName", Address = "Address", Email = "mail", Phone = "phone", Vatin = "inn"}}
+            //});
 
             Customers = new ObservableCollection<Customer>();
 

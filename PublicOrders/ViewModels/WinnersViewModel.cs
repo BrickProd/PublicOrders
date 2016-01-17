@@ -7,7 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 using PublicOrders.Annotations;
+using PublicOrders.Commands;
 using PublicOrders.Models;
 using PublicOrders.Data;
 
@@ -45,10 +47,24 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private DelegateCommand _refreshListCommand;
+        public ICommand RefreshListCommand
+        {
+            get
+            {
+                if (_refreshListCommand == null)
+                {
+                    _refreshListCommand = new DelegateCommand(RefreshList);
+                }
+                return _refreshListCommand;
+            }
+        }
+
+
         public WinnersViewModel()
         {
-            //Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
-            Winners = new ObservableCollection<Winner>(new List<Winner>() { new Winner() {Name = "Jnbbui", WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1), Rating = 2} });
+            Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
+            //Winners = new ObservableCollection<Winner>(new List<Winner>() { new Winner() {Name = "Jnbbui", WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1), Rating = 2} });
 
             WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
 
@@ -75,6 +91,20 @@ namespace PublicOrders.ViewModels
                 Winner w = args.Item as Winner;
                 args.Accepted = w.WinnerStatus == DataService.WinnersDbContext.WinnerStatuses.Find(3);
             };
+        }
+
+        public void RefreshList(object param)
+        {
+            Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
+
+            ToView.Source = Winners;
+            ToView.View.Refresh();
+
+            Favorites.Source = Winners;
+            Favorites.View.Refresh();
+
+            BlackList.Source = Winners;
+            BlackList.View.Refresh();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

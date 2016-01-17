@@ -149,7 +149,7 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-            <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
+            <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <Hyperlink NavigateUri="{Binding SelectedLot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте
                 </Hyperlink>

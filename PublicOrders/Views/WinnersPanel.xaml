@@ -31,7 +31,7 @@
                     <TextBlock Text="{Binding Lot.Name}" FontSize="14" TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding Email}" FontSize="14"/>
                     <TextBlock Text="{Binding Phone}" FontSize="14"/>
-                    <telerik:RadRating NumberOfItemsToGenerate="15" Value="{Binding Rating, Mode=TwoWay}" IsReadOnly="True"></telerik:RadRating>
+                    <telerik:RadRating NumberOfItemsToGenerate="5" Value="{Binding Rating, Mode=TwoWay}" IsReadOnly="True"></telerik:RadRating>
                 </StackPanel>
             </StackPanel>
         </DataTemplate>
@@ -82,7 +82,7 @@
             <ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId">
 
             </ComboBox>
-            <telerik:RadRating Grid.Column="1" Grid.Row="4" Margin="10" NumberOfItemsToGenerate="5" Value="{Binding SelectedWinner.Rating}" VerticalAlignment="Center"></telerik:RadRating>
+            <telerik:RadRating Grid.Column="1" Grid.Row="4" Margin="10" NumberOfItemsToGenerate="5" Value="{Binding SelectedWinner.Rating, Mode=TwoWay}" VerticalAlignment="Center"></telerik:RadRating>
             <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <!--<Hyperlink NavigateUri="{Binding SelectedWinner.Lot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте
@@ -101,16 +101,18 @@
                 <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
                           ItemTemplate="{StaticResource WinnerDataTemplate}">
-                    
+
                 </ListView>
             </TabItem>
             <TabItem Header="Чёрный список" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
                 <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding BlackList.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
                           ItemTemplate="{StaticResource WinnerDataTemplate}">
-                    
+
                 </ListView>
             </TabItem>
+
         </TabControl>
+        <Button Content="обновить" Width="85" Margin="0,10,10,0" HorizontalAlignment="Right" Height="26" VerticalAlignment="Top" Command="{Binding RefreshListCommand}"/>
     </Grid>
 </UserControl>
