@@ -59,6 +59,10 @@ namespace PublicOrders.Processors.Internet
             winnerSearchProgress_delegate = _winnerSearchProgress_delegate;
         }
 
+        private void WinnerDatesSearched_proc(List<DateTime> winDates, ResultType_enum resultType_enum, string message) {
+            string sss = "ваываыва";
+        }
+
         private ResultType_enum AnalizeContract(Customer customer, XmlNode contractNode, InternetRequestEngine internetRequestEngine,
                                                 out Lot lot, out string contractMessage)
         {
@@ -76,6 +80,12 @@ namespace PublicOrders.Processors.Internet
 
                 lot = mvm.wc.Lots.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
                 if (lot != null) {
+                    //!!! Проверка активности (ТЕСТ)
+                    /*WinnerDatesSearched_delegete winnerDatesSearched_delegete = new WinnerDatesSearched_delegete(WinnerDatesSearched_proc);
+                    WinnerActiveProcessor wap = new WinnerActiveProcessor(winnerDatesSearched_delegete);
+                    wap.OperateWinDates(lot.Winner.Name.Trim());
+                    Thread.Sleep(10000);*/
+
                     return ResultType_enum.Done;
                 }
                 lot = new Lot();

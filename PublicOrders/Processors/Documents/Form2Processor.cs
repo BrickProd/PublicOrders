@@ -391,6 +391,19 @@ namespace PublicOrders.Processors
                             continue;
 
                         a++;
+
+                        // Инициализация продукта и свойств шаблона
+                        if (product.Name == null) product.Name = "";
+                        if (product.TradeMark == null) product.TradeMark = "";
+                        if (product.Certification == null) product.Certification = "";
+                        foreach (Form2Property f2p in product.Form2Properties)
+                        {
+                            if (f2p.RequiredParam == null) f2p.RequiredParam = "";
+                            if (f2p.RequiredValue == null) f2p.RequiredValue = "";
+                            if (f2p.OfferValue == null) f2p.OfferValue = "";
+                            if (f2p.Measure == null) f2p.Measure = "";
+                        }
+
                         // <nnn> - новый параграф
                         // <rrr> - /r
                         // <nnn> - /n
@@ -501,10 +514,18 @@ namespace PublicOrders.Processors
                             (product.Form2Properties.Count == 0))
                             continue;
 
-                        myTable.Cell(beginRowNum, 1).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 1)); // Номер
-                        myTable.Cell(beginRowNum, 2).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 2)); // Наименование
-                        myTable.Cell(beginRowNum, 3).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 3)); // Товарный знак
-                        myTable.Cell(beginRowNum, 8).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 8)); // Сертификация
+                        try
+                        {
+                            myTable.Cell(beginRowNum, 1).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 1)); // Номер
+                            myTable.Cell(beginRowNum, 2).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 2)); // Наименование
+                            myTable.Cell(beginRowNum, 3).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 3)); // Товарный знак
+                            myTable.Cell(beginRowNum, 8).Merge(myTable.Cell(beginRowNum + product.Form2Properties.Count - 1, 8)); // Сертификация
+                        }
+                        catch {
+
+                        }
+                             
+
 
                         beginRowNum = beginRowNum + product.Form2Properties.Count;
                     }

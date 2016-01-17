@@ -360,6 +360,17 @@ namespace PublicOrders.Processors
                             continue;
 
                         a++;
+
+                        // Инициализация продукта и свойств шаблона
+                        if (product.Name == null) product.Name = "";
+                        if (product.TradeMark == null) product.TradeMark = "";
+                        if (product.Certification == null) product.Certification = "";
+                        foreach (FreedomProperty fp in product.FreedomProperties)
+                        {
+                            if (fp.CustomerParam == null) fp.CustomerParam = "";
+                            if (fp.MemberParam == null) fp.MemberParam = "";
+                        }
+
                         // <nnn> - новый параграф
                         // <rrr> - /r
                         // <nnn> - /n

@@ -366,6 +366,20 @@ namespace PublicOrders.Processors
                             continue;
 
                         a++;
+
+                        // Инициализация продукта и свойств шаблона
+                        if (product.Name == null) product.Name = "";
+                        if (product.TradeMark == null) product.TradeMark = "";
+                        if (product.Certification == null) product.Certification = "";
+                        foreach ( CommitteeProperty cp in product.CommitteeProperties) {
+                            if (cp.ParamName == null) cp.ParamName = "";
+                            if (cp.MinValue == null) cp.MinValue = "";
+                            if (cp.MaxValue == null) cp.MaxValue = "";
+                            if (cp.VariableParam == null) cp.VariableParam = "";
+                            if (cp.SpecificParam == null) cp.SpecificParam = "";
+                            if (cp.Measure == null) cp.Measure = "";
+                        }
+
                         // <nnn> - новый параграф
                         // <rrr> - /r
                         // <nnn> - /n
@@ -462,9 +476,16 @@ namespace PublicOrders.Processors
                             (product.CommitteeProperties.Count == 0))
                             continue;
 
-                        myTable.Cell(beginRowNum, 1).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 1)); // Номер
-                        myTable.Cell(beginRowNum, 2).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 2)); // Наименование
-                        myTable.Cell(beginRowNum, 9).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 9)); // Товарный знак
+                        try
+                        {
+                            myTable.Cell(beginRowNum, 1).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 1)); // Номер
+                            myTable.Cell(beginRowNum, 2).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 2)); // Наименование
+                            myTable.Cell(beginRowNum, 9).Merge(myTable.Cell(beginRowNum + product.CommitteeProperties.Count - 1, 9)); // Товарный знак
+                        }
+                        catch {
+
+                        }
+
 
                         beginRowNum = beginRowNum + product.CommitteeProperties.Count;
                     }
