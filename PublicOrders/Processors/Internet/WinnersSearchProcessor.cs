@@ -67,6 +67,7 @@ namespace PublicOrders.Processors.Internet
                                                 out Lot lot, out string contractMessage)
         {
             int infoAboutContractEdit = 0;
+            int infoAboutDocument = 0; // Информация о предоставлении документации
 
             contractMessage = "";
             HtmlAgilityPack.HtmlNode nodeTmp = null;
@@ -190,12 +191,26 @@ namespace PublicOrders.Processors.Internet
                 nodesTmp = doc.DocumentNode.SelectNodes(text);
                 HtmlAgilityPack.HtmlNodeCollection lotTrs = nodesTmp.ElementAt(2 + infoAboutContractEdit).SelectNodes(".//table/tr");
 
-                lot.DocumentDateTime = Convert.ToDateTime(lotTrs.ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim());
+                foreach (HtmlAgilityPack.HtmlNode tr in lotTrs)
+                {
+                    if (tr.ChildNodes.ElementAt(1).InnerText.Trim().ToLower() == "дата заключения контракта")
+                    {
+                        lot.DocumentDateTime = Convert.ToDateTime(tr.ChildNodes.ElementAt(3).InnerText.Trim());
+                        break;
+                    }
+                }
 
                 #endregion
 
                 #region Цена контракта
-                string priceStr = lotTrs.ElementAt(3).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
+                string priceStr = "0";
+                foreach (HtmlAgilityPack.HtmlNode tr in lotTrs) {
+                    if (tr.ChildNodes.ElementAt(1).InnerText.Trim().ToLower() == "цена контракта") {
+                        priceStr = tr.ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
+                        break;
+                    }
+                }
+
                 try
                 {
                     if (priceStr.IndexOf(',') > -1)
@@ -214,7 +229,17 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Валюта
-                string priceTypeStr = lotTrs.ElementAt(4).ChildNodes.ElementAt(3).InnerText.Trim();
+                string priceTypeStr = "";
+                foreach (HtmlAgilityPack.HtmlNode tr in lotTrs)
+                {
+                    if (tr.ChildNodes.ElementAt(1).InnerText.Trim().ToLower() == "валюта контракта")
+                    {
+                        priceTypeStr = tr.ChildNodes.ElementAt(3).InnerText.Trim();
+                        break;
+                    }
+                }
+
+
                 LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == priceTypeStr.ToLower());
                 if (lotPriceType == null)
                 {
@@ -249,6 +274,11 @@ namespace PublicOrders.Processors.Internet
                     return ResultType_enum.Error;
                 }
 
+                if (doc.DocumentNode.InnerText.IndexOf("Информация о предоставлении документации") > -1)
+                {
+                    infoAboutDocument = 1;
+                }
+
                 #region Л О Т (сайт заказа)
                 #region Название
                 text = "//div[@class=\"cardWrapper\"]";
@@ -269,7 +299,7 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Максимальная цена
-                priceStr = templates2Nodes.ElementAt(3).SelectNodes(".//table/tr").ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
+                priceStr = templates2Nodes.ElementAt(3 + infoAboutDocument).SelectNodes(".//table/tr").ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim().Replace(" ", "").ToLower();
                 try
                 {
                     if (priceStr.IndexOf(',') > -1)

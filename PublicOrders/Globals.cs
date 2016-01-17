@@ -94,6 +94,7 @@ namespace PublicOrders.Models
 
         public static string DecodeInternetSymbs(string text)
         {
+            text = text.Replace("<br>", " ");
             text = HttpUtility.UrlDecode(text);
             text = HttpUtility.HtmlDecode(text);
             return text;
