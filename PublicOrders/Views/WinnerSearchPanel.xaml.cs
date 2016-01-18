@@ -75,11 +75,17 @@ namespace PublicOrders.Views
             var vm = this.DataContext as WinnerSearchViewModel;
             vm.WinnerLotsSearchCommand.Execute(new object());
 
+            MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+            mvm.csProcessor.PausePlay();
+
             SlideOutCustomers();
         }
 
         private void OpenCustomerSideBtn_Click(object sender, RoutedEventArgs e)
         {
+            MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+            mvm.csProcessor.PausePlay();
+
             SlideInCustomers();
         }
 

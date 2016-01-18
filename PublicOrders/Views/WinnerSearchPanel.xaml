@@ -467,6 +467,9 @@
                                                 <DataTrigger Binding="{Binding Order.LawType.Name}" Value="94">
                                                     <Setter Property="Background" Value="#E7E284"></Setter>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding Winner.WinnerStatus.WinnerStatusId}" Value="3">
+                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </ListView.ItemContainerStyle>
