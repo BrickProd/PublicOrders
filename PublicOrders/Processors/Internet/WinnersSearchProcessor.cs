@@ -241,7 +241,7 @@ namespace PublicOrders.Processors.Internet
                 }
 
 
-                LotPriceType lotPriceType = mvm.wc.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == priceTypeStr.ToLower());
+                LotPriceType lotPriceType = DataService.WinnersDbContext.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == priceTypeStr.ToLower());
                 if (lotPriceType == null)
                 {
                     lotPriceType = new LotPriceType();

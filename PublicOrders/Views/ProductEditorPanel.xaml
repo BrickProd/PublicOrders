@@ -57,7 +57,7 @@
             <TextBox Grid.Row="1" Text="{Binding SelectedProduct.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             <TextBox Grid.Row="2" Text="{Binding SelectedProduct.TradeMark}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             <TextBox Grid.Row="3" Text="{Binding SelectedProduct.Certification}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            <ComboBox Grid.Row="4" ItemsSource="{Binding Rubrics}" SelectedItem="{Binding SelectedProduct.Rubric, Mode=TwoWay}" DisplayMemberPath="Name" SelectedValuePath="Rubric" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+            <ComboBox Grid.Row="4" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=RubricCollection}" SelectedItem="{Binding SelectedProduct.Rubric, Mode=TwoWay}" DisplayMemberPath="Name" SelectedValuePath="Rubric" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             <TabControl Grid.Row="5" Grid.Column="1" Margin="10,0,10,10" Grid.RowSpan="3">
                 <TabItem Header="Комитет" Style="{StaticResource PanelContentStyleMini}" Margin="0">
                     <Grid Margin="0">

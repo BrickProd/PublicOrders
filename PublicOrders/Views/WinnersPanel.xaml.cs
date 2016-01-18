@@ -94,5 +94,54 @@ namespace PublicOrders.Views
 
             DataService.WinnersDbContext.SaveChanges();
         }
+
+        private void Control_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            this.NoteTextGrid.Visibility = Visibility.Visible;
+            ThicknessAnimation anim = new ThicknessAnimation
+            {
+                From = new Thickness(50, 0, -50, 0),
+                To = new Thickness(0, 0, 0, 0),
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+
+            DoubleAnimation anim2 = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+
+            this.NoteTextGrid.BeginAnimation(FrameworkElement.MarginProperty, anim);
+            this.NoteTextGrid.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            ThicknessAnimation anim = new ThicknessAnimation
+            {
+                From = new Thickness(0, 0, 0, 0),
+                To = new Thickness(50, 0, -50, 0),
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+
+            DoubleAnimation anim2 = new DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
+            anim2.Completed += (o, args) =>
+            {
+                this.NoteTextGrid.Visibility = Visibility.Collapsed;
+            };
+
+            this.NoteTextGrid.BeginAnimation(FrameworkElement.MarginProperty, anim);
+            this.NoteTextGrid.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+        }
     }
 }

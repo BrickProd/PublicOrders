@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -47,6 +48,32 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private DelegateCommand _addNoteCommand;
+        public ICommand AddNoteCommand
+        {
+            get
+            {
+                if (_addNoteCommand == null)
+                {
+                    _addNoteCommand = new DelegateCommand(AddNote);
+                }
+                return _addNoteCommand;
+            }
+        }
+
+        private DelegateCommand _deleteNoteCommand;
+        public ICommand DeleteNoteCommand
+        {
+            get
+            {
+                if (_deleteNoteCommand == null)
+                {
+                    _deleteNoteCommand = new DelegateCommand(DeleteNote);
+                }
+                return _deleteNoteCommand;
+            }
+        }
+
         private DelegateCommand _refreshListCommand;
         public ICommand RefreshListCommand
         {
@@ -57,6 +84,19 @@ namespace PublicOrders.ViewModels
                     _refreshListCommand = new DelegateCommand(RefreshList);
                 }
                 return _refreshListCommand;
+            }
+        }
+
+        private DelegateCommand _saveNoteCommand;
+        public ICommand SaveNoteCommand
+        {
+            get
+            {
+                if (_saveNoteCommand == null)
+                {
+                    _saveNoteCommand = new DelegateCommand(SaveNote);
+                }
+                return _saveNoteCommand;
             }
         }
 
@@ -106,6 +146,38 @@ namespace PublicOrders.ViewModels
             BlackList.Source = Winners;
             BlackList.View.Refresh();
         }
+
+        public void AddNote(object param)
+        {
+            SelectedWinner.WinnerNotes.Add(new WinnerNote
+            {
+                CreateDateTime = DateTime.Now,
+                Name = "новая заметка",
+                UserName = Properties.Settings.Default.UserName,
+            });
+
+            DataService.WinnersDbContext.SaveChanges();
+        }
+
+        public void DeleteNote(object param)
+        {
+            var note = param as WinnerNote;
+
+            DataService.WinnersDbContext.WinnerNotes.Remove(note);
+
+            DataService.WinnersDbContext.SaveChanges();
+        }
+        public void SaveNote(object param)
+        {
+            var note = param as WinnerNote;
+
+            DataService.WinnersDbContext.Entry(note).State = EntityState.Modified;
+
+            DataService.WinnersDbContext.SaveChanges();
+        }
+
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
