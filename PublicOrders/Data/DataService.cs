@@ -19,5 +19,10 @@ namespace PublicOrders.Data
         {
             return winnersDbContext.SaveChanges();
         }
+
+        public static void UpdateContext()
+        {
+            winnersDbContext = new WinnersDbContext();
+        }
     }
 }
