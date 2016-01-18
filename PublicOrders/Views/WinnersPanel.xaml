@@ -79,9 +79,11 @@
                 <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
                 <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedWinner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             </StackPanel>
-            <ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId">
+            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" 
+                                 ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
+            <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId">
 
-            </ComboBox>
+            </ComboBox>-->
             <telerik:RadRating Grid.Column="1" Grid.Row="4" Margin="10" NumberOfItemsToGenerate="5" Value="{Binding SelectedWinner.Rating, Mode=TwoWay}" VerticalAlignment="Center"></telerik:RadRating>
 
             <TabControl Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
@@ -161,7 +163,9 @@
                 <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
                           ItemTemplate="{StaticResource WinnerDataTemplate}">
-
+                    <ListView.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding DeleteWinnerCommand}"></KeyBinding>
+                    </ListView.InputBindings>
                 </ListView>
             </TabItem>
             <TabItem Header="Чёрный список" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">

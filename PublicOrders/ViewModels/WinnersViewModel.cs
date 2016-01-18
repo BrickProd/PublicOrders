@@ -13,6 +13,7 @@ using PublicOrders.Annotations;
 using PublicOrders.Commands;
 using PublicOrders.Models;
 using PublicOrders.Data;
+using System.Windows;
 
 namespace PublicOrders.ViewModels
 {
@@ -45,6 +46,19 @@ namespace PublicOrders.ViewModels
             {
                 _selectedWinner = value;
                 OnPropertyChanged();
+            }
+        }
+
+        private DelegateCommand _deleteWinnerCommand;
+        public ICommand DeleteWinnerCommand
+        {
+            get
+            {
+                if (_deleteWinnerCommand == null)
+                {
+                    _deleteWinnerCommand = new DelegateCommand(DeleteWinner);
+                }
+                return _deleteWinnerCommand;
             }
         }
 
@@ -100,6 +114,29 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        public void DeleteWinner(object param)
+        {
+            if (SelectedWinner == null) return;
+            if (MessageBox.Show("Удалить выделенного победителя?", "Предупреждение",
+               MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+            {
+                SelectedWinner.Rating = 0;
+                SelectedWinner.WinnerStatus = null;
+
+                DataService.WinnersDbContext.SaveChanges();
+
+                Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
+
+                ToView.Source = Winners;
+                ToView.View.Refresh();
+
+                Favorites.Source = Winners;
+                Favorites.View.Refresh();
+
+                BlackList.Source = Winners;
+                BlackList.View.Refresh();
+            }
+        }
 
         public WinnersViewModel()
         {
@@ -163,6 +200,7 @@ namespace PublicOrders.ViewModels
 
         public void DeleteNote(object param)
         {
+            if (param == null) return; 
             var note = param as WinnerNote;
 
             DataService.WinnersDbContext.WinnerNotes.Remove(note);
