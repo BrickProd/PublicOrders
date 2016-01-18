@@ -95,6 +95,8 @@ namespace PublicOrders.ViewModels
 
         public void RefreshList(object param)
         {
+            DataService.UpdateContext();
+
             Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
 
             ToView.Source = Winners;
