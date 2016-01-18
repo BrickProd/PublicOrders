@@ -142,6 +142,7 @@ namespace PublicOrders.ViewModels
         {
             Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
             //Winners = new ObservableCollection<Winner>(new List<Winner>() { new Winner() {Name = "Jnbbui", WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1), Rating = 2} });
+            //Winners = DataService.Winners;
 
             WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
 
@@ -175,6 +176,8 @@ namespace PublicOrders.ViewModels
             DataService.UpdateContext();
 
             Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
+            WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
+            //Winners = DataService.Winners;
 
             ToView.Source = Winners;
             ToView.View.Refresh();

@@ -85,7 +85,7 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
-            DataService.WinnersDbContextSaveChanges();
+            //DataService.WinnersDbContextSaveChanges();
 
             var vm = DataContext as WinnersViewModel;
             vm.ToView.View.Refresh();

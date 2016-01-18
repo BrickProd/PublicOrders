@@ -143,8 +143,11 @@ namespace PublicOrders.Views
             var vm = DataContext as WinnerSearchViewModel;
 
 
-            DataService.WinnersDbContext.Winners.Find(vm.SelectedLot.Winner.WinnerId).WinnerStatus =
-                vm.SelectedLot.Winner.WinnerStatus;
+
+            DataService.WinnersDbContext.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
+
+            //DataService.WinnersDbContext.Winners.Find(vm.SelectedLot.Winner.WinnerId).WinnerStatus =
+            //    vm.SelectedLot.Winner.WinnerStatus;
 
             DataService.WinnersDbContextSaveChanges();
         }
