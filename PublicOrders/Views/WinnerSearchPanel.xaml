@@ -148,9 +148,9 @@
                         </ScrollViewer>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
+                <!--<TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
                     
-                </TabItem>
+                </TabItem>-->
             </TabControl>
             <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <Hyperlink NavigateUri="{Binding SelectedLot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">

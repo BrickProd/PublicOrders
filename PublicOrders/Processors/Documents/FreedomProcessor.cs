@@ -306,7 +306,7 @@ namespace PublicOrders.Processors
                     doc.Paragraphs.Add(ref missingObj);
 
 
-                    doc.Paragraphs[1].Range.Text = "Приложение № 1";
+                    doc.Paragraphs[1].Range.Text = "Приложение №1";
                     doc.Paragraphs[1].Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
                     doc.Paragraphs[1].Range.ParagraphFormat.LeftIndent = 300;
                     doc.Paragraphs[1].Range.ParagraphFormat.LineSpacing = 11;
