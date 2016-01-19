@@ -80,7 +80,7 @@ namespace PublicOrders.Processors.Internet
                 string contractNumber = contractNode.InnerText.Substring(contractNode.InnerText.IndexOf("?reestrNumber=") + 14, contractNode.InnerText.Length - (contractNode.InnerText.IndexOf("?reestrNumber=") + 14));
                 string contractLink = @"http://new.zakupki.gov.ru" + contractNode.InnerText;
 
-                lot = DataService.WinnersDbContext.Lots.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
+                lot = DataService.Lots.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
                 if (lot != null) {
                     //!!! Проверка активности (ТЕСТ)
                     /*WinnerDatesSearched_delegete winnerDatesSearched_delegete = new WinnerDatesSearched_delegete(WinnerDatesSearched_proc);
@@ -172,7 +172,7 @@ namespace PublicOrders.Processors.Internet
                 #endregion
 
                 #region Л О Т (сайт контракта)
-                Winner repeatWinner = DataService.WinnersDbContext.Winners.FirstOrDefault(m => (m.Name == winner.Name && m.Vatin == winner.Vatin));
+                Winner repeatWinner = DataService.Winners.FirstOrDefault(m => (m.Name == winner.Name && m.Vatin == winner.Vatin));
                 if (repeatWinner != null)
                 {
                     lot.Winner = repeatWinner;
@@ -241,13 +241,13 @@ namespace PublicOrders.Processors.Internet
                 }
 
 
-                LotPriceType lotPriceType = DataService.WinnersDbContext.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == priceTypeStr.ToLower());
+                LotPriceType lotPriceType = DataService.Context.LotPriceTypes.FirstOrDefault(m => m.Name.ToLower().Trim() == priceTypeStr.ToLower());
                 if (lotPriceType == null)
                 {
                     lotPriceType = new LotPriceType();
                     lotPriceType.Name = priceTypeStr;
-                    DataService.WinnersDbContext.LotPriceTypes.Add(lotPriceType);
-                    DataService.WinnersDbContextSaveChanges();
+                    DataService.Context.LotPriceTypes.Add(lotPriceType);
+                    DataService.Context.SaveChanges();
                 }
                 lot.LotPriceType = lotPriceType;
                 #endregion
@@ -341,7 +341,7 @@ namespace PublicOrders.Processors.Internet
                 #region Номер закона
                 /*if (lot.OrderHref.IndexOf("zk44") > -1)
                 {*/
-                    order.LawType = DataService.WinnersDbContext.LawTypes.FirstOrDefault(m => m.Name == "44");
+                    order.LawType = DataService.Context.LawTypes.FirstOrDefault(m => m.Name == "44");
                 /*}
                 else
                 {
@@ -351,13 +351,13 @@ namespace PublicOrders.Processors.Internet
 
                 #region Тип заказа
                 string orderTypeStr = templates2Nodes.ElementAt(0).SelectNodes(".//table/tr").ElementAt(0).ChildNodes.ElementAt(3).InnerText.Trim();
-                OrderType orderType = DataService.WinnersDbContext.OrderTypes.FirstOrDefault(m => m.Name.ToLower() == orderTypeStr.ToLower());
+                OrderType orderType = DataService.Context.OrderTypes.FirstOrDefault(m => m.Name.ToLower() == orderTypeStr.ToLower());
                 if (orderType == null)
                 {
                     orderType = new OrderType();
                     orderType.Name = orderTypeStr;
-                    DataService.WinnersDbContext.OrderTypes.Add(orderType);
-                    DataService.WinnersDbContextSaveChanges();
+                    DataService.Context.OrderTypes.Add(orderType);
+                    DataService.Context.SaveChanges();
                 }
                 order.OrderType = orderType;
 
@@ -373,13 +373,13 @@ namespace PublicOrders.Processors.Internet
 
                 #endregion
 
-                DataService.WinnersDbContext.Lots.Add(lot);
-                DataService.WinnersDbContextSaveChanges();
+                DataService.Context.Lots.Add(lot);
+                DataService.Context.SaveChanges();
                 //DataService.Winners.Add(lot.Winner);
-                //DataService.WinnersDbContext.Entry(lot).State = System.Data.Entity.EntityState.Added;
-                //DataService.WinnersDbContext.Lots.Add(lot);
-                //DataService.WinnersDbContextSaveChanges();
-                /*using(WinnersDbContext context = new WinnersDbContext())
+                //DataService.Context.Entry(lot).State = System.Data.Entity.EntityState.Added;
+                //DataService.Context.Lots.Add(lot);
+                //DataService.Context.SaveChanges();
+                /*using(Context context = new Context())
                 {
                     context.Configuration.AutoDetectChangesEnabled = false;
                     context.Lots.Add(lot);
@@ -443,7 +443,7 @@ namespace PublicOrders.Processors.Internet
                     winnerSearchProgress_delegate(customer, "Получение заказов из БД..", 0);
 
                     bool searchedFromDB = false;
-                    List<Order> ordersDB = DataService.WinnersDbContext.Orders.Where(m => ((m.Customer.Vatin == customer.Vatin) &&
+                    List<Order> ordersDB = DataService.Context.Orders.Where(m => ((m.Customer.Vatin == customer.Vatin) &&
                                                                    (m.PublishDateTime < highPublishDate) &&
                                                                    (m.PublishDateTime > lowPublishDate))).ToList();
 

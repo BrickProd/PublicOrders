@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using PublicOrders.Processors.Main;
 using System.Windows.Data;
+using PublicOrders.Data;
 
 namespace PublicOrders.ViewModels
 {
@@ -202,7 +203,7 @@ namespace PublicOrders.ViewModels
 
 
 
-            FilteredProducts.Source = mvm.ProductCollection;
+            FilteredProducts.Source = DataService.Products; /*mvm.ProductCollection;*/
             FilteredProducts.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
             FilteredProducts.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
             FilteredProducts.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
@@ -223,7 +224,7 @@ namespace PublicOrders.ViewModels
             }
 
             if (SelectedInstruction == null) {
-                SelectedInstruction = mvm.InstructionCollection[0];
+                SelectedInstruction = DataService.Instructions[0];
             }
         }
 

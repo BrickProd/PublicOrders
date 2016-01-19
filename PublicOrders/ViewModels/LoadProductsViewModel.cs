@@ -18,6 +18,7 @@ using PublicOrders.Processors.Main;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Data;
+using PublicOrders.Data;
 
 namespace PublicOrders.ViewModels
 {
@@ -247,8 +248,9 @@ namespace PublicOrders.ViewModels
             this.DocPath = "";
 
             //Rubrics = new ObservableCollection<Rubric>(mvm.RubricCollection);
-            if (SelectedRubric == null) {
-                SelectedRubric = mvm.RubricCollection.FirstOrDefault(m => m.Name == "--Без рубрики--");
+            if (SelectedRubric == null)
+            {
+                SelectedRubric = DataService.Context.Rubrics.Find(1); /*mvm.RubricCollection.FirstOrDefault(m => m.Name == "--Без рубрики--");*/
             }
 
             //Templates = mvm.TemplateCollection;

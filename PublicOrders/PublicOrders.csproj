@@ -93,10 +93,11 @@
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Data\DataService.cs" />
-    <Compile Include="Models\AutenDbContext.cs" />
-    <Compile Include="Models\DocumentDbContext.cs" />
+    <Compile Include="Models\Document.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Models\WinnersDbContext.cs" />
+    <Compile Include="Models\PublicOrdersContext.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Winner.cs" />
     <Compile Include="Processors\Documents\Main\CreateDocumentProcessor.cs" />
     <Compile Include="Processors\Documents\CommitteeProcessor.cs" />
     <Compile Include="Processors\Documents\Form2Processor.cs" />

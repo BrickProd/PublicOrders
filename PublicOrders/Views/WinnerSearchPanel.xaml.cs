@@ -76,7 +76,7 @@ namespace PublicOrders.Views
             vm.WinnerLotsSearchCommand.Execute(new object());
 
             MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-            mvm.csProcessor.PausePlay();
+            mvm.csProcessor?.PausePlay();
 
             SlideOutCustomers();
         }
@@ -84,7 +84,7 @@ namespace PublicOrders.Views
         private void OpenCustomerSideBtn_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-            mvm.csProcessor.PausePlay();
+            mvm.csProcessor?.PausePlay();
 
             SlideInCustomers();
         }
@@ -144,12 +144,12 @@ namespace PublicOrders.Views
 
 
 
-            DataService.WinnersDbContext.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
+            //DataService.WinnersDbContext.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
 
             //DataService.WinnersDbContext.Winners.Find(vm.SelectedLot.Winner.WinnerId).WinnerStatus =
             //    vm.SelectedLot.Winner.WinnerStatus;
 
-            DataService.WinnersDbContextSaveChanges();
+            DataService.Context.SaveChanges();
         }
 
         private void CustomersSide_MouseLeave(object sender, MouseEventArgs e)

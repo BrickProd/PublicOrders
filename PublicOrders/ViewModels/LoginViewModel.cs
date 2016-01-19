@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using PublicOrders.Commands;
 using PublicOrders.Models;
 using System.Linq;
+using PublicOrders.Data;
 
 namespace PublicOrders.ViewModels
 {
@@ -19,7 +20,7 @@ namespace PublicOrders.ViewModels
 	{
         private MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        private AutenDbContext adc = null;
+        //private AutenDbContext adc = null;
 
         public string UserStr { get; set; }
         public string Password { get; set; }
@@ -66,7 +67,7 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            User currentUser = adc.Users.FirstOrDefault(m => (m.Login == UserStr) && (m.Password == Password));
+            User currentUser = DataService.Context.Users.FirstOrDefault(m => (m.Login == UserStr) && (m.Password == Password));
             if (currentUser == null) {
                 MessageBox.Show("Неверно введенные данные!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -100,7 +101,7 @@ namespace PublicOrders.ViewModels
 
         public LoginViewModel()
 		{
-            adc = new AutenDbContext();
+            //adc = new AutenDbContext();
 
             UserStr = Properties.Settings.Default.UserName;
         }

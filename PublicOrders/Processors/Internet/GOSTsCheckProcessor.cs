@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using PublicOrders.Data;
 
 namespace PublicOrders.Processors.Internet
 {
@@ -78,7 +79,7 @@ namespace PublicOrders.Processors.Internet
                 isPause = false;
 
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
-                //List<Product> products = mvm.dc.Products.ToList();
+                //List<Product> products = DataService.Context.Products.ToList();
                 Regex regex = new Regex("гост.*?\\d*-{0,1}\\d{2,4}", RegexOptions.IgnoreCase);
                 MatchCollection mColl = null;
                 Int16 checkResult = -1;
@@ -123,8 +124,8 @@ namespace PublicOrders.Processors.Internet
 
                     }
 
-                    mvm.dc.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                    mvm.dc.SaveChanges();
+                    DataService.Context.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                    DataService.Context.SaveChanges();
                 }
 
                 gostCheckProgress_delegate("", 0);

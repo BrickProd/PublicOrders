@@ -6,6 +6,7 @@ using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
 using System.Linq;
 using System.Collections.Generic;
+using PublicOrders.Data;
 using PublicOrders.Processors.Internet;
 
 namespace PublicOrders
@@ -21,49 +22,49 @@ namespace PublicOrders
         // Глобальные коллекции
         #region Глобальные коллекции
         // Товар
-        private ObservableCollection<Product> _products;
-        public ObservableCollection<Product> ProductCollection
-        {
-            get
-            {
-                return _products;
-            }
-            set
-            {
-                _products = value;
-                OnPropertyChanged("ProductsCollection");
-            }
-        }
+        //private ObservableCollection<Product> _products;
+        //public ObservableCollection<Product> ProductCollection
+        //{
+        //    get
+        //    {
+        //        return _products;
+        //    }
+        //    set
+        //    {
+        //        _products = value;
+        //        OnPropertyChanged("ProductsCollection");
+        //    }
+        //}
 
-        // Инструкции
-        private ObservableCollection<Instruction> _instructions;
-        public ObservableCollection<Instruction> InstructionCollection
-        {
-            get
-            {
-                return _instructions;
-            }
-            set
-            {
-                _instructions = value;
-                OnPropertyChanged("InstructionCollection");
-            }
-        }
+        //// Инструкции
+        //private ObservableCollection<Instruction> _instructions;
+        //public ObservableCollection<Instruction> InstructionCollection
+        //{
+        //    get
+        //    {
+        //        return _instructions;
+        //    }
+        //    set
+        //    {
+        //        _instructions = value;
+        //        OnPropertyChanged("InstructionCollection");
+        //    }
+        //}
 
-        // Рубрики
-        private ObservableCollection<Rubric> _rubrics;
-        public ObservableCollection<Rubric> RubricCollection
-        {
-            get
-            {
-                return _rubrics;
-            }
-            set
-            {
-                _rubrics = value;
-                OnPropertyChanged("RubricCollection");
-            }
-        }
+        //// Рубрики
+        //private ObservableCollection<Rubric> _rubrics;
+        //public ObservableCollection<Rubric> RubricCollection
+        //{
+        //    get
+        //    {
+        //        return _rubrics;
+        //    }
+        //    set
+        //    {
+        //        _rubrics = value;
+        //        OnPropertyChanged("RubricCollection");
+        //    }
+        //}
 
         // Шаблоны
         private ObservableCollection<string> _templates;
@@ -83,11 +84,11 @@ namespace PublicOrders
 
 
         #region Документы
-        public DocumentDbContext dc { get; set; }
+        //public DocumentDbContext dc { get; set; }
         #endregion
 
         #region Победители
-        public WinnersDbContext wc { get; set; }
+        //public WinnersDbContext wc { get; set; }
         #endregion
 
         #region Пользователи
@@ -203,10 +204,10 @@ namespace PublicOrders
         public MainViewModel()
 		{
             // Документы
-            dc = new DocumentDbContext();
-            this.ProductCollection = new ObservableCollection<Product>(dc.Products);
-            this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
-            this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
+            //dc = new DocumentDbContext();
+            //this.ProductCollection = new ObservableCollection<Product>(dc.Products);
+            //this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
+            //this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
             this.TemplateCollection = new ObservableCollection<string>(new List<string> {
                         "Комитет",
                         "Свобода",
@@ -214,29 +215,29 @@ namespace PublicOrders
                     });
 
             // Победители
-            wc = new WinnersDbContext();
+            //wc = new WinnersDbContext();
 
             CheckProductsRepetition();
         }
 
         public void RefreshRubrics() {
-            this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
+            //this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
         }
 
         public void RefreshInstructions()
         {
-            this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
+            //this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
         }
 
         public void RefreshProducts()
         {
-            this.ProductCollection = new ObservableCollection<Product>(dc.Products);
+            //this.ProductCollection = new ObservableCollection<Product>(dc.Products);
         }
 
         public void CheckProductsRepetition()
         {
-            this.ProductCollection.ToList().ForEach(m => {
-                m.IsRepetition = ProductCollection.Where(p => ((p.Name == m.Name) && (p.TradeMark == m.TradeMark))).Count() > 1;
+            DataService.Products.ToList().ForEach(m => {
+                m.IsRepetition = DataService.Products.Where(p => ((p.Name == m.Name) && (p.TradeMark == m.TradeMark))).Count() > 1;
             });      
         }
 

@@ -37,7 +37,7 @@ namespace PublicOrders
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
                 mvm.RefreshProducts();
-                vm.FilteredProducts.Source = mvm.ProductCollection;
+                //vm.FilteredProducts.Source = mvm.ProductCollection;
                 vm.FilteredProducts.View.Refresh();
 
                 mvm.RefreshInstructions();
@@ -60,18 +60,18 @@ namespace PublicOrders
                 var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
                 var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-                mvm.RefreshProducts();
-                vm.Products.Source = mvm.ProductCollection;
-                vm.Products.View.Refresh();
-                mvm.CheckProductsRepetition();
+                //mvm.RefreshProducts();
+                //vm.Products.Source = mvm.ProductCollection;
+                //vm.Products.View.Refresh();
+                //mvm.CheckProductsRepetition();
 
-                mvm.RefreshRubrics();
-                vm.CustomRubrics.Source = mvm.RubricCollection.Where(m => m.RubricId != 1);
-                vm.CustomRubrics.View.Refresh();
+                //mvm.RefreshRubrics();
+                //vm.CustomRubrics.Source = mvm.RubricCollection.Where(m => m.RubricId != 1);
+                //vm.CustomRubrics.View.Refresh();
 
-                mvm.RefreshInstructions();
-                vm.CustomInstructions.Source = mvm.InstructionCollection.Where(m => m.InstructionId != 1);
-                vm.CustomInstructions.View.Refresh();
+                //mvm.RefreshInstructions();
+                //vm.CustomInstructions.Source = mvm.InstructionCollection.Where(m => m.InstructionId != 1);
+                //vm.CustomInstructions.View.Refresh();
                 //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
             }
             catch (Exception ex)
@@ -131,8 +131,9 @@ namespace PublicOrders
                 this.ProductEditorPanel.ProductEditPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
 
-                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-                mvm.dc.SaveChanges();
+                //var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+                //mvm.dc.SaveChanges();
+                DataService.Context.SaveChanges();
             }
         }
 

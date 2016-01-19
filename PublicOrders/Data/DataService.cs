@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
@@ -11,38 +13,34 @@ namespace PublicOrders.Data
 {
     public static class DataService
     {
-        private static WinnersDbContext winnersDbContext = new WinnersDbContext();
+        private static PublicOrdersContext context = new PublicOrdersContext();
 
-        public static WinnersDbContext WinnersDbContext
+        public static PublicOrdersContext Context
         {
-            get { return winnersDbContext; }
-        }
-
-        public static int WinnersDbContextSaveChanges()
-        {
-            return winnersDbContext.SaveChanges();
+            get { return context; }
         }
 
         public static void UpdateContext()
         {
-            
-            var context = ((IObjectContextAdapter)winnersDbContext).ObjectContext;
-            WinnersDbContext.Winners.ToList().ForEach(m =>
+            var context = ((IObjectContextAdapter)Context).ObjectContext;
+
+            Context.Winners.ToList().ForEach(m =>
             {
                 context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.StoreWins, m);
             });
-            
-
         }
 
-        //public static ObservableCollection<Winner> Winners
-        //{
-        //    get { return new ObservableCollection<Winner>(winnersDbContext.Winners); }
-        //}
+        public static ObservableCollection<Winner> Winners { get; set; } = new ObservableCollection<Winner>(context.Winners);
 
-        //public static ObservableCollection<Lot> Lots
-        //{
-        //    get { return new ObservableCollection<Lot>(winnersDbContext.Lots); }
-        //}
+        public static ObservableCollection<Customer> Customers { get; set; } = new ObservableCollection<Customer>(/*context.Customers*/);
+
+        public static ObservableCollection<Lot> Lots { get; set; } = new ObservableCollection<Lot>(/*context.Lots*/);
+
+        public static ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>(context.Products);
+
+        public static ObservableCollection<Rubric> Rubrics { get; set; } = new ObservableCollection<Rubric>(context.Rubrics);
+        
+
+        public static ObservableCollection<Instruction> Instructions { get; set; } = new ObservableCollection<Instruction>(context.Instructions);
     }
 }

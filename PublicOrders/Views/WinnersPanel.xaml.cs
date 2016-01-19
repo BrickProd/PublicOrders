@@ -92,7 +92,7 @@ namespace PublicOrders.Views
             vm.Favorites.View.Refresh();
             vm.BlackList.View.Refresh();
 
-            DataService.WinnersDbContext.SaveChanges();
+            DataService.Context.SaveChanges();
         }
 
         private void Control_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

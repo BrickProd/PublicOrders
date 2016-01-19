@@ -14,6 +14,7 @@ using System.Data.Entity;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using PublicOrders.Data;
 using PublicOrders.Processors.Internet;
 
 namespace PublicOrders.ViewModels
@@ -79,7 +80,8 @@ namespace PublicOrders.ViewModels
             }
             set
             {
-                mvm.dc.SaveChanges();
+                DataService.Context.SaveChanges();
+                //mvm.dc.SaveChanges();
                 _selectedRubric = value;
                 OnPropertyChanged("SelectedRubric");
             }
@@ -94,7 +96,9 @@ namespace PublicOrders.ViewModels
             }
             set
             {
-                mvm.dc.SaveChanges();
+                DataService.Context.SaveChanges();
+
+                //mvm.dc.SaveChanges();
                 _selectedInstruction = value;
                 OnPropertyChanged("SelectedInstruction");
             }
@@ -115,8 +119,9 @@ namespace PublicOrders.ViewModels
 
         private void UpdateProduct(object param)
         {
-            mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
-            mvm.dc.SaveChanges();
+            //mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
+            //mvm.dc.SaveChanges();
+            DataService.Context.SaveChanges();
         }
 
         public CollectionViewSource CustomRubrics { get; set; }
@@ -306,9 +311,8 @@ namespace PublicOrders.ViewModels
             if (mvm != null)
             {
                 Products = new CollectionViewSource();
-                //this.mvm.ProductCollection =
 
-                Products.Source = new ObservableCollection<Product>(mvm.dc.Products);
+                Products.Source = DataService.Products;
                 Products.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
                 Products.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
                 Products.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
@@ -316,19 +320,19 @@ namespace PublicOrders.ViewModels
                 Products.View.Refresh();
 
                 CustomRubrics = new CollectionViewSource();
-                CustomRubrics.Source = mvm.RubricCollection.Where(m => m.RubricId != 1);
+                CustomRubrics.Source = DataService.Rubrics;
                 CustomRubrics.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 CustomRubrics.View.Refresh();
 
                 CustomInstructions = new CollectionViewSource();
-                CustomInstructions.Source = mvm.InstructionCollection.Where(m => m.InstructionId != 1);
+                CustomInstructions.Source = DataService.Instructions;
                 CustomInstructions.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 CustomInstructions.View.Refresh();
 
                 mvm.CheckProductsRepetition();
 
-                this.CustomRubrics.View.Refresh();
-                this.CustomInstructions.View.Refresh();
+                //this.CustomRubrics.View.Refresh();
+                //this.CustomInstructions.View.Refresh();
             }
         }
 
@@ -366,23 +370,26 @@ namespace PublicOrders.ViewModels
             var newProduct = new Product
             {
                 Name = "_НОВЫЙ ТОВАР",
-                Rubric = mvm.RubricCollection.FirstOrDefault(m=>m.RubricId==1)
-                
+                Rubric = DataService.Context.Rubrics.Find(1)
             };
 
-            mvm.dc.Entry(newProduct).State = EntityState.Added;
-            mvm.dc.SaveChanges();
+            DataService.Context.Products.Add(newProduct);
+            DataService.Context.SaveChanges();
+            //mvm.dc.Entry(newProduct).State = EntityState.Added;
+            //mvm.dc.SaveChanges();
 
-            mvm.ProductCollection.Add(newProduct);
+            DataService.Products.Add(newProduct);
+
+            //mvm.ProductCollection.Add(newProduct);
             mvm.CheckProductsRepetition();
-            this.Products.View.Refresh();
+            //this.Products.View.Refresh();
 
             this.SelectedProduct = newProduct;
         }
         private void AddRubric(object param)
         {
             // Проверка на повтор
-            var repeatRubric = mvm.dc.Rubrics.FirstOrDefault(m => m.Name == NewRubricName);
+            var repeatRubric = DataService.Context.Rubrics.FirstOrDefault(m => m.Name == NewRubricName);
             if (repeatRubric != null) {
                 MessageBox.Show("Рубрика уже существует!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -391,16 +398,23 @@ namespace PublicOrders.ViewModels
             // Добавление
             var newRubric = new Rubric { Name = NewRubricName };
 
-            mvm.dc.Entry(newRubric).State = EntityState.Added;
-            mvm.dc.SaveChanges();
+            DataService.Context.Rubrics.Add(newRubric);
+            DataService.Context.SaveChanges();
+            //mvm.dc.Entry(newProduct).State = EntityState.Added;
+            //mvm.dc.SaveChanges();
 
-            mvm.RubricCollection.Add(newRubric);
-            this.CustomRubrics.View.Refresh();
+            DataService.Rubrics.Add(newRubric);
+
+            //mvm.dc.Entry(newRubric).State = EntityState.Added;
+            //mvm.dc.SaveChanges();
+
+            //mvm.RubricCollection.Add(newRubric);
+            //this.CustomRubrics.View.Refresh();
         }
         private void AddInstruction(object param)
         {
             // Проверка на повтор
-            var repeatInstruction = mvm.dc.Instructions.FirstOrDefault(m => m.Name == "НОВАЯ ИНСТРУКЦИЯ");
+            var repeatInstruction = DataService.Context.Instructions.FirstOrDefault(m => m.Name == "НОВАЯ ИНСТРУКЦИЯ");
             if (repeatInstruction != null)
             {
                 MessageBox.Show("\"НОВАЯ ИНСТРУКЦИЯ\" уже существует!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -412,11 +426,16 @@ namespace PublicOrders.ViewModels
                 Name = "НОВАЯ ИНСТРУКЦИЯ"
             };
 
-            mvm.dc.Entry(newInstruction).State = EntityState.Added;
-            mvm.dc.SaveChanges();
+            DataService.Context.Instructions.Add(newInstruction);
+            DataService.Context.SaveChanges();
 
-            mvm.InstructionCollection.Add(newInstruction);
-            this.CustomInstructions.View.Refresh();
+            DataService.Instructions.Add(newInstruction);
+
+            //mvm.dc.Entry(newInstruction).State = EntityState.Added;
+            //mvm.dc.SaveChanges();
+
+            //mvm.InstructionCollection.Add(newInstruction);
+            //this.CustomInstructions.View.Refresh();
 
             this.SelectedInstruction = newInstruction;
         }
@@ -430,7 +449,9 @@ namespace PublicOrders.ViewModels
 
                 p.Rubric = SelectedRubric;
 
-                mvm.dc.SaveChanges();
+                //mvm.dc.SaveChanges();
+
+                DataService.Context.SaveChanges();
             });
 
             this.Products.View.Refresh();
@@ -440,8 +461,6 @@ namespace PublicOrders.ViewModels
         private void AllGOSTsChecked_proc(ResultType_enum resultType_enum, string message)
         {
             GostCheckInProcess = false;
-
-
 
         }
 
@@ -491,11 +510,18 @@ namespace PublicOrders.ViewModels
                     //p.FreedomProperties.Clear();
                     //p.Form2Properties.Clear();
                     //mvm.dc.Entry(p).State = EntityState.Deleted;
-                    mvm.dc.Products.Remove(p);
 
-                    mvm.ProductCollection.Remove(p);
+                    DataService.Context.Products.Remove(p);
+                    DataService.Context.SaveChanges();
+
+                    DataService.Products.Remove(p);
+                    //mvm.dc.Products.Remove(p);
+
+                    //mvm.ProductCollection.Remove(p);
                 });
-                mvm.dc.SaveChanges();
+                //mvm.dc.SaveChanges();
+
+                DataService.Context.SaveChanges();
             }
         }
 
@@ -508,13 +534,22 @@ namespace PublicOrders.ViewModels
 
                     SelectedRubric.Products.ToList().ForEach(p => {
                         p.RubricId = 1;
-                        mvm.dc.Entry(p).State = EntityState.Modified;
+
+
+                        //mvm.dc.Entry(p).State = EntityState.Modified;
                     });
-                    mvm.dc.SaveChanges();
-                    mvm.dc.Entry(SelectedRubric).State = EntityState.Deleted;
-                    mvm.dc.SaveChanges();
-                    mvm.RubricCollection.Remove(SelectedRubric);
-                CustomRubrics.View.Refresh();
+
+                
+                    //mvm.dc.SaveChanges();
+
+                DataService.Context.Rubrics.Remove(SelectedRubric);
+                    DataService.Context.SaveChanges();
+
+                DataService.Rubrics.Remove(SelectedRubric);
+                //mvm.dc.Entry(SelectedRubric).State = EntityState.Deleted;
+                //    mvm.dc.SaveChanges();
+                //    mvm.RubricCollection.Remove(SelectedRubric);
+                //CustomRubrics.View.Refresh();
             }
         }
 
@@ -524,10 +559,15 @@ namespace PublicOrders.ViewModels
             if (MessageBox.Show("Удалить выделенную инструкцию?", "Предупреждение",
                MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
             {
-                mvm.dc.Entry(SelectedInstruction).State = EntityState.Deleted;
-                mvm.dc.SaveChanges();
-                mvm.InstructionCollection.Remove(SelectedInstruction);
-                CustomInstructions.View.Refresh();
+                DataService.Context.Instructions.Remove(SelectedInstruction);
+                DataService.Context.SaveChanges();
+
+                DataService.Instructions.Remove(SelectedInstruction);
+
+                //mvm.dc.Entry(SelectedInstruction).State = EntityState.Deleted;
+                //mvm.dc.SaveChanges();
+                //mvm.InstructionCollection.Remove(SelectedInstruction);
+                //CustomInstructions.View.Refresh();
             }
         }
 
@@ -543,16 +583,23 @@ namespace PublicOrders.ViewModels
             {
                 SelectedProduct.ModifiedDateTime = DateTime.Now;
                 //mvm.dc.Entry(SelectedProduct).State = EntityState.Modified;
-                await mvm.dc.SaveChangesAsync();
-                mvm.CheckProductsRepetition();
+
+
+                //await mvm.dc.SaveChangesAsync();
+                //mvm.CheckProductsRepetition();
+
+                await DataService.Context.SaveChangesAsync();
+
             }
             
             this.Products.View.Refresh();
         }
         private void SaveInstruction(object param)
         {
-            mvm.dc.Entry(SelectedInstruction).State = EntityState.Modified;
-            mvm.dc.SaveChanges();
+            //mvm.dc.Entry(SelectedInstruction).State = EntityState.Modified;
+            //mvm.dc.SaveChanges();
+
+            DataService.Context.SaveChanges();
         }
 
         private void ChoseProductsInRubric(object param)

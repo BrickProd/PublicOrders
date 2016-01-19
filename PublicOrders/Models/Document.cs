@@ -1,5 +1,4 @@
-﻿using PublicOrders.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,55 +6,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PublicOrders.Annotations;
 
 namespace PublicOrders.Models
 {
-    public class DocumentDbContext : DbContext
-    {
-        public DocumentDbContext()
-            : base("PublicOrdersDocsConnection")
-        {
-            Database.SetInitializer<DocumentDbContext>(new DocInitializer());
-        }
-
-        public DbSet<Rubric> Rubrics { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Instruction> Instructions { get; set; }
-        public DbSet<FreedomProperty> FreedomProperties { get; set; }
-        public DbSet<CommitteeProperty> CommitteeProperties { get; set; }
-        public DbSet<Form2Property> Form2Properties { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<CommitteeProperty>().HasKey(p => new { p.ProductId, p.CommitteePropertyId });
-            modelBuilder.Entity<Form2Property>().HasKey(p => new { p.ProductId, p.Form2PropertyId});
-            modelBuilder.Entity<FreedomProperty>().HasKey(p => new { p.ProductId, p.FreedomPropertyId });
-        }
-
-
-
-    }
-
-    public class DocInitializer : CreateDatabaseIfNotExists<DocumentDbContext>
-    {
-        protected override void Seed(DocumentDbContext context)
-        {
-            var instructions = new List<Instruction>{
-                new Instruction{ Name = "--Без инструкции--" }
-            };
-            instructions.ForEach(m => context.Instructions.Add(m));
-            context.SaveChanges();
-
-            var rubrics = new List<Rubric>{
-                new Rubric{ Name = "--Без рубрики--" }
-            };
-            rubrics.ForEach(m => context.Rubrics.Add(m));
-            context.SaveChanges();
-        }
-    }
-
     public class Instruction
     {
         [Key]
@@ -158,9 +112,13 @@ namespace PublicOrders.Models
 
         private bool _isSelected;
         [NotMapped]
-        public bool IsSelected { get {
+        public bool IsSelected
+        {
+            get
+            {
                 return _isSelected;
-            } set
+            }
+            set
             {
                 _isSelected = value;
                 OnPropertyChanged("IsSelected");
@@ -187,8 +145,8 @@ namespace PublicOrders.Models
                 OnPropertyChanged("IsRepetition");
             }
         }
-        
-       
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -248,7 +206,7 @@ namespace PublicOrders.Models
         public string RequiredParam { get; set; }
 
         [Column(TypeName = "ntext")]
-        public string RequiredValue{ get; set; }
+        public string RequiredValue { get; set; }
 
         [Column(TypeName = "ntext")]
         public string OfferValue { get; set; }
@@ -272,7 +230,7 @@ namespace PublicOrders.Models
         virtual public Product Product { get; set; }
 
         [Column(TypeName = "ntext")]
-        public string CustomerParam{ get; set; }
+        public string CustomerParam { get; set; }
 
         [Column(TypeName = "ntext")]
         public string MemberParam { get; set; }

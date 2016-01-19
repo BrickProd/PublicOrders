@@ -316,7 +316,7 @@
                                         </Button.Template>
                                     </Button>
                                 </Border>
-                                <ListView x:Name="CustomersListBox" Margin="0" ItemsSource="{Binding Customers}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
+                                <ListView x:Name="CustomersListBox" Margin="0" ItemsSource="{Binding Customers.View}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
 							    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                           MouseLeave="CustomersSide_MouseLeave"
 							    BorderBrush="LightGray">
@@ -451,7 +451,7 @@
                                 <TextBlock Grid.Row="1" Text="{Binding SelectedCustomer.Name}" Margin="0" TextTrimming="WordEllipsis" FontSize="18" HorizontalAlignment="Center"/>
 
 
-                                <ListView x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Lots}" BorderThickness="0" FontSize="16"
+                                <ListView x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Lots.View}" BorderThickness="0" FontSize="16"
 								AlternationCount="2" SelectedItem="{Binding SelectedLot}"
                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" Grid.Row="2">
                                     <ListView.ItemContainerStyle>

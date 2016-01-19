@@ -10,6 +10,7 @@ using System.Windows.Input;
 using PublicOrders.Annotations;
 using PublicOrders.Commands;
 using System.Windows;
+using System.Windows.Data;
 using PublicOrders.Data;
 using PublicOrders.Processors;
 using PublicOrders.Models;
@@ -127,33 +128,36 @@ namespace PublicOrders.ViewModels
         #endregion
 
         #region Коллекции
-        private ObservableCollection<Customer> _customers;
-        public ObservableCollection<Customer> Customers
-        {
-            get
-            {
-                return _customers;
-            }
-            set
-            {
-                _customers = value;
-                OnPropertyChanged("Customers");
-            }
-        }
+        //private ObservableCollection<Customer> _customers;
+        //public ObservableCollection<Customer> Customers
+        //{
+        //    get
+        //    {
+        //        return _customers;
+        //    }
+        //    set
+        //    {
+        //        _customers = value;
+        //        OnPropertyChanged("Customers");
+        //    }
+        //}
 
-        private ObservableCollection<Lot> _lots;
-        public ObservableCollection<Lot> Lots
-        {
-            get
-            {
-                return _lots;
-            }
-            set
-            {
-                _lots = value;
-                OnPropertyChanged("Lots");
-            }
-        }
+        public CollectionViewSource Customers { get; set; }
+        public CollectionViewSource Lots { get; set; }
+
+        //private ObservableCollection<Lot> _lots;
+        //public ObservableCollection<Lot> Lots
+        //{
+        //    get
+        //    {
+        //        return _lots;
+        //    }
+        //    set
+        //    {
+        //        _lots = value;
+        //        OnPropertyChanged("Lots");
+        //    }
+        //}
 
         public ObservableCollection<WinnerStatus> WinnerStatuses
         {
@@ -257,12 +261,12 @@ namespace PublicOrders.ViewModels
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Customers.Clear();
+                    DataService.Customers.Clear();
                 }));
             }
             else
             {
-                Customers = new ObservableCollection<Customer>();
+                //Customers = new ObservableCollection<Customer>();
             }
 
             // Очищаем список победителей
@@ -270,12 +274,12 @@ namespace PublicOrders.ViewModels
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Lots.Clear();
+                    DataService.Lots.Clear();
                 }));
             }
             else
             {
-                Lots = new ObservableCollection<Lot>();
+                //Lots = new ObservableCollection<Lot>();
             }
 
             // Останавливаем поиск победителей
@@ -381,7 +385,7 @@ namespace PublicOrders.ViewModels
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Customers.Add(customer);
+                    DataService.Customers.Add(customer);
                 }));
             }
             catch {
@@ -420,11 +424,11 @@ namespace PublicOrders.ViewModels
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Lots.Clear();
+                    DataService.Lots.Clear();
                 }));
             }
             else {
-                Lots = new ObservableCollection<Lot>();
+                //Lots = new ObservableCollection<Lot>();
             }
 
 
@@ -538,7 +542,7 @@ namespace PublicOrders.ViewModels
                 if (lot.Winner.Name != "")
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        Lots.Add(lot);
+                        DataService.Lots.Add(lot);
                     }));
             }
             catch {
@@ -567,7 +571,7 @@ namespace PublicOrders.ViewModels
             }
 
             CreateWinnersDocumentDone_delegete createWinnersDocumentDone_delegete = new CreateWinnersDocumentDone_delegete(CreateWinnersDocumentDone_proc);
-            mvm.cwProcessor = new CreateWinnersDocProcessor (SelectedCustomer, Lots.Select(m=>m.Winner).Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
+            mvm.cwProcessor = new CreateWinnersDocProcessor (SelectedCustomer, DataService.Lots.Select(m=>m.Winner).Where(m=>m.IsChoosen).ToList(), createWinnersDocumentDone_delegete);
             mvm.cwProcessor.Operate();
         }
 
@@ -588,15 +592,21 @@ namespace PublicOrders.ViewModels
         {
             IsWinnerLotsSearchingPause = false;
             //Winners = new ObservableCollection<object>(база);
-            Lots = new ObservableCollection<Lot>();
+            //Lots = new ObservableCollection<Lot>();
             //Lots = new ObservableCollection<Lot>(new List<Lot>()
             //{
             //    new Lot() { Name = "LotName", ContractNumber = "394030", DocumentPrice = 10, LotPrice=234, Winner = new Winner() {Name = "WinnerName", Address = "Address", Email = "mail", Phone = "phone", Vatin = "inn"}}
             //});
 
-            Customers = new ObservableCollection<Customer>();
+            Lots = new CollectionViewSource();
+            Lots.Source = DataService.Lots;
 
-            WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
+            Customers = new CollectionViewSource();
+            Customers.Source = DataService.Customers;
+
+            //Customers = new ObservableCollection<Customer>();
+
+            WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.Context.WinnerStatuses);
         }
 
 

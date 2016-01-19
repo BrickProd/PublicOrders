@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PublicOrders.Data;
 using PublicOrders.Models;
 using PublicOrders.ViewModels;
 
@@ -197,8 +198,10 @@ namespace PublicOrders.Views
 
         private void SaveChanges_LostFocus(object sender, RoutedEventArgs e)
         {
-            var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
-            mvm.dc.SaveChanges();
+            //var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+            //mvm.dc.SaveChanges();
+
+            DataService.Context.SaveChanges();
         }
     }
 }

@@ -13,97 +13,6 @@ using PublicOrders.Annotations;
 
 namespace PublicOrders.Models
 {
-    public class WinnersDbContext : DbContext
-    {
-        public WinnersDbContext()
-            : base("PublicOrdersWinnersConnection")
-        {
-            Database.SetInitializer<WinnersDbContext>(new WinnersInitializer());
-        }
-
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<CustomerType> CustomerTypes { get; set; }
-        public DbSet<CustomerLevel> CustomerLevels { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        //public DbSet<OrderPriceType> OrderPriceTypes { get; set; }
-        public DbSet<LotPriceType> LotPriceTypes { get; set; }
-        public DbSet<OrderType> OrderTypes { get; set; }
-        public DbSet<LawType> LawTypes { get; set; }
-        public DbSet<Lot> Lots { get; set; }
-        public DbSet<Winner> Winners { get; set; }
-        public DbSet<WinnerStatus> WinnerStatuses { get; set; }
-        public DbSet<WinnerNote> WinnerNotes { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            //у документов много атрибутов
-            //атрибут может быть в разных документах
-            modelBuilder.Entity<Customer>().HasMany(o => o.CustomerTypes).WithMany(d => d.Customers).Map(m =>
-            {
-                m.ToTable("Customers_CustomerTypes");
-                m.MapLeftKey("CustomerId");
-                m.MapRightKey("CustomerTypeId");
-            });
-
-
-
-            /*modelBuilder.Entity<Customer>().HasMany(o => o.Orders).WithMany(d => d.Customers).Map(m =>
-            {
-                m.ToTable("Customers_Orders");
-                m.MapLeftKey("CustomerId");
-                m.MapRightKey("OrderId");
-            });*/
-
-            /*modelBuilder.Entity<Order>().HasMany(o => o.Lots).WithMany(d => d.Orders).Map(m =>
-            {
-                m.ToTable("Orders_Lots");
-                m.MapLeftKey("OrderId");
-                m.MapRightKey("LotId");
-            });*/
-        }
-
-        public class WinnersInitializer : CreateDatabaseIfNotExists<WinnersDbContext>
-        {
-            protected override void Seed(WinnersDbContext context)
-            {
-                var customerLevels = new List<CustomerLevel>
-                {
-                    new CustomerLevel{ CustomerLevelCode = "Federal" },
-                    new CustomerLevel{ CustomerLevelCode = "Subject" },
-                    new CustomerLevel{ CustomerLevelCode = "Municipal" },
-                    new CustomerLevel{ CustomerLevelCode = "Other" }
-                };
-                customerLevels.ForEach(m => context.CustomerLevels.Add(m));
-
-                var customerTypes = new List<CustomerType>
-                {
-                    new CustomerType{ CustomerTypeCode = "Customer" },
-                    new CustomerType{ CustomerTypeCode = "Organization" },
-                };
-                customerTypes.ForEach(m => context.CustomerTypes.Add(m));
-
-                var lawTypes = new List<LawType>
-                {
-                    new LawType{ Name = "44" },
-                    new LawType{ Name = "94" },
-                    new LawType{ Name = "223" },
-                    new LawType{ Name = "None" },
-                };
-                lawTypes.ForEach(m => context.LawTypes.Add(m));
-
-                var winnerStatuses = new List<WinnerStatus>
-                {
-                    new WinnerStatus{ Name = "Для просмотра" },
-                    new WinnerStatus{ Name = "Избранное" },
-                    new WinnerStatus{ Name = "Чёрный список" }
-                };
-                winnerStatuses.ForEach(m => context.WinnerStatuses.Add(m));
-
-                context.SaveChanges();
-            }
-        }
-    }
-
     // З А К А З Ч И К
     public class Customer
     {
@@ -145,14 +54,14 @@ namespace PublicOrders.Models
         private ObservableCollection<CustomerType> _сustomerTypes;
         public virtual ObservableCollection<CustomerType> CustomerTypes
         {
-            get { return _сustomerTypes ?? (_сustomerTypes = new ObservableCollection<CustomerType>(new  HashSet<CustomerType>())); } // Try HashSet<N>
+            get { return _сustomerTypes ?? (_сustomerTypes = new ObservableCollection<CustomerType>(new HashSet<CustomerType>())); } // Try HashSet<N>
             set { _сustomerTypes = value; }
         }
 
         private ObservableCollection<Order> _orders;
         public virtual ObservableCollection<Order> Orders
         {
-            get { return _orders ?? (_orders = new ObservableCollection<Order>(new HashSet< Order >())); } // Try HashSet<N>
+            get { return _orders ?? (_orders = new ObservableCollection<Order>(new HashSet<Order>())); } // Try HashSet<N>
             set { _orders = value; }
         }
 
@@ -261,7 +170,7 @@ namespace PublicOrders.Models
         private ObservableCollection<Lot> _lots;
         public virtual ObservableCollection<Lot> Lots
         {
-            get { return _lots ?? (_lots = new ObservableCollection<Lot> (new HashSet<Lot>())); } // Try HashSet<N>
+            get { return _lots ?? (_lots = new ObservableCollection<Lot>(new HashSet<Lot>())); } // Try HashSet<N>
             set { _lots = value; }
         }
 
@@ -381,8 +290,8 @@ namespace PublicOrders.Models
 
 
 
-        // П О Б Е Д И Т Е Л Ь
-        public class Winner : INotifyPropertyChanged
+    // П О Б Е Д И Т Е Л Ь
+    public class Winner : INotifyPropertyChanged
     {
         private ObservableCollection<WinnerNote> _winnerNotes;
         private bool _isChoosen;
@@ -414,7 +323,7 @@ namespace PublicOrders.Models
         private ObservableCollection<Lot> _lots;
         public virtual ObservableCollection<Lot> Lots
         {
-            get { return _lots ?? (_lots = new ObservableCollection<Lot>( new HashSet<Lot>())); } // Try HashSet<N>
+            get { return _lots ?? (_lots = new ObservableCollection<Lot>(new HashSet<Lot>())); } // Try HashSet<N>
             set { _lots = value; }
         }
 
@@ -422,8 +331,11 @@ namespace PublicOrders.Models
         public bool IsChoosen
         {
             get { return _isChoosen; }
-            set { _isChoosen = value;
-                OnPropertyChanged(); }
+            set
+            {
+                _isChoosen = value;
+                OnPropertyChanged();
+            }
         }
 
         [ForeignKey("WinnerStatus")]
@@ -498,7 +410,7 @@ namespace PublicOrders.Models
 
         public WinnerStatus()
         {
-            
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
