@@ -137,22 +137,22 @@
                             </StackPanel>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!--<Trigger Property="IsMouseOver" Value="True">
+                            <Trigger Property="IsMouseOver" Value="True">
                                 <Trigger.EnterActions>
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="myCp" Storyboard.TargetProperty="Foreground.Color" To="#FF007ACB" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="myCp" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#FF007ACB" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.EnterActions>
                                 <Trigger.ExitActions>
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="myCp" Storyboard.TargetProperty="Foreground.Color" To="Gray" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
+                                            <ColorAnimation Storyboard.TargetName="myCp" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="Gray" Duration="0:0:0.18" AutoReverse="False"></ColorAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.ExitActions>
-                            </Trigger>-->
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

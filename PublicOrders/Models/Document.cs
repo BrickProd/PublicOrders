@@ -65,6 +65,11 @@ namespace PublicOrders.Models
         [Column(TypeName = "datetime2")]
         public DateTime ModifiedDateTime { get; set; }
 
+        [NotMapped]
+        public string ModifiedDateTimeRus {
+            get { return ModifiedDateTime.ToString("d MMM yyyy"); }
+        }
+
         private ObservableCollection<CommitteeProperty> _committeeProperties;
         public virtual ObservableCollection<CommitteeProperty> CommitteeProperties
         {

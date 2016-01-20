@@ -74,23 +74,6 @@ namespace PublicOrders.Views
             toRubricsListBox.BeginAnimation(MarginProperty, anim);
         }
 
-        
-
-        private void AddNewRubricBtn_Click(object sender, RoutedEventArgs e)
-        {
-            this.AddNewRubricPanel.Visibility = Visibility.Visible;
-        }
-
-        private void CancelNewRubricBtn_Click(object sender, RoutedEventArgs e)
-        {
-            this.AddNewRubricPanel.Visibility = Visibility.Collapsed;
-        }
-
-        private void OkNewRubricBtn_Click(object sender, RoutedEventArgs e)
-        {
-            this.AddNewRubricPanel.Visibility = Visibility.Collapsed;
-        }
-
         private void productsList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ListBox parent = (ListBox)sender;

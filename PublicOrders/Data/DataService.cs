@@ -31,16 +31,13 @@ namespace PublicOrders.Data
         }
 
         public static ObservableCollection<Winner> Winners { get; set; } = new ObservableCollection<Winner>(context.Winners);
-
         public static ObservableCollection<Customer> Customers { get; set; } = new ObservableCollection<Customer>(/*context.Customers*/);
-
         public static ObservableCollection<Lot> Lots { get; set; } = new ObservableCollection<Lot>(/*context.Lots*/);
 
+
         public static ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>(context.Products);
-
         public static ObservableCollection<Rubric> Rubrics { get; set; } = new ObservableCollection<Rubric>(context.Rubrics);
-        
-
         public static ObservableCollection<Instruction> Instructions { get; set; } = new ObservableCollection<Instruction>(context.Instructions);
+        public static ObservableCollection<string> Templates { get; set; } = new ObservableCollection<string>(new List<string> { "Комитет", "Свобода", "Форма 2"});
     }
 }

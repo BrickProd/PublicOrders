@@ -92,6 +92,7 @@
     </ApplicationDefinition>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converters\IndexConverter.cs" />
     <Compile Include="Data\DataService.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Globals.cs" />

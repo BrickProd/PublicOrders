@@ -6,10 +6,14 @@
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" x:Class="PublicOrders.Views.CreateDocumentPanel"
              mc:Ignorable="d" 
+    xmlns:converters ="clr-namespace:PublicOrders.Converters"   
              d:DesignHeight="700" d:DesignWidth="800" Padding="20 0 20 0">
     <UserControl.DataContext>
         <ViewModels:CreateDocumentViewModel/>
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <converters:IndexConverter x:Key="IndexConverter" />
+    </UserControl.Resources>
     <Grid>
 
         <!--ПАНЕЛЬ ЗАГРУЗКИ-->
@@ -66,8 +70,8 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <ComboBox x:Name="comboBox" FontSize="18" Margin="5" Grid.Row="1" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=TemplateCollection}" SelectedItem="{Binding SelectedTemplate}" SelectedIndex="0" Grid.ColumnSpan="2"/>
-        <ComboBox x:Name="comboBox1" FontSize="18" Margin="5" Grid.Row="3" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=InstructionCollection}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name" Grid.ColumnSpan="2"/>
+                <ComboBox x:Name="comboBox" FontSize="18" Margin="5" Grid.Row="1" ItemsSource="{Binding Templates.View}" SelectedItem="{Binding SelectedTemplate}" SelectedIndex="0" Grid.ColumnSpan="2"/>
+        <ComboBox x:Name="comboBox1" FontSize="18" Margin="5" Grid.Row="3" ItemsSource="{Binding Instructions.View}" SelectedItem="{Binding SelectedInstruction}" DisplayMemberPath="Name" SelectedValuePath="Name" Grid.ColumnSpan="2"/>
         <Button x:Name="button" FontSize="18" Content="Создать" HorizontalAlignment="Center" Grid.Row="4" Width="150" Command="{Binding CreateDocumentCommand}" Style="{StaticResource OKButtonStyle}" Grid.ColumnSpan="2" Height="25"/>
         
         <TextBlock Margin="5,5,5,0" Grid.Row="2" TextWrapping="Wrap" Text="Выбрать документ - стрелка вправо" VerticalAlignment="Top"/>
@@ -83,10 +87,17 @@
             </ListBox.InputBindings>
             <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
-                                <TextBlock Text="{Binding TradeMark}" TextWrapping="Wrap" FontSize="14"></TextBlock>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="{Binding TradeMark}" TextWrapping="Wrap" FontSize="14"></TextBlock>
+                                </StackPanel>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListView.GroupStyle>

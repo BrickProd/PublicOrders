@@ -67,19 +67,7 @@ namespace PublicOrders
         //}
 
         // Шаблоны
-        private ObservableCollection<string> _templates;
-        public ObservableCollection<string> TemplateCollection
-        {
-            get
-            {
-                return _templates;
-            }
-            set
-            {
-                _templates = value;
-                OnPropertyChanged("TemplateCollection");
-            }
-        }
+        
         #endregion
 
 
@@ -208,11 +196,7 @@ namespace PublicOrders
             //this.ProductCollection = new ObservableCollection<Product>(dc.Products);
             //this.RubricCollection = new ObservableCollection<Rubric>(dc.Rubrics);
             //this.InstructionCollection = new ObservableCollection<Instruction>(dc.Instructions);
-            this.TemplateCollection = new ObservableCollection<string>(new List<string> {
-                        "Комитет",
-                        "Свобода",
-                        "Форма 2"
-                    });
+            //this.TemplateCollection = 
 
             // Победители
             //wc = new WinnersDbContext();

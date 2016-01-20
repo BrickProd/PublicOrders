@@ -42,6 +42,9 @@ namespace PublicOrders.ViewModels
 
         public CollectionViewSource FilteredProducts { get; set; }
         public CollectionViewSource ProductsForDocumentGroped { get; set; }
+        public CollectionViewSource Templates { get; set; }
+        public CollectionViewSource Instructions { get; set; }
+
         public ObservableCollection<Product> ProductsForDocument { get; set; }
         public Product SelectedProduct { get; set; }
 
@@ -55,6 +58,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        
         //public ObservableCollection<Instruction> Instructions { get; set; }
         public Instruction SelectedInstruction { get; set; }
 
@@ -196,13 +200,15 @@ namespace PublicOrders.ViewModels
         {
             this.IsCreateInProcess = false;
 
-
             ProductsForDocument = new ObservableCollection<Product>();
 
+            Templates = new CollectionViewSource();
+            Templates.Source = DataService.Templates;
+
+            Instructions = new CollectionViewSource();
+            Instructions.Source = DataService.Instructions;
+
             FilteredProducts = new CollectionViewSource();
-
-
-
             FilteredProducts.Source = DataService.Products; /*mvm.ProductCollection;*/
             FilteredProducts.GroupDescriptions.Add(new PropertyGroupDescription("Rubric.Name"));
             FilteredProducts.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
@@ -215,13 +221,8 @@ namespace PublicOrders.ViewModels
             ProductsForDocumentGroped.SortDescriptions.Add(new SortDescription("Rubric.Name", ListSortDirection.Ascending));
             ProductsForDocumentGroped.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 
-            SelectedTemplate = mvm.TemplateCollection[0];
+            SelectedTemplate = DataService.Templates[0];
             FilteredProducts.View.Refresh();
-
-            if (SelectedTemplate == null)
-            {
-                SelectedTemplate = mvm.TemplateCollection[0];
-            }
 
             if (SelectedInstruction == null) {
                 SelectedInstruction = DataService.Instructions[0];

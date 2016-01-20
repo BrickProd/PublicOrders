@@ -63,6 +63,9 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        public CollectionViewSource Rubrics { get; set; }
+        public CollectionViewSource Templates { get; set; }
+
         private string _selectedTemplate;
         public string SelectedTemplate
         {
@@ -94,19 +97,14 @@ namespace PublicOrders.ViewModels
 
                         //    break;
                     }
-
-                    //yourImage.Freeze(); // -> to prevent error: "Must create DependencySource on same Thread as the DependencyObject"
                     SelectedTemplateImage = yourImage;
                 }
                 else
                 {
                     SelectedTemplateImage = null;
-                }
-
-                
+                } 
             }
         }
-
 
         public ImageSource SelectedTemplateImage {
             get
@@ -247,18 +245,21 @@ namespace PublicOrders.ViewModels
         {
             this.DocPath = "";
 
-            //Rubrics = new ObservableCollection<Rubric>(mvm.RubricCollection);
+            Rubrics = new CollectionViewSource();
+            Rubrics.Source = DataService.Rubrics;
+
+            Templates = new CollectionViewSource();
+            Templates.Source = DataService.Templates;
+
             if (SelectedRubric == null)
             {
-                SelectedRubric = DataService.Context.Rubrics.Find(1); /*mvm.RubricCollection.FirstOrDefault(m => m.Name == "--Без рубрики--");*/
-            }
-
-            //Templates = mvm.TemplateCollection;
-            if (SelectedTemplate == null)
-            {
-                SelectedTemplate = mvm.TemplateCollection[0];
+                SelectedRubric = DataService.Context.Rubrics.Find(1);
             }
         }
+
+
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
