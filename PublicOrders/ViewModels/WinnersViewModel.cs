@@ -19,6 +19,8 @@ namespace PublicOrders.ViewModels
 {
     public class WinnersViewModel : INotifyPropertyChanged
     {
+        public UserStatus CurentStatus { get; set; }
+
         private ObservableCollection<Winner> _winners;
         private Winner _selectedWinner;
 
@@ -37,6 +39,18 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public WinnerNote SelectedNote
+        {
+            get { return _selectedNote; }
+            set
+            {
+                _selectedNote = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<User> ClientUsers { get; set; }
 
         //private DelegateCommand _deleteWinnerCommand;
         //public ICommand DeleteWinnerCommand
@@ -91,6 +105,8 @@ namespace PublicOrders.ViewModels
         }
 
         private DelegateCommand _saveNoteCommand;
+        private WinnerNote _selectedNote;
+
         public ICommand SaveNoteCommand
         {
             get
@@ -135,12 +151,16 @@ namespace PublicOrders.ViewModels
 
             WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.Context.WinnerStatuses);
 
+            var isAdmin = DataService.CurrentUser.UserStatus.UserStatusId == 1;
+
             ToView = new CollectionViewSource();
             ToView.Source = DataService.Winners;
             ToView.Filter += (sender, args) =>
             {
                 Winner w = args.Item as Winner;
-                args.Accepted = w.WinnerStatus == DataService.Context.WinnerStatuses.Find(1);
+
+                var status = w.WinnerStatus == DataService.Context.WinnerStatuses.Find(1);
+                args.Accepted = isAdmin ?  status: w.User?.Login == DataService.CurrentUser.Login && status;
             };
 
             Favorites = new CollectionViewSource();
@@ -148,7 +168,9 @@ namespace PublicOrders.ViewModels
             Favorites.Filter += (sender, args) =>
             {
                 Winner w = args.Item as Winner;
-                args.Accepted = w.WinnerStatus == DataService.Context.WinnerStatuses.Find(2);
+
+                var status = w.WinnerStatus == DataService.Context.WinnerStatuses.Find(2);
+                args.Accepted = isAdmin ? status : w.User?.Login == DataService.CurrentUser.Login && status;
             };
 
             BlackList = new CollectionViewSource();
@@ -156,8 +178,14 @@ namespace PublicOrders.ViewModels
             BlackList.Filter += (sender, args) =>
             {
                 Winner w = args.Item as Winner;
-                args.Accepted = w.WinnerStatus == DataService.Context.WinnerStatuses.Find(3);
+
+                var status = w.WinnerStatus == DataService.Context.WinnerStatuses.Find(3);
+                args.Accepted = isAdmin ? status : w.User?.Login == DataService.CurrentUser.Login && status;
             };
+
+            ClientUsers = new ObservableCollection<User>(DataService.Context.Users.Where(m => m.UserStatusId == 2).ToList());
+
+            CurentStatus = DataService.CurrentUser.UserStatus;
         }
 
         public void RefreshList(object param)
@@ -180,30 +208,30 @@ namespace PublicOrders.ViewModels
 
         public void AddNote(object param)
         {
-            SelectedWinner.WinnerNotes.Add(new WinnerNote
+            var newNote = new WinnerNote
             {
                 CreateDateTime = DateTime.Now,
                 Name = "новая заметка",
                 UserName = Properties.Settings.Default.UserName,
-            });
+            };
+            
+
+            SelectedWinner.WinnerNotes.Add(newNote);
+            SelectedNote = newNote;
 
             DataService.Context.SaveChanges();
         }
 
         public void DeleteNote(object param)
         {
-            if (param == null) return; 
-            var note = param as WinnerNote;
-
-            DataService.Context.WinnerNotes.Remove(note);
+            DataService.Context.WinnerNotes.Remove(SelectedNote);
 
             DataService.Context.SaveChanges();
         }
         public void SaveNote(object param)
         {
-            var note = param as WinnerNote;
 
-            DataService.Context.Entry(note).State = EntityState.Modified;
+            DataService.Context.Entry(SelectedNote).State = EntityState.Modified;
 
             DataService.Context.SaveChanges();
         }

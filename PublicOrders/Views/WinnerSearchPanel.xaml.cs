@@ -17,6 +17,7 @@ using PublicOrders.ViewModels;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using PublicOrders.Data;
+using PublicOrders.Models;
 
 namespace PublicOrders.Views
 {
@@ -143,8 +144,20 @@ namespace PublicOrders.Views
             var vm = DataContext as WinnerSearchViewModel;
 
             //if(DataService.Context.Entry(vm.SelectedLot.Winner).)
-            vm.SelectedLot.Winner.WinnerStatus = DataService.Context.WinnerStatuses.Find(1);
+           //vm.SelectedLot.Winner.WinnerStatus = DataService.Context.WinnerStatuses.Find(1);
+            //var en = DataService.Context.Entry(vm.SelectedLot.Winner).CurrentValues;
+
+            ////var ww = en.GetValue<User>("User");
+            //var en2 = DataService.Context.Entry(vm.SelectedLot.Winner).OriginalValues;
+            //var s = en == en2;
+
             DataService.Context.SaveChanges();
+
+            //using (PublicOrdersContext c = new PublicOrdersContext())
+            //{
+            //    c.Winners.Attach(vm.SelectedLot.Winner);
+            //    c.SaveChanges();
+            //}
         }
 
         private void CustomersSide_MouseLeave(object sender, MouseEventArgs e)

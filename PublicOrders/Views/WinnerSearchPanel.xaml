@@ -68,7 +68,7 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="55"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
@@ -78,7 +78,7 @@
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Пользователь" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedLot.Winner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedLot.Winner.Name}"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
@@ -88,8 +88,11 @@
                 <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedLot.Winner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             </StackPanel>
 
-            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Name" 
+            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" telerik:StyleManager.Theme="Windows8Touch"
                                  ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
+            
+            <!--<telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Login" telerik:StyleManager.Theme="Windows8Touch"
+                                 ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>-->
             <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}"  DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId" FontSize="18">
                 
             </ComboBox>-->

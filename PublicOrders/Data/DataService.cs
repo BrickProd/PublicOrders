@@ -20,13 +20,16 @@ namespace PublicOrders.Data
             get { return context; }
         }
 
+        public static User CurrentUser { get; set; }
+
+
         public static void UpdateContext()
         {
             var context = ((IObjectContextAdapter)Context).ObjectContext;
 
             Context.Winners.ToList().ForEach(m =>
             {
-                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.StoreWins, m);
+                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
             });
         }
 

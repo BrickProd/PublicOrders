@@ -59,18 +59,20 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
+                <RowDefinition Height="55"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="55"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="7" Style="{StaticResource SlideDownEButtonStyle}"
+            <Button Grid.Row="8" Style="{StaticResource SlideDownEButtonStyle}"
 				x:Name="CloseWinnerInfoPanel" Command="{Binding SaveProductCommand}" Click="CloseWinnerInfoPanel_Click"
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Пользователь" Grid.Column="0" Grid.Row="5" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Рейтинг" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedWinner.Name}"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
@@ -79,14 +81,28 @@
                 <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
                 <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedWinner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             </StackPanel>
-            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" 
+            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" telerik:StyleManager.Theme="Windows8Touch"
                                  ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
+
+            <telerik:RadComboBox Grid.Column="1" Grid.Row="5" Margin="10" SelectedItem="{Binding SelectedWinner.User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Login" telerik:StyleManager.Theme="Windows8Touch"
+                                 ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках">
+                <telerik:RadComboBox.Style>
+                    <Style TargetType="telerik:RadComboBox">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurentStatus.UserStatusId}" Value="2">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </telerik:RadComboBox.Style>
+            </telerik:RadComboBox>
+
             <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedWinner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId">
 
             </ComboBox>-->
             <telerik:RadRating Grid.Column="1" Grid.Row="4" Margin="10" NumberOfItemsToGenerate="5" Value="{Binding SelectedWinner.Rating, Mode=TwoWay}" VerticalAlignment="Center"></telerik:RadRating>
 
-            <TabControl Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
+            <TabControl Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="3">
                 <TabItem Header="Заметки" Style="{StaticResource PanelContentStyleMini}">
                     <Grid>
                         <Grid>
@@ -95,12 +111,22 @@
                                 <RowDefinition Height="29*"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Добавить" Command="{Binding AddNoteCommand}"></Button>
-                                <Button Content="Удалить" Command="{Binding DeleteNoteCommand}" CommandParameter="{Binding ElementName=NotesList, Path=SelectedItem}"></Button>
+                                <Button Content="Добавить" Command="{Binding AddNoteCommand}" Style="{StaticResource MiniButtonStyle}" Margin="10 0" Click="ButtonBase_OnClick"></Button>
+                                <Button Content="Удалить" Command="{Binding DeleteNoteCommand}" Margin="10 0">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource MiniButtonStyle}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurentStatus.UserStatusId}" Value="2">
+                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
                             </StackPanel>
                             <ScrollViewer Grid.Row="1">
                                 <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                    <ListView ItemsSource="{Binding SelectedWinner.WinnerNotes}" ItemContainerStyle="{StaticResource ListBoxItemStyle}" x:Name="NotesList" Height="206" BorderThickness="0" SelectionMode="Single" MouseDoubleClick="Control_OnMouseDoubleClick">
+                                    <ListView ItemsSource="{Binding SelectedWinner.WinnerNotes}" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedNote}" x:Name="NotesList" Height="136" BorderThickness="0" SelectionMode="Single" MouseDoubleClick="Control_OnMouseDoubleClick">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <Grid>
@@ -128,10 +154,31 @@
                                 <RowDefinition Height="29*"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Назад" Click="ButtonBase_OnClick" Command="{Binding SaveNoteCommand}" CommandParameter="{Binding ElementName=NotesList, Path=SelectedItem}"></Button>
-                                <TextBox Text="{Binding ElementName=NotesList, Path=SelectedItem.Name}" HorizontalAlignment="Center" Margin="20 0" BorderThickness="0 0 0 0.5"></TextBox>
+                                <Button Content="Назад" Click="ButtonBackBase_OnClick" Command="{Binding SaveNoteCommand}" Style="{StaticResource MiniButtonStyle}"></Button>
+                                <TextBox Text="{Binding SelectedNote.Name}" HorizontalAlignment="Center" Margin="20 0" BorderThickness="0 0 0 0.5" Width="384"></TextBox>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Margin="0,5,0,0" Text="{Binding ElementName=NotesList, Path=SelectedItem.Text}" TextWrapping="Wrap" AcceptsReturn="True"/>
+                            <TextBox Grid.Row="1" Margin="0,5,0,0" Text="{Binding SelectedNote.Text}" TextWrapping="Wrap" AcceptsReturn="True">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="IsReadOnly" Value="True"></Setter>
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition  Binding="{Binding CurentStatus.UserStatusId}" Value="2"></Condition>
+                                                    <Condition  Binding="{Binding SelectedNote.Text}" Value="текст заметки"></Condition>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsReadOnly" Value="False"></Setter>
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition  Binding="{Binding CurentStatus.UserStatusId}" Value="1"></Condition>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsReadOnly" Value="False"></Setter>
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
                         </Grid>
                     </Grid>
                 </TabItem>
@@ -145,7 +192,7 @@
                     </Grid>
                 </TabItem>-->
             </TabControl>
-            <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
+            <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <!--<Hyperlink NavigateUri="{Binding SelectedWinner.Lot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте
                 </Hyperlink>-->

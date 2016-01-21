@@ -133,7 +133,15 @@ namespace PublicOrders
 
                 //var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
                 //mvm.dc.SaveChanges();
-                DataService.Context.SaveChanges();
+                try
+                {
+                    DataService.Context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    
+                }
+                
             }
         }
 

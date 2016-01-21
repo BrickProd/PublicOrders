@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -79,9 +80,15 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
+            DataService.CurrentUser = DataService.Context.Users.FirstOrDefault(m => m.Login == UserStr);
+            //if(DataService.CurrentUser.UserStatus.UserStatusId !=1)
+            //    DataService.Winners = new ObservableCollection<Winner>(DataService.Context.Winners.Where(m => m.User.Login == DataService.CurrentUser.Login));
+
             MainWindow mv = new MainWindow();
 
             var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+
+
             mvm.currentUserStatus = currentUser.UserStatus;
             mv.DataContext = mvm;
             mv.Show();

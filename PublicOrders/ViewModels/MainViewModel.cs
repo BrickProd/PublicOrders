@@ -70,6 +70,7 @@ namespace PublicOrders
         
         #endregion
 
+            
 
         #region Документы
         //public DocumentDbContext dc { get; set; }

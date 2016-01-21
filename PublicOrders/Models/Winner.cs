@@ -436,13 +436,14 @@ namespace PublicOrders.Models
             }
         }
 
-        [Index, Required]
+        [Index, Required, Column(TypeName = "datetime2")]
         public DateTime CreateDateTime { get; set; }
 
         [Column(TypeName = "varchar"), MaxLength(120)]
         [Index]
         public string UserName { get; set; }
 
+        [Column(TypeName = "datetime2")]
         public DateTime AlertDateTime
         {
             get { return _alertDateTime; }
