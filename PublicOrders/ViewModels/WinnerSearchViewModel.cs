@@ -128,37 +128,9 @@ namespace PublicOrders.ViewModels
         #endregion
 
         #region Коллекции
-        //private ObservableCollection<Customer> _customers;
-        //public ObservableCollection<Customer> Customers
-        //{
-        //    get
-        //    {
-        //        return _customers;
-        //    }
-        //    set
-        //    {
-        //        _customers = value;
-        //        OnPropertyChanged("Customers");
-        //    }
-        //}
-
         public CollectionViewSource Customers { get; set; }
         public CollectionViewSource Lots { get; set; }
-
-        //private ObservableCollection<Lot> _lots;
-        //public ObservableCollection<Lot> Lots
-        //{
-        //    get
-        //    {
-        //        return _lots;
-        //    }
-        //    set
-        //    {
-        //        _lots = value;
-        //        OnPropertyChanged("Lots");
-        //    }
-        //}
-
+        public ObservableCollection<User> ClientUsers { get; set; }
         public ObservableCollection<WinnerStatus> WinnerStatuses
         {
             get { return _winnerStatuses; }
@@ -168,7 +140,6 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged();
             }
         }
-
         #endregion
 
         #region Команды
@@ -190,8 +161,6 @@ namespace PublicOrders.ViewModels
                 return customersSearchCommand;
             }
         }
-
-
         public ICommand WinnerLotsSearchCommand
         {
             get
@@ -203,7 +172,6 @@ namespace PublicOrders.ViewModels
                 return winnerLotsSearchCommand;
             }
         }
-
         public ICommand WinnerLotsSearchStopCommand
         {
             get
@@ -215,7 +183,6 @@ namespace PublicOrders.ViewModels
                 return winnerLotsSearchStopCommand;
             }
         }
-
         public ICommand WinnerLotsSearchPausePlayCommand
         {
             get
@@ -227,7 +194,6 @@ namespace PublicOrders.ViewModels
                 return winnerLotsSearchPausePlayCommand;
             }
         }
-
         public ICommand CreateReportCommand
         {
             get
@@ -239,7 +205,6 @@ namespace PublicOrders.ViewModels
                 return createReportCommand;
             }
         }
-
         public ICommand CreateReportStopCommand
         {
             get
@@ -591,12 +556,6 @@ namespace PublicOrders.ViewModels
         public WinnerSearchViewModel()
         {
             IsWinnerLotsSearchingPause = false;
-            //Winners = new ObservableCollection<object>(база);
-            //Lots = new ObservableCollection<Lot>();
-            //Lots = new ObservableCollection<Lot>(new List<Lot>()
-            //{
-            //    new Lot() { Name = "LotName", ContractNumber = "394030", DocumentPrice = 10, LotPrice=234, Winner = new Winner() {Name = "WinnerName", Address = "Address", Email = "mail", Phone = "phone", Vatin = "inn"}}
-            //});
 
             Lots = new CollectionViewSource();
             Lots.Source = DataService.Lots;
@@ -604,11 +563,10 @@ namespace PublicOrders.ViewModels
             Customers = new CollectionViewSource();
             Customers.Source = DataService.Customers;
 
-            //Customers = new ObservableCollection<Customer>();
+            ClientUsers = new ObservableCollection<User>(DataService.Context.Users.Where(m => m.UserStatusId == 2).ToList());
 
             WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.Context.WinnerStatuses);
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

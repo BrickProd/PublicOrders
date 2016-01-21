@@ -23,6 +23,14 @@ namespace PublicOrders.Models
         public int? UserStatusId { get; set; }
         public virtual UserStatus UserStatus { get; set; }
 
+
+        private ObservableCollection<Winner> _winners;
+        public virtual ObservableCollection<Winner> Winners
+        {
+            get { return _winners ?? (_winners = new ObservableCollection<Winner>(new HashSet<Winner>())); }
+            set { _winners = value; }
+        }
+
         public User()
         {
 

@@ -124,20 +124,6 @@ namespace PublicOrders.Models
         [Key]
         public long OrderId { get; set; }
 
-        /*[Column(TypeName = "varchar"), MaxLength(400), Required]
-        [Index]
-        public string Name { get; set; }*/
-
-        /*[Index]
-        public long OrderPrice { get; set; }*/
-
-        /*[ForeignKey("OrderPriceType")]
-        public int? OrderPriceTypeId { get; set; }
-        virtual public OrderPriceType OrderPriceType { get; set; }*/
-
-        /*[Index]
-        public long MaxLotPrice { get; set; }*/
-
         [ForeignKey("LawType"), Required]
         public int LawTypeId { get; set; }
         virtual public LawType LawType { get; set; }
@@ -180,22 +166,7 @@ namespace PublicOrders.Models
         }
     }
 
-    //
-    /*public class OrderPriceType
-    {
-        [Key]
-        public int OrderPriceTypeId { get; set; }
-
-        [Column(TypeName = "varchar"), MaxLength(50)]
-        [Index]
-        public string Name { get; set; }
-
-        public OrderPriceType()
-        {
-
-        }
-    }*/
-
+    
     public class LotPriceType
     {
         [Key]
@@ -342,6 +313,13 @@ namespace PublicOrders.Models
         public short? WinnerStatusId { get; set; }
         virtual public WinnerStatus WinnerStatus { get; set; }
 
+
+        [ForeignKey("User")]
+        public int? UserId { get; set; }
+        virtual public User User { get; set; }
+
+
+
         public virtual ObservableCollection<WinnerNote> WinnerNotes
         {
             get { return _winnerNotes ?? (_winnerNotes = new ObservableCollection<WinnerNote>(new HashSet<WinnerNote>())); }
@@ -427,6 +405,7 @@ namespace PublicOrders.Models
     {
         private string _name;
         private string _text;
+        private DateTime _alertDateTime;
 
         [Key]
         public short WinnerNoteId { get; set; }
@@ -463,6 +442,13 @@ namespace PublicOrders.Models
         [Column(TypeName = "varchar"), MaxLength(120)]
         [Index]
         public string UserName { get; set; }
+
+        public DateTime AlertDateTime
+        {
+            get { return _alertDateTime; }
+            set { _alertDateTime = value;
+                OnPropertyChanged(); }
+        }
 
         public WinnerNote()
         {

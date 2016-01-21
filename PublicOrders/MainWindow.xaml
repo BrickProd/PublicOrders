@@ -4,6 +4,7 @@
 	x:Class="PublicOrders.MainWindow"
 	x:Name="Window"
 	xmlns:local="clr-namespace:PublicOrders" 
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
 	Title="MainWindow"
 	Width="800" Height="600" WindowState="Maximized" MinHeight="700" MinWidth="800">
 

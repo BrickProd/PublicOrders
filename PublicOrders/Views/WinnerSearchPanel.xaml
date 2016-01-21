@@ -4,16 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PublicOrders.Views"
-             xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
-    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-    x:Class="PublicOrders.Views.WinnerSearchPanel"
+             xmlns:viewModels="clr-namespace:PublicOrders.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             x:Class="PublicOrders.Views.WinnerSearchPanel"
              mc:Ignorable="d" 
+             xmlns:converters ="clr-namespace:PublicOrders.Converters"         
              d:DesignHeight="400" d:DesignWidth="1200" Padding="20 0 20 0">
     <UserControl.DataContext>
-        <ViewModels:WinnerSearchViewModel/>
+        <viewModels:WinnerSearchViewModel/>
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <converters:IndexConverter x:Key="IndexConverter" />
+    </UserControl.Resources>
     <Grid Background="Transparent">
-
         <!--ПАНЕЛЬ ЗАГРУЗКИ-->
         <Grid x:Name="CreateReportBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" >
             <Grid.Style>
@@ -73,7 +78,7 @@
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="Пользователь" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedLot.Winner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedLot.Winner.Name}"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
@@ -82,9 +87,12 @@
                 <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
                 <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedLot.Winner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
             </StackPanel>
-            <ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}"  DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId" FontSize="18">
+
+            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Name" 
+                                 ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
+            <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}"  DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId" FontSize="18">
                 
-            </ComboBox>
+            </ComboBox>-->
             <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
                 <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
                     <Grid>
@@ -317,9 +325,7 @@
                                     </Button>
                                 </Border>
                                 <ListView x:Name="CustomersListBox" Margin="0" ItemsSource="{Binding Customers.View}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
-							    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                          MouseLeave="CustomersSide_MouseLeave"
-							    BorderBrush="LightGray">
+							    ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseLeave="CustomersSide_MouseLeave" BorderBrush="LightGray">
                                     <ListView.Style>
                                         <Style TargetType="ListView">
                                             <Style.Triggers>
@@ -344,10 +350,17 @@
                                     </ListView.Style>
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding Vatin}" FontSize="14" />
-                                            </StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="40"></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding Vatin}" FontSize="14" />
+                                                </StackPanel>
+                                            </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                     <ListView.ItemContainerStyle>
@@ -475,16 +488,24 @@
                                     </ListView.ItemContainerStyle>
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <CheckBox IsChecked="{Binding Winner.IsChoosen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5"></CheckBox>
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Winner.Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                    <TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="Wrap"/>
-                                                    <TextBlock Text="{Binding Winner.Email}" FontSize="14"/>
-                                                    <TextBlock Text="{Binding Winner.Phone}" FontSize="14"/>
-                                                    <telerik:RadRating NumberOfItemsToGenerate="5" Value="{Binding Winner.Rating}" IsReadOnly="True"></telerik:RadRating>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="40"></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
+                                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                    <CheckBox IsChecked="{Binding Winner.IsChoosen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5"></CheckBox>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Winner.Name}" FontSize="16" TextWrapping="Wrap"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="Wrap"/>
+                                                        <TextBlock Text="{Binding Winner.Email}" FontSize="14"/>
+                                                        <TextBlock Text="{Binding Winner.Phone}" FontSize="14"/>
+                                                        <telerik:RadRating NumberOfItemsToGenerate="5" Value="{Binding Winner.Rating}" IsReadOnly="True"></telerik:RadRating>
+                                                    </StackPanel>
                                                 </StackPanel>
-                                            </StackPanel>
+                                            </Grid>
+                                            
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
