@@ -22,12 +22,31 @@ namespace PublicOrders.Data
 
         public static User CurrentUser { get; set; }
 
-
-        public static void UpdateContext()
+        public static void UpdateWinnerContext()
         {
             var context = ((IObjectContextAdapter)Context).ObjectContext;
 
             Context.Winners.ToList().ForEach(m =>
+            {
+                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
+            });
+        }
+
+        public static void UpdateNotesContext()
+        {
+            var context = ((IObjectContextAdapter)Context).ObjectContext;
+
+            Context.WinnerNotes.ToList().ForEach(m =>
+            {
+                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
+            });
+        }
+
+        public static void UpdateProductsContext()
+        {
+            var context = ((IObjectContextAdapter)Context).ObjectContext;
+
+            Context.Products.ToList().ForEach(m =>
             {
                 context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
             });

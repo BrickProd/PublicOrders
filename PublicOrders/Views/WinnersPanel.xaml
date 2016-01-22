@@ -59,9 +59,9 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="55"/>
+                <RowDefinition Height="60"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="55"/>
+                <RowDefinition Height="60"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="50"/>
@@ -124,60 +124,45 @@
                                     </Button.Style>
                                 </Button>
                             </StackPanel>
-                            <ScrollViewer Grid.Row="1">
-                                <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                    <ListView ItemsSource="{Binding SelectedWinner.WinnerNotes}" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedNote}" x:Name="NotesList" Height="136" BorderThickness="0" SelectionMode="Single" MouseDoubleClick="Control_OnMouseDoubleClick">
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition></RowDefinition>
-                                                        <RowDefinition></RowDefinition>
-                                                    </Grid.RowDefinitions>
-                                                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
-                                                    <StackPanel Orientation="Horizontal" Grid.Row="1">
-                                                        <TextBlock Text="{Binding CreateDateTime}" Margin="5 0" FontSize="10" FontStyle="Italic"></TextBlock>
-                                                        <TextBlock Text="{Binding UserName}" Margin="5 0" FontSize="10" FontStyle="Italic"></TextBlock>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
-                                </StackPanel>
-                            </ScrollViewer>
+                            <ListView Grid.Row="1" ItemsSource="{Binding SelectedWinner.WinnerNotes}" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedNote}" x:Name="NotesList" BorderThickness="0" SelectionMode="Single" MouseDoubleClick="Control_OnMouseDoubleClick">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
+                                            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                                <TextBlock Text="{Binding CreateDateTime}" Margin="5 0" FontSize="10" FontStyle="Italic"></TextBlock>
+                                                <TextBlock Text="{Binding UserName}" Margin="5 0" FontSize="10" FontStyle="Italic"></TextBlock>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                         </Grid>
 
                         <!--текст заметки-->
                         <Grid Background="White" x:Name="NoteTextGrid" Visibility="Collapsed">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
+                                <RowDefinition Height="40"/>
                                 <RowDefinition Height="29*"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Назад" Click="ButtonBackBase_OnClick" Command="{Binding SaveNoteCommand}" Style="{StaticResource MiniButtonStyle}"></Button>
                                 <TextBox Text="{Binding SelectedNote.Name}" HorizontalAlignment="Center" Margin="20 0" BorderThickness="0 0 0 0.5" Width="384"></TextBox>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Margin="0,5,0,0" Text="{Binding SelectedNote.Text}" TextWrapping="Wrap" AcceptsReturn="True">
-                                <TextBox.Style>
-                                    <Style TargetType="TextBox">
-                                        <Setter Property="IsReadOnly" Value="True"></Setter>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition  Binding="{Binding CurentStatus.UserStatusId}" Value="2"></Condition>
-                                                    <Condition  Binding="{Binding SelectedNote.Text}" Value="текст заметки"></Condition>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="IsReadOnly" Value="False"></Setter>
-                                            </MultiDataTrigger>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition  Binding="{Binding CurentStatus.UserStatusId}" Value="1"></Condition>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="IsReadOnly" Value="False"></Setter>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBox.Style>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                <TextBlock Text="Напоминание" VerticalAlignment="Center" FontSize="18"></TextBlock>
+                                <ToggleButton Style="{StaticResource AnimatedSwitch}" IsChecked="{Binding SelectedNote.AlertOn}" Width="80" Height="30" Margin="10 0"></ToggleButton>
+                                <telerik:RadDateTimePicker telerik:StyleManager.Theme="Windows8Touch" SelectedValue="{Binding SelectedNote.AlertDateTime}" DateTimeWatermarkContent="Время напоминания" Margin="10 0" Culture="ru">
+                                    
+                                </telerik:RadDateTimePicker>
+                            </StackPanel>
+                            <TextBox Name="NoteTextTextBox" Grid.Row="2" Margin="0,5,0,0" Text="{Binding SelectedNote.Text}" TextWrapping="Wrap" AcceptsReturn="True">
+                                
                             </TextBox>
                         </Grid>
                     </Grid>
@@ -224,6 +209,6 @@
             </TabItem>
 
         </TabControl>
-        <Button Content="обновить" Width="85" Margin="0,10,10,0" HorizontalAlignment="Right" Height="26" VerticalAlignment="Top" Command="{Binding RefreshListCommand}"/>
+        <Button Content="обновить" Width="85" Margin="0,10,10,0" HorizontalAlignment="Right" Height="26" VerticalAlignment="Top" Command="{Binding RefreshListCommand}" Style="{StaticResource MiniButtonStyle}"/>
     </Grid>
 </UserControl>

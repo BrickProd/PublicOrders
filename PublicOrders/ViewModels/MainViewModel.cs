@@ -6,8 +6,12 @@ using PublicOrders.Processors.Main;
 using PublicOrders.Processors.Documents.Main;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using PublicOrders.Data;
 using PublicOrders.Processors.Internet;
+using Telerik.Windows.Controls;
 
 namespace PublicOrders
 {
@@ -18,6 +22,13 @@ namespace PublicOrders
                 return this.currentUserStatus.StatusName.ToLower() == "admin";
             }
         }
+
+
+        private Timer _timer;
+
+
+
+
 
         // Глобальные коллекции
         #region Глобальные коллекции
@@ -203,6 +214,49 @@ namespace PublicOrders
             //wc = new WinnersDbContext();
 
             CheckProductsRepetition();
+
+
+
+
+            TimerCallback method = new TimerCallback(CheckAlert);
+            this._timer = new Timer(method);
+            _timer.Change(0, 60000);
+		}
+
+        void CheckAlert(object param)
+        {
+            using (PublicOrdersContext context = new PublicOrdersContext())
+            {
+                if (DataService.CurrentUser != null)
+                {
+                    var notes = context.WinnerNotes.Where(m=>m.UserName == DataService.CurrentUser.Login)
+                        .Where(m=>m.AlertOn)
+                        .Where(
+                            m =>
+                                m.AlertDateTime.Year == DateTime.Now.Year &&
+                                 m.AlertDateTime.Month == DateTime.Now.Month &&
+                                 m.AlertDateTime.Day == DateTime.Now.Day &&
+                                 m.AlertDateTime.Hour == DateTime.Now.Hour &&
+                                 m.AlertDateTime.Minute == DateTime.Now.Minute).ToList();
+
+
+                    RadDesktopAlertManager manager = new RadDesktopAlertManager();
+                    notes.ForEach(m =>
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            var alert = new RadDesktopAlert();
+                            alert.Header = m.Name;
+                            alert.Content = m.Text;
+                            alert.CanAutoClose = false;
+
+                            manager.ShowAlert(alert);
+                        }));
+                        
+                    });
+                }
+                
+            }   
         }
 
         public void RefreshRubrics() {

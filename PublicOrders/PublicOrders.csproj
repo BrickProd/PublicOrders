@@ -78,6 +78,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\Telerik.Windows.Controls.Input.dll</HintPath>
     </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2015.3.1104.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
     <Reference Include="Telerik.Windows.Data, Version=2015.3.1104.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />

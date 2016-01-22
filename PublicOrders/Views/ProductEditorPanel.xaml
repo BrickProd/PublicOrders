@@ -362,5 +362,6 @@
                 </TabItem>
             </TabControl>
         </Border>
+        <Button Content="обновить" Width="85" Margin="0,10,10,0" HorizontalAlignment="Right" FontSize="18" Height="26" VerticalAlignment="Top" Command="{Binding RefreshListCommand}" Style="{StaticResource MiniButtonStyle}"/>
     </Grid>
 </UserControl>

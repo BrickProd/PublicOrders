@@ -85,38 +85,43 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.MarginProperty, anim);
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
-            //DataService.WinnersDbContextSaveChanges();
-
             var vm = DataContext as WinnersViewModel;
             vm.ToView.View.Refresh();
             vm.Favorites.View.Refresh();
             vm.BlackList.View.Refresh();
 
             DataService.Context.SaveChanges();
+
+            ButtonBackBase_OnClick(null, e);
         }
 
+        //даблклик на заметке
         private void Control_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            
-                this.NoteTextGrid.Visibility = Visibility.Visible;
-                ThicknessAnimation anim = new ThicknessAnimation
-                {
-                    From = new Thickness(50, 0, -50, 0),
-                    To = new Thickness(0, 0, 0, 0),
-                    Duration = TimeSpan.FromSeconds(0.3),
-                    EasingFunction = new CircleEase()
-                };
+            this.NoteTextGrid.Visibility = Visibility.Visible;
+            ThicknessAnimation anim = new ThicknessAnimation
+            {
+                From = new Thickness(50, 0, -50, 0),
+                To = new Thickness(0, 0, 0, 0),
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
 
-                DoubleAnimation anim2 = new DoubleAnimation
-                {
-                    From = 0,
-                    To = 1,
-                    Duration = TimeSpan.FromSeconds(0.3),
-                    EasingFunction = new CircleEase()
-                };
+            DoubleAnimation anim2 = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new CircleEase()
+            };
 
-                this.NoteTextGrid.BeginAnimation(FrameworkElement.MarginProperty, anim);
-                this.NoteTextGrid.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+            this.NoteTextGrid.BeginAnimation(FrameworkElement.MarginProperty, anim);
+            this.NoteTextGrid.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+
+            if (DataService.CurrentUser.UserStatus.UserStatusId != 1 && !string.IsNullOrEmpty(this.NoteTextTextBox.Text))
+            {
+                this.NoteTextTextBox.IsReadOnly = true;
+            }
             
         }
 
@@ -148,6 +153,7 @@ namespace PublicOrders.Views
             this.NoteTextGrid.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
         }
 
+        //добавить заметку
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             this.NoteTextGrid.Visibility = Visibility.Visible;
@@ -169,6 +175,8 @@ namespace PublicOrders.Views
 
             this.NoteTextGrid.BeginAnimation(FrameworkElement.MarginProperty, anim);
             this.NoteTextGrid.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
+
+            this.NoteTextTextBox.IsReadOnly = false;
         }
     }
 }

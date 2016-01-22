@@ -290,7 +290,26 @@ namespace PublicOrders.ViewModels
                 return updateProductCommand;
             }
         }
+
+        private DelegateCommand _refreshListCommand;
+        public ICommand RefreshListCommand
+        {
+            get
+            {
+                if (_refreshListCommand == null)
+                {
+                    _refreshListCommand = new DelegateCommand(RefreshList);
+                }
+                return _refreshListCommand;
+            }
+        }
         #endregion
+
+        public void RefreshList(object param)
+        {
+            DataService.UpdateProductsContext();
+            this.Products.View.Refresh();
+        }
 
         public ProductEditorViewModel()
         {

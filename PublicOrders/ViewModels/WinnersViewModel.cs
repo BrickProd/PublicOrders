@@ -190,8 +190,8 @@ namespace PublicOrders.ViewModels
 
         public void RefreshList(object param)
         {
-            DataService.UpdateContext();
-
+            DataService.UpdateWinnerContext();
+            DataService.UpdateNotesContext();
             //Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
             //WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
             //Winners = DataService.Winners;
@@ -212,9 +212,9 @@ namespace PublicOrders.ViewModels
             {
                 CreateDateTime = DateTime.Now,
                 Name = "новая заметка",
+                AlertDateTime = DateTime.Now,
                 UserName = Properties.Settings.Default.UserName,
             };
-            
 
             SelectedWinner.WinnerNotes.Add(newNote);
             SelectedNote = newNote;
@@ -225,17 +225,14 @@ namespace PublicOrders.ViewModels
         public void DeleteNote(object param)
         {
             DataService.Context.WinnerNotes.Remove(SelectedNote);
-
             DataService.Context.SaveChanges();
         }
         public void SaveNote(object param)
         {
 
             DataService.Context.Entry(SelectedNote).State = EntityState.Modified;
-
             DataService.Context.SaveChanges();
         }
-
 
 
 

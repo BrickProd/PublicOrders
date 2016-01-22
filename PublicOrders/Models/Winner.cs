@@ -406,6 +406,7 @@ namespace PublicOrders.Models
         private string _name;
         private string _text;
         private DateTime _alertDateTime;
+        private bool _alertOn;
 
         [Key]
         public short WinnerNoteId { get; set; }
@@ -449,6 +450,16 @@ namespace PublicOrders.Models
             get { return _alertDateTime; }
             set { _alertDateTime = value;
                 OnPropertyChanged(); }
+        }
+
+        public bool AlertOn
+        {
+            get { return _alertOn; }
+            set
+            {
+                _alertOn = value;
+                OnPropertyChanged();
+            }
         }
 
         public WinnerNote()
