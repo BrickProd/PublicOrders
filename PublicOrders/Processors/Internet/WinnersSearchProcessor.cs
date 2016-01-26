@@ -80,7 +80,7 @@ namespace PublicOrders.Processors.Internet
                 string contractNumber = contractNode.InnerText.Substring(contractNode.InnerText.IndexOf("?reestrNumber=") + 14, contractNode.InnerText.Length - (contractNode.InnerText.IndexOf("?reestrNumber=") + 14));
                 string contractLink = @"http://new.zakupki.gov.ru" + contractNode.InnerText;
 
-                lot = DataService.Lots.ToList().FirstOrDefault(m => (m.ContractNumber == contractNumber));
+                lot = DataService.Lots.FirstOrDefault(m => (m.ContractNumber == contractNumber));
                 if (lot != null) {
                     //!!! Проверка активности (ТЕСТ)
                     /*WinnerDatesSearched_delegete winnerDatesSearched_delegete = new WinnerDatesSearched_delegete(WinnerDatesSearched_proc);
@@ -247,7 +247,7 @@ namespace PublicOrders.Processors.Internet
                     lotPriceType = new LotPriceType();
                     lotPriceType.Name = priceTypeStr;
                     DataService.Context.LotPriceTypes.Add(lotPriceType);
-                    DataService.Context.SaveChanges();
+                    //DataService.Context.SaveChanges();
                 }
                 lot.LotPriceType = lotPriceType;
                 #endregion
@@ -357,7 +357,7 @@ namespace PublicOrders.Processors.Internet
                     orderType = new OrderType();
                     orderType.Name = orderTypeStr;
                     DataService.Context.OrderTypes.Add(orderType);
-                    DataService.Context.SaveChanges();
+                    //DataService.Context.SaveChanges();
                 }
                 order.OrderType = orderType;
 

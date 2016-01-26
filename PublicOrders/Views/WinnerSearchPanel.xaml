@@ -169,7 +169,7 @@
 
                                     <telerik:RadCartesianChart.EmptyContentTemplate>
                                         <DataTemplate>
-                                            <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." />
+                                            <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." telerik:StyleManager.Theme="Windows8Touch"/>
                                         </DataTemplate>
                                     </telerik:RadCartesianChart.EmptyContentTemplate>
                                     <telerik:RadCartesianChart.Series>
@@ -553,6 +553,7 @@
                                                                 <TextBlock Text="{Binding Winner.Email}" FontSize="14"/>
                                                                 <TextBlock Text="{Binding Winner.Phone}" FontSize="14"/>
                                                                 <telerik:RadRating NumberOfItemsToGenerate="5" Value="{Binding Winner.Rating}" IsReadOnly="True"></telerik:RadRating>
+                                                                <TextBlock Text="{Binding Winner.WinnerStatus.Name}" FontSize="14" FontWeight="Light"/>
                                                             </StackPanel>
                                                         </StackPanel>
                                                     </Grid>

@@ -524,7 +524,15 @@ namespace PublicOrders.ViewModels
             if (SelectedProduct != null)
             {
                 SelectedProduct.ModifiedDateTime = DateTime.Now;
-                DataService.Context.SaveChanges();
+
+                try
+                {
+                    DataService.Context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка! Изменения не сохранены.\nДождитесь окончания загрузки продуктов.");
+                }
             }
             
             mvm.CheckProductsRepetition();

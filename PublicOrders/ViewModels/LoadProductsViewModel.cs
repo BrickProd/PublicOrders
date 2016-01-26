@@ -27,7 +27,7 @@ namespace PublicOrders.ViewModels
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
         private string _docPath;
-        private bool _isLoadInProcess;
+        private bool _isBusy;
         private ImageSource _selectedTemplateImage;
 
         public string DocPath
@@ -39,13 +39,13 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("DocPath");
             }
         }
-        public bool IsLoadInProcess
+        public bool IsBusy
         {
-            get { return _isLoadInProcess; }
+            get { return _isBusy; }
             set
             {
-                _isLoadInProcess = value;
-                OnPropertyChanged("IsLoadInProcess");
+                _isBusy = value;
+                OnPropertyChanged();
             }
         }
 
@@ -162,7 +162,7 @@ namespace PublicOrders.ViewModels
                 return;
             }
 
-            IsLoadInProcess = true;
+            IsBusy = true;
 
             if ((mvm.lpProcessor != null) && (mvm.lpProcessor.isWorking()))
             {
@@ -238,7 +238,7 @@ namespace PublicOrders.ViewModels
                 default:
                     return;
             }
-            this.IsLoadInProcess = false;
+            IsBusy = false;
         }
 
         public LoadProductsViewModel()

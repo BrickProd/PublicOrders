@@ -189,7 +189,7 @@ namespace PublicOrders.ViewModels
             //Winners = new ObservableCollection<Winner>(new List<Winner>() { new Winner() {Name = "Jnbbui", WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1), Rating = 2} });
             //Winners = DataService.Winners;
 
-            WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.Context.WinnerStatuses);
+            WinnerStatuses = DataService.WinnerStatuses;
 
             var isAdmin = DataService.CurrentUser.UserStatus.UserStatusId == 1;
 
@@ -223,7 +223,7 @@ namespace PublicOrders.ViewModels
                 args.Accepted = isAdmin ? status : w.User?.Login == DataService.CurrentUser.Login && status;
             };
 
-            ClientUsers = new ObservableCollection<User>(DataService.Context.Users.Where(m => m.UserStatusId == 2).ToList());
+            ClientUsers = DataService.ClientUsers;
 
             CurentStatus = DataService.CurrentUser.UserStatus;
 
@@ -243,7 +243,7 @@ namespace PublicOrders.ViewModels
         public void RefreshList(object param)
         {
             DataService.UpdateWinnerContext();
-            DataService.UpdateNotesContext();
+            //DataService.UpdateNotesContext();
 
             ToView.View.Refresh();
             Favorites.View.Refresh();

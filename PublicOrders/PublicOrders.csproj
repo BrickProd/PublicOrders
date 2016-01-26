@@ -96,6 +96,8 @@
     <Compile Include="Converters\AxisLabelConverter.cs" />
     <Compile Include="Converters\IndexConverter.cs" />
     <Compile Include="Data\DataService.cs" />
+    <Compile Include="Data\ProductsRepository.cs" />
+    <Compile Include="Data\WinnersRepository.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Models\PublicOrdersContext.cs" />

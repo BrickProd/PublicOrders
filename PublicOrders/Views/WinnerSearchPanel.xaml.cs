@@ -144,14 +144,24 @@ namespace PublicOrders.Views
             var vm = DataContext as WinnerSearchViewModel;
 
             //if(DataService.Context.Entry(vm.SelectedLot.Winner).)
-           //vm.SelectedLot.Winner.WinnerStatus = DataService.Context.WinnerStatuses.Find(1);
+            //vm.SelectedLot.Winner.WinnerStatus = DataService.Context.WinnerStatuses.Find(1);
             //var en = DataService.Context.Entry(vm.SelectedLot.Winner).CurrentValues;
 
             ////var ww = en.GetValue<User>("User");
             //var en2 = DataService.Context.Entry(vm.SelectedLot.Winner).OriginalValues;
             //var s = en == en2;
 
-            DataService.Context.SaveChanges();
+            try
+            {
+                DataService.Context.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
+                DataService.Context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                DataService.Context.Entry(vm.SelectedLot.Winner).State = EntityState.Unchanged;
+                MessageBox.Show("Ошибка! Изменения не сохранены.\nДождитесь окончания работы поиска.");
+            }
+            
 
             //using (PublicOrdersContext c = new PublicOrdersContext())
             //{

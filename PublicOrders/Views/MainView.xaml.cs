@@ -149,7 +149,7 @@ namespace PublicOrders
 	    {
 	        var vm=  WinnersPanel.DataContext as WinnersViewModel;
 
-            vm.RefreshListCommand.Execute(null);
+            //vm.RefreshListCommand.Execute(null);
 	    }
 	}
 }

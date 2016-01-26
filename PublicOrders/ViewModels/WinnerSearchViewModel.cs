@@ -608,10 +608,6 @@ namespace PublicOrders.ViewModels
         public void GetWinnerActivity(object param)
         {
             WinnerActivities.Clear();
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 300});
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(2), Value = 130 });
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(3), Value = 240 });
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(5), Value = 30 });
 
             WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
             WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
@@ -642,9 +638,9 @@ namespace PublicOrders.ViewModels
             Customers = new CollectionViewSource();
             Customers.Source = DataService.Customers;
 
-            ClientUsers = new ObservableCollection<User>(DataService.Context.Users.Where(m => m.UserStatusId == 2).ToList());
+            ClientUsers = DataService.ClientUsers;
 
-            WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.Context.WinnerStatuses);
+            WinnerStatuses = DataService.WinnerStatuses;
 
             WinnerActivities = new ObservableCollection<WinnerActivity>();
         }

@@ -292,6 +292,8 @@ namespace PublicOrders.Models
         public string Phone { get; set; }
 
         private ObservableCollection<Lot> _lots;
+        private WinnerStatus _winnerStatus;
+
         public virtual ObservableCollection<Lot> Lots
         {
             get { return _lots ?? (_lots = new ObservableCollection<Lot>(new HashSet<Lot>())); } // Try HashSet<N>
@@ -311,7 +313,16 @@ namespace PublicOrders.Models
 
         [ForeignKey("WinnerStatus")]
         public short? WinnerStatusId { get; set; }
-        virtual public WinnerStatus WinnerStatus { get; set; }
+
+        virtual public WinnerStatus WinnerStatus
+        {
+            get { return _winnerStatus; }
+            set
+            {
+                _winnerStatus = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         [ForeignKey("User")]

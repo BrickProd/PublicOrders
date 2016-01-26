@@ -205,7 +205,7 @@
 
                             <telerik:RadCartesianChart.EmptyContentTemplate>
                                 <DataTemplate>
-                                    <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." />
+                                    <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." telerik:StyleManager.Theme="Windows8Touch"/>
                                 </DataTemplate>
                             </telerik:RadCartesianChart.EmptyContentTemplate>
                             <telerik:RadCartesianChart.Series>
