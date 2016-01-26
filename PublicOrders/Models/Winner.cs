@@ -354,6 +354,37 @@ namespace PublicOrders.Models
         }
     }
 
+    // А К Т И В Н О С Т Ь   П О Б Е Д И Т Е Л Я
+    public class WinnerActivity : INotifyPropertyChanged
+    {
+        private DateTime _date;
+        private int _value;
+
+        public int Value { get; set; }
+        public DateTime Date
+        {
+            get { return _date; }
+            set
+            {
+                _date = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public WinnerActivity()
+        {
+
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     // С Т А Т У С   П О Б Е Д И Т Е Л Я
     public class WinnerStatus : INotifyPropertyChanged
     {

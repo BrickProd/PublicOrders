@@ -6,6 +6,7 @@
              xmlns:ViewModels="clr-namespace:PublicOrders.ViewModels"
              xmlns:local="clr-namespace:PublicOrders.Views"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:labelConverter="clr-namespace:PublicOrders.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="700" Padding="20 0 20 0" FontSize="18">
     <UserControl.Resources>
@@ -167,15 +168,80 @@
                         </Grid>
                     </Grid>
                 </TabItem>
-                <!--<TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
+                <TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="22*"/>
                         </Grid.RowDefinitions>
+                        
+                        <Button Content="Обновить" Style="{StaticResource MiniButtonStyle}" Command="{Binding GetWinnerActivityCommand}" Grid.Row="0"></Button>
+                        
+                        <telerik:RadCartesianChart Grid.Row="1">
+                            <telerik:RadCartesianChart.Resources>
+                                <labelConverter:AxisLabelConverter x:Key="axisLabelConverter" />
+                                <telerik:LinearAxis x:Key="additionalAxis"
+                                    Minimum="0" Maximum="300"
+                                    HorizontalLocation="Right">
+                                    <telerik:LinearAxis.LabelStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontFamily" Value="Segoe UI" />
+                                            <Setter Property="FontSize" Value="11" />
+                                            <Setter Property="Margin" Value="2,0,0,0"/>
+                                        </Style>
+                                    </telerik:LinearAxis.LabelStyle>
+                                </telerik:LinearAxis>
 
+                                <Style TargetType="TextBlock" x:Key="axisTextStyleMain">
+                                    <Setter Property="FontFamily" Value="Segoe UI" />
+                                    <Setter Property="FontSize" Value="11" />
+                                </Style>
+                                <DataTemplate x:Key="axisLabelTemplate">
+                                            <TextBlock Text="{Binding Converter={StaticResource axisLabelConverter}}" 
+                                   TextAlignment="Center"
+                                   Style="{StaticResource axisTextStyleMain}" />    
+                                </DataTemplate>
+                            </telerik:RadCartesianChart.Resources>
+
+                            <!--<telerik:RadCartesianChart.EmptyContentTemplate>
+                                <DataTemplate>
+                                    <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." />
+                                </DataTemplate>
+                            </telerik:RadCartesianChart.EmptyContentTemplate>-->
+                            <telerik:RadCartesianChart.Series>
+                                <telerik:LineSeries ItemsSource="{Binding WinnerActivities}" Stroke="Red"
+                                    ValueBinding="Close" CategoryBinding="Date"
+                                    RenderOptions="{Binding Path=SelectedValue, ElementName=renderingModesList}"
+                                    VerticalAxis="{StaticResource additionalAxis}">
+                                    <telerik:LineSeries.TrackBallTemplate>
+                                        <DataTemplate>
+                                            <Ellipse Height="9" Width="9" Stroke="White" StrokeThickness="1" Fill="Aqua" />
+                                        </DataTemplate>
+                                    </telerik:LineSeries.TrackBallTemplate>
+                                </telerik:LineSeries>
+                            </telerik:RadCartesianChart.Series>
+
+                            <telerik:RadCartesianChart.HorizontalAxis>
+                                <telerik:DateTimeContinuousAxis MajorStep="12" MajorStepUnit="Month" TickOrigin="1-1-2000"
+                                                LabelTemplate="{StaticResource axisLabelTemplate}" />
+                            </telerik:RadCartesianChart.HorizontalAxis>
+                            <telerik:RadCartesianChart.VerticalAxis>
+                                <telerik:LinearAxis Minimum="0" Maximum="300">
+                                    <telerik:LinearAxis.LabelStyle>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource axisTextStyleMain}">
+                                            <Setter Property="Margin" Value="0,0,2,0"/>
+                                        </Style>
+                                    </telerik:LinearAxis.LabelStyle>
+                                </telerik:LinearAxis>
+                            </telerik:RadCartesianChart.VerticalAxis>
+                            <telerik:RadCartesianChart.Grid>
+                                <telerik:CartesianChartGrid MajorXLinesRenderMode="All" MajorLinesVisibility="XY"/>
+                            </telerik:RadCartesianChart.Grid>
+                        </telerik:RadCartesianChart>
+                        
+                        
                     </Grid>
-                </TabItem>-->
+                </TabItem>
             </TabControl>
             <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <!--<Hyperlink NavigateUri="{Binding SelectedWinner.Lot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">

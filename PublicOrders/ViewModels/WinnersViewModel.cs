@@ -14,6 +14,7 @@ using PublicOrders.Commands;
 using PublicOrders.Models;
 using PublicOrders.Data;
 using System.Windows;
+using PublicOrders.Processors.Internet;
 
 namespace PublicOrders.ViewModels
 {
@@ -119,6 +120,32 @@ namespace PublicOrders.ViewModels
             }
         }
 
+        private DelegateCommand _getWinnerActivityCommand;
+        private List<WinnerActivity> _winnerActivities;
+
+        public ICommand GetWinnerActivityCommand
+        {
+            get
+            {
+                if (_getWinnerActivityCommand == null)
+                {
+                    _getWinnerActivityCommand = new DelegateCommand(GetWinnerActivity);
+                }
+                return _getWinnerActivityCommand;
+            }
+        }
+
+        public List<WinnerActivity> WinnerActivities
+        {
+            get { return _winnerActivities; }
+            set
+            {
+                _winnerActivities = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         //public void DeleteWinner(object param)
         //{
         //    if (SelectedWinner == null) return;
@@ -142,6 +169,28 @@ namespace PublicOrders.ViewModels
         //        BlackList.View.Refresh();
         //    }
         //}
+
+
+        public void GetWinnerActivity(object param)
+        {
+            WinnerActivities = new List<WinnerActivity>();
+
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 300});
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(10), Value = 130 });
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(12), Value = 240 });
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(15), Value = 30 });
+
+            //WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
+            //WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
+
+            //proc.OperateWinDates(SelectedWinner.Name);
+        }
+
+        private void ActivityReady_proc(List<DateTime> dates, ResultType_enum resultType_enum, string message)
+        {
+            
+
+        }
 
         public WinnersViewModel()
         {
@@ -186,7 +235,23 @@ namespace PublicOrders.ViewModels
             ClientUsers = new ObservableCollection<User>(DataService.Context.Users.Where(m => m.UserStatusId == 2).ToList());
 
             CurentStatus = DataService.CurrentUser.UserStatus;
+
+
+
+            WinnerActivities = new List<WinnerActivity>();
+
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 100 });
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(10), Value = 130 });
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(12), Value = 240 });
+            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(15), Value = 10 });
+
+
         }
+
+
+
+
+
 
         public void RefreshList(object param)
         {
