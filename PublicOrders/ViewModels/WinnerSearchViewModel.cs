@@ -22,10 +22,23 @@ namespace PublicOrders.ViewModels
 {
     public class WinnerSearchViewModel : INotifyPropertyChanged
     {
+        private bool isBusy;
+        private string busyContent;
+        private Customer _selectedCustomer = null;
+        private Lot _selectedLot = null;
+        private string _searchInput;
+        private bool _isCustomersSearching;
+        private bool _isWinnerLotsSearching;
+        private bool _isWinnerLotsSearchingPause;
+        private bool _reportCreating;
+        private int _searchingProgress;
+        private string _searchingProgressText;
+        private string currentCustomerSearching = "";
+        private ObservableCollection<WinnerStatus> _winnerStatuses;
+
         #region Переменные
         MainViewModel mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
-        private Customer _selectedCustomer = null;
         public Customer SelectedCustomer
         {
             get { return _selectedCustomer; }
@@ -35,8 +48,6 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("SelectedCustomer");
             }
         }
-
-        private Lot _selectedLot = null;
         public Lot SelectedLot
         {
             get { return _selectedLot; }
@@ -47,8 +58,6 @@ namespace PublicOrders.ViewModels
                 GetWinnerActivity(null);
             }
         }
-
-        private string _searchInput;
         public string SearchInput
         {
             get { return _searchInput; }
@@ -58,8 +67,6 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("SearchInput");
             }
         }
-
-        private bool _isCustomersSearching;
         public bool IsCustomersSearching
         {
             get { return _isCustomersSearching; }
@@ -69,8 +76,6 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("IsCustomersSearching");
             }
         }
-
-        private bool _isWinnerLotsSearching;
         public bool IsWinnerLotsSearching
         {
             get { return _isWinnerLotsSearching; }
@@ -80,8 +85,6 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("IsWinnerLotsSearching");
             }
         }
-
-        private bool _isWinnerLotsSearchingPause;
         public bool IsWinnerLotsSearchingPause
         {
             get { return _isWinnerLotsSearchingPause; }
@@ -91,8 +94,6 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("IsWinnerLotsSearchingPause");
             }
         }
-
-        private bool _reportCreating;
         public bool ReportCreating
         {
             get { return _reportCreating; }
@@ -102,9 +103,7 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("ReportCreating");
             }
         }
-
         // Число
-        private int _searchingProgress;
         public int SearchingProgress
         {
             get { return _searchingProgress; }
@@ -114,9 +113,7 @@ namespace PublicOrders.ViewModels
                 OnPropertyChanged("SearchingProgress");
             }
         }
-
         // Текст в прогрессе
-        private string _searchingProgressText;
         public string SearchingProgressText
         {
             get { return _searchingProgressText; }
@@ -124,6 +121,30 @@ namespace PublicOrders.ViewModels
             {
                 _searchingProgressText = value;
                 OnPropertyChanged("SearchingProgressText");
+            }
+        }
+        public string BusyContent
+        {
+            get { return this.busyContent; }
+            set
+            {
+                if (this.busyContent != value)
+                {
+                    this.busyContent = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool IsBusy
+        {
+            get { return isBusy; }
+            set
+            {
+                if (this.isBusy != value)
+                {
+                    this.isBusy = value;
+                    OnPropertyChanged();
+                }
             }
         }
         #endregion
@@ -316,7 +337,6 @@ namespace PublicOrders.ViewModels
             currentCustomerSearching = "";
         }
 
-
         private void AllCustomersSearched_proc(ResultType_enum resultType_enum, string message) {
             if (resultType_enum != ResultType_enum.Done)
             {
@@ -374,10 +394,6 @@ namespace PublicOrders.ViewModels
 
             }*/
         }
-
-
-        private string currentCustomerSearching = "";
-        private ObservableCollection<WinnerStatus> _winnerStatuses;
 
         private void WinnerLotsSearch(object param) {
             if (SelectedCustomer != null)
@@ -530,7 +546,8 @@ namespace PublicOrders.ViewModels
 
         private void CreateReport(object param)
         {
-            ReportCreating = true;
+            IsBusy = true;
+            BusyContent = "Создание документа";
             if ((mvm.cwProcessor != null) && (mvm.cwProcessor.isWorking()))
             {
                 mvm.cwProcessor.Stop();
@@ -547,7 +564,7 @@ namespace PublicOrders.ViewModels
         }
 
         private void CreateWinnersDocumentDone_proc(ResultType_enum resultCreate, string message) {
-            ReportCreating = false;
+            IsBusy = false;
             MessageBox.Show("Документ создан!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         #endregion

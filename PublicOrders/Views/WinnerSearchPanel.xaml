@@ -19,595 +19,556 @@
         <converters:IndexConverter x:Key="IndexConverter" />
     </UserControl.Resources>
     <Grid Background="Transparent">
-        <!--ПАНЕЛЬ ЗАГРУЗКИ-->
-        <Grid x:Name="CreateReportBusy" Margin="0" Panel.ZIndex="100" Background="Transparent" >
-            <Grid.Style>
-                <Style TargetType="{x:Type Grid}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ReportCreating}" Value="True">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ReportCreating}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>
-            <TextBlock Text="Создание отчёта..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Foreground="#FF007ACB">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Style.Triggers>
-                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3" AutoReverse="True" RepeatBehavior="Forever"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-        </Grid>
-        <!-- подробная информация о победителе -->
-        <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="WinnerInfoPanel" Visibility="Collapsed" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="170"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.Style>
-                <Style TargetType="{x:Type Grid}">
-                    <Style.Triggers>
-                        <Trigger Property="Opacity" Value="0">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="55"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="255*"/>
-                <RowDefinition Height="50"/>
-            </Grid.RowDefinitions>
-            <Button Grid.Row="7" Style="{StaticResource SlideDownEButtonStyle}"
+        <telerik:RadBusyIndicator BusyContent="{Binding BusyContent}" IsBusy="{Binding IsBusy, FallbackValue=False}"
+				IsIndeterminate="True" telerik:StyleManager.Theme="Windows8Touch" FontSize="18">
+            <Grid>
+                <!-- подробная информация о победителе -->
+                <Grid Margin="0,0,0,0" Background="White" Panel.ZIndex="100" x:Name="WinnerInfoPanel" Visibility="Collapsed" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.Style>
+                        <Style TargetType="{x:Type Grid}">
+                            <Style.Triggers>
+                                <Trigger Property="Opacity" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="55"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="255*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="7" Style="{StaticResource SlideDownEButtonStyle}"
 				x:Name="CloseWinnerInfoPanel" Command="{Binding SaveProductCommand}" Click="CloseWinnerInfoPanel_Click"
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
-            <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedLot.Winner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedLot.Winner.Name}"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
-                <TextBlock Grid.Row="1" Text="Email: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
-                <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedLot.Winner.Email}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-                <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
-                <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedLot.Winner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
-            </StackPanel>
+                    <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    <TextBlock Text="Заказ" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedLot.Winner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedLot.Winner.Name}"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                        <TextBlock Grid.Row="1" Text="Email: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
+                        <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedLot.Winner.Email}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Text="Тел: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
+                        <TextBox IsReadOnly="True" BorderThickness="0" Grid.Row="1" Text="{Binding SelectedLot.Winner.Phone}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
+                    </StackPanel>
 
-            <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" telerik:StyleManager.Theme="Windows8Touch"
+                    <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" telerik:StyleManager.Theme="Windows8Touch"
                                  ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
-            
-            <!--<telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Login" telerik:StyleManager.Theme="Windows8Touch"
+
+                    <!--<telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Login" telerik:StyleManager.Theme="Windows8Touch"
                                  ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>-->
-            <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}"  DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId" FontSize="18">
+                    <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}"  DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId" FontSize="18">
                 
             </ComboBox>-->
-            <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
-                <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <ScrollViewer>
-                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                <TextBlock Text="Название:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                    <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
+                        <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
+                            <Grid>
+                                <ScrollViewer>
+                                    <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                        <TextBlock Text="Название:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Цена:" FontSize="18"></TextBlock>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.LotPrice}" FontSize="16" FontStyle="Italic"></TextBox>
-                                    <TextBlock Text=" -> " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBox>
-                                    <TextBlock Text=" " FontSize="16" FontStyle="Italic"></TextBlock>
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBox>
-                                </StackPanel>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="Цена:" FontSize="18"></TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.LotPrice}" FontSize="16" FontStyle="Italic"></TextBox>
+                                            <TextBlock Text=" -> " FontSize="16" FontStyle="Italic"></TextBlock>
+                                            <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.DocumentPrice}" FontSize="16" FontStyle="Italic"></TextBox>
+                                            <TextBlock Text=" " FontSize="16" FontStyle="Italic"></TextBlock>
+                                            <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.LotPriceType.Name}" FontSize="16" FontStyle="Italic"></TextBox>
+                                        </StackPanel>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Дата:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.DocumentDateTime}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="Дата:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.DocumentDateTime}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Закон:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.LawType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="Закон:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.LawType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Тип заказа:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.OrderType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
+                                        <TextBlock Text="Тип заказа:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.OrderType.Name}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
 
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Номер заказа:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Number}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
+                                        <TextBlock Text="Номер заказа:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Number}" FontSize="16" TextWrapping="Wrap" FontStyle="Italic"></TextBox>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
 
-                </TabItem>
-                <TabItem Header="Заказчик" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <ScrollViewer>
-                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                <TextBlock Text="ИНН:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.Vatin}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
-                                
-                                <TextBlock Text="Название:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                        </TabItem>
+                        <TabItem Header="Заказчик" Style="{StaticResource PanelContentStyleMini}">
+                            <Grid>
+                                <ScrollViewer>
+                                    <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                        <TextBlock Text="ИНН:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.Vatin}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Адрес:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.Address}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="Название:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.Name}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Text="Уровень:" FontSize="18"></TextBlock>
-                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.CustomerLevel.CustomerLevelCode}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
-                                <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="Адрес:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.Address}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="22*"/>
-                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Уровень:" FontSize="18"></TextBlock>
+                                        <TextBox IsReadOnly="True" BorderThickness="0" Text="{Binding SelectedLot.Order.Customer.CustomerLevel.CustomerLevelCode}" FontSize="16" FontStyle="Italic" TextWrapping="Wrap"></TextBox>
+                                        <TextBlock Text="" FontSize="16" TextWrapping="Wrap"></TextBlock>
 
-                        <Button Content="Обновить" Style="{StaticResource MiniButtonStyle}" Command="{Binding GetWinnerActivityCommand}" Grid.Row="0"></Button>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Активность" Style="{StaticResource PanelContentStyleMini}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="22*"/>
+                                </Grid.RowDefinitions>
 
-                        <telerik:RadCartesianChart Grid.Row="1" Margin="20">
-                            <telerik:RadCartesianChart.Resources>
-                                <converters:AxisLabelConverter x:Key="axisLabelConverter" />
-                                <telerik:LinearAxis x:Key="additionalAxis"
+                                <Button Content="Обновить" Style="{StaticResource MiniButtonStyle}" Command="{Binding GetWinnerActivityCommand}" Grid.Row="0"></Button>
+
+                                <telerik:RadCartesianChart Grid.Row="1" Margin="20">
+                                    <telerik:RadCartesianChart.Resources>
+                                        <converters:AxisLabelConverter x:Key="axisLabelConverter" />
+                                        <telerik:LinearAxis x:Key="additionalAxis"
                                     Minimum="0" Maximum="{Binding MaxAxis}"
                                     HorizontalLocation="Right">
-                                    <telerik:LinearAxis.LabelStyle>
-                                        <Style TargetType="TextBlock">
+                                            <telerik:LinearAxis.LabelStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Segoe UI" />
+                                                    <Setter Property="FontSize" Value="11" />
+                                                    <Setter Property="Margin" Value="2,0,0,0"/>
+                                                </Style>
+                                            </telerik:LinearAxis.LabelStyle>
+                                        </telerik:LinearAxis>
+
+                                        <Style TargetType="TextBlock" x:Key="axisTextStyleMain">
                                             <Setter Property="FontFamily" Value="Segoe UI" />
                                             <Setter Property="FontSize" Value="11" />
-                                            <Setter Property="Margin" Value="2,0,0,0"/>
                                         </Style>
-                                    </telerik:LinearAxis.LabelStyle>
-                                </telerik:LinearAxis>
-
-                                <Style TargetType="TextBlock" x:Key="axisTextStyleMain">
-                                    <Setter Property="FontFamily" Value="Segoe UI" />
-                                    <Setter Property="FontSize" Value="11" />
-                                </Style>
-                                <DataTemplate x:Key="axisLabelTemplate">
-                                    <TextBlock Text="{Binding Converter={StaticResource axisLabelConverter}}" 
+                                        <DataTemplate x:Key="axisLabelTemplate">
+                                            <TextBlock Text="{Binding Converter={StaticResource axisLabelConverter}}" 
                                    TextAlignment="Center"
                                    Style="{StaticResource axisTextStyleMain}" />
-                                </DataTemplate>
-                            </telerik:RadCartesianChart.Resources>
+                                        </DataTemplate>
+                                    </telerik:RadCartesianChart.Resources>
 
-                            <telerik:RadCartesianChart.EmptyContentTemplate>
-                                <DataTemplate>
-                                    <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." />
-                                </DataTemplate>
-                            </telerik:RadCartesianChart.EmptyContentTemplate>
-                            <telerik:RadCartesianChart.Series>
-                                <telerik:LineSeries ItemsSource="{Binding WinnerActivities}" Stroke="DarkBlue"
+                                    <telerik:RadCartesianChart.EmptyContentTemplate>
+                                        <DataTemplate>
+                                            <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." />
+                                        </DataTemplate>
+                                    </telerik:RadCartesianChart.EmptyContentTemplate>
+                                    <telerik:RadCartesianChart.Series>
+                                        <telerik:LineSeries ItemsSource="{Binding WinnerActivities}" Stroke="DarkBlue"
                                     ValueBinding="Value" CategoryBinding="Date"
                                     RenderOptions="{Binding Path=SelectedValue, ElementName=renderingModesList}"
                                     VerticalAxis="{StaticResource additionalAxis}">
-                                    <telerik:LineSeries.TrackBallTemplate>
-                                        <DataTemplate>
-                                            <Ellipse Height="9" Width="9" Stroke="White" StrokeThickness="1" Fill="Black" />
-                                        </DataTemplate>
-                                    </telerik:LineSeries.TrackBallTemplate>
-                                </telerik:LineSeries>
-                            </telerik:RadCartesianChart.Series>
+                                            <telerik:LineSeries.TrackBallTemplate>
+                                                <DataTemplate>
+                                                    <Ellipse Height="9" Width="9" Stroke="White" StrokeThickness="1" Fill="Black" />
+                                                </DataTemplate>
+                                            </telerik:LineSeries.TrackBallTemplate>
+                                        </telerik:LineSeries>
+                                    </telerik:RadCartesianChart.Series>
 
-                            <telerik:RadCartesianChart.TrackBallLineStyle>
-                                <Style />
-                            </telerik:RadCartesianChart.TrackBallLineStyle>
-                            <telerik:RadCartesianChart.TrackBallInfoStyle>
-                                <Style TargetType="telerik:TrackBallInfoControl">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="telerik:TrackBallInfoControl" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </telerik:RadCartesianChart.TrackBallInfoStyle>
-
-                            <telerik:RadCartesianChart.Behaviors>
-                                <telerik:ChartPanAndZoomBehavior PanMode="Horizontal" ZoomMode="Horizontal" DragMode="Pan" />
-                            </telerik:RadCartesianChart.Behaviors>
-
-                            <telerik:RadCartesianChart.HorizontalAxis>
-                                <telerik:DateTimeContinuousAxis MajorStep="4" MajorStepUnit="Month" PlotMode="OnTicks" 
-                                                LabelTemplate="{StaticResource axisLabelTemplate}" />
-                            </telerik:RadCartesianChart.HorizontalAxis>
-                            <telerik:RadCartesianChart.VerticalAxis>
-                                <telerik:LinearAxis Minimum="0" Maximum="{Binding MaxAxis}">
-                                    <telerik:LinearAxis.LabelStyle>
-                                        <Style TargetType="TextBlock" BasedOn="{StaticResource axisTextStyleMain}">
-                                            <Setter Property="Margin" Value="0,0,2,0"/>
+                                    <telerik:RadCartesianChart.TrackBallLineStyle>
+                                        <Style />
+                                    </telerik:RadCartesianChart.TrackBallLineStyle>
+                                    <telerik:RadCartesianChart.TrackBallInfoStyle>
+                                        <Style TargetType="telerik:TrackBallInfoControl">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="telerik:TrackBallInfoControl" />
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
-                                    </telerik:LinearAxis.LabelStyle>
-                                </telerik:LinearAxis>
-                            </telerik:RadCartesianChart.VerticalAxis>
-                            <telerik:RadCartesianChart.Grid>
-                                <telerik:CartesianChartGrid MajorXLinesRenderMode="All" MajorLinesVisibility="XY"/>
-                            </telerik:RadCartesianChart.Grid>
-                        </telerik:RadCartesianChart>
+                                    </telerik:RadCartesianChart.TrackBallInfoStyle>
+
+                                    <telerik:RadCartesianChart.Behaviors>
+                                        <telerik:ChartPanAndZoomBehavior PanMode="Horizontal" ZoomMode="Horizontal" DragMode="Pan" />
+                                    </telerik:RadCartesianChart.Behaviors>
+
+                                    <telerik:RadCartesianChart.HorizontalAxis>
+                                        <telerik:DateTimeContinuousAxis MajorStep="4" MajorStepUnit="Month" PlotMode="OnTicks" 
+                                                LabelTemplate="{StaticResource axisLabelTemplate}" />
+                                    </telerik:RadCartesianChart.HorizontalAxis>
+                                    <telerik:RadCartesianChart.VerticalAxis>
+                                        <telerik:LinearAxis Minimum="0" Maximum="{Binding MaxAxis}">
+                                            <telerik:LinearAxis.LabelStyle>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource axisTextStyleMain}">
+                                                    <Setter Property="Margin" Value="0,0,2,0"/>
+                                                </Style>
+                                            </telerik:LinearAxis.LabelStyle>
+                                        </telerik:LinearAxis>
+                                    </telerik:RadCartesianChart.VerticalAxis>
+                                    <telerik:RadCartesianChart.Grid>
+                                        <telerik:CartesianChartGrid MajorXLinesRenderMode="All" MajorLinesVisibility="XY"/>
+                                    </telerik:RadCartesianChart.Grid>
+                                </telerik:RadCartesianChart>
 
 
-                    </Grid>
-                </TabItem>
-            </TabControl>
-            <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <Hyperlink NavigateUri="{Binding SelectedLot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте
                 </Hyperlink>
-            </TextBlock>
-        </Grid>
+                    </TextBlock>
+                </Grid>
 
 
+                <Border BorderThickness="0 0 0 0" Margin="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70"/>
+                            <RowDefinition Height="100*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Margin="10 20" Grid.Row="0">
+                            <TextBox x:Name="key" FontSize="18" Margin="0" KeyDown="OnKeyDownHandler">
+                                <TextBox.Template>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                            <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}" Click="Button_Click"/>
+                                            <Grid Margin="0">
+                                                <ProgressBar Value="{Binding SearchingProgress}" Minimum="0" Maximum="100" Name="ProgressBar">
+                                                    <ProgressBar.Style>
+                                                        <Style TargetType="{x:Type ProgressBar}">
+                                                            <Setter Property="Foreground" Value="#FF007ACB"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ProgressBar.Style>
+                                                </ProgressBar>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <StackPanel.Style>
+                                                        <Style TargetType="StackPanel">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=ProgressBar, Path=Visibility}" Value="Collapsed">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </StackPanel.Style>
+                                                    <TextBlock Text="{Binding SearchingProgressText}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5 0"></TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </TextBox.Template>
+                                <TextBox.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
+                                                <Setter Property="UIElement.IsEnabled" Value="False"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <ProgressBar Margin="0,29,0,-3" IsIndeterminate="True" Panel.ZIndex="-10" Background="Transparent" BorderBrush="Transparent">
+                                <ProgressBar.Style>
+                                    <Style TargetType="{x:Type ProgressBar}">
+                                        <Setter Property="Foreground" Value="#FF007ACB"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
+                                                <Setter Property="Opacity" Value="1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsCustomersSearching}" Value="False">
+                                                <Setter Property="Opacity" Value="0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+                        </Grid>
+                        <Grid Margin="10 0" Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="245*"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
 
+                            <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
+                            <Grid x:Name="MainPanelGrid">
 
-
-        <Border BorderThickness="0 0 0 0" Margin="0">
-            <Border.Style>
-                <Style TargetType="{x:Type Border}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Visibility, ElementName=CreateReportBusy}" Value="Visible">
-                            <Setter Property="Effect" Value="{StaticResource BlurEffect}"/>
-                            <Setter Property="IsEnabled" Value="False"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition Height="100*"/>
-                </Grid.RowDefinitions>
-                <Grid Margin="10 20" Grid.Row="0">
-                    <TextBox x:Name="key" FontSize="18" Margin="0" KeyDown="OnKeyDownHandler">
-                        <TextBox.Template>
-                            <ControlTemplate>
-                                <Grid>
-                                    <TextBox x:Name="CustomerName" Grid.Column="0" Text="{Binding SearchInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                    <Button HorizontalAlignment="Right" Content="Найти" Background="White" Grid.Column="1" Foreground="Black" Padding="5 0" Command="{Binding CustomersSearchCommand}" Click="Button_Click"/>
+                                <!--ЗаКАЗЧИКИ-->
+                                <Border BorderThickness="0.5 0 0.5 0" BorderBrush="LightGray" Grid.Row="0" Margin="0 0 10 0" Grid.Column="0" Name="CustomersSide" Panel.ZIndex="2">
                                     <Grid Margin="0">
-                                        <ProgressBar Value="{Binding SearchingProgress}" Minimum="0" Maximum="100" Name="ProgressBar">
-                                            <ProgressBar.Style>
-                                                <Style TargetType="{x:Type ProgressBar}">
-                                                    <Setter Property="Foreground" Value="#FF007ACB"/>
+                                        <Border Margin="0" Name="OpenCustomerSide" Visibility="Visible">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
+                                                        <Trigger Property="Visibility" Value="Visible">
+                                                            <Trigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.EnterActions>
+                                                            <Trigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.ExitActions>
+                                                        </Trigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </ProgressBar.Style>
-                                        </ProgressBar>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <StackPanel.Style>
-                                                <Style TargetType="StackPanel">
+                                            </Border.Style>
+                                            <Button Name="OpenCustomerSideBtn" Click="OpenCustomerSideBtn_Click" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Height="100" HorizontalAlignment="Right" Margin="0,90" Width="100">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <Grid Background="Transparent">
+                                                            <ContentPresenter></ContentPresenter>
+                                                            <ed:BlockArrow Name="ArrowRight" Height="25" Margin="10 0 20 0" Orientation="Right" Fill="#FF007ACB" Stroke="#FF007ACB" StrokeThickness="0" VerticalAlignment="Center" />
+                                                        </Grid>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Trigger.EnterActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ThicknessAnimation Storyboard.TargetName="ArrowRight" Storyboard.TargetProperty="Margin" To="10 0 10 0" Duration="0:0:0.2" >
+                                                                                <ThicknessAnimation.EasingFunction>
+                                                                                    <ElasticEase></ElasticEase>
+                                                                                </ThicknessAnimation.EasingFunction>
+                                                                            </ThicknessAnimation>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </Trigger.EnterActions>
+                                                                <Trigger.ExitActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ThicknessAnimation Storyboard.TargetName="ArrowRight" Storyboard.TargetProperty="Margin" To="10 0 20 0" Duration="0:0:0.2">
+                                                                                <ThicknessAnimation.EasingFunction>
+                                                                                    <ElasticEase></ElasticEase>
+                                                                                </ThicknessAnimation.EasingFunction>
+                                                                            </ThicknessAnimation>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </Trigger.ExitActions>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Border>
+                                        <ListView x:Name="CustomersListBox" Margin="0" ItemsSource="{Binding Customers.View}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
+							    ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseLeave="CustomersSide_MouseLeave" BorderBrush="LightGray">
+                                            <ListView.Style>
+                                                <Style TargetType="ListView">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ElementName=ProgressBar, Path=Visibility}" Value="Collapsed">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Trigger Property="Visibility" Value="Visible">
+                                                            <Trigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.EnterActions>
+                                                            <Trigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.ExitActions>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ListView.Style>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="40"></ColumnDefinition>
+                                                            <ColumnDefinition></ColumnDefinition>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                                                            <TextBlock Text="{Binding Vatin}" FontSize="14" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+                                                    <EventSetter Event="Control.MouseDoubleClick" Handler="CustomerDoubleClick"/>
+                                                </Style>
+                                            </ListView.ItemContainerStyle>
+                                        </ListView>
+                                    </Grid>
+                                </Border>
+
+                                <!--ПОБЕДИТЕЛИ-->
+                                <Border BorderBrush="LightGray" BorderThickness="0.5 0 0.5 0" Grid.Row="0" Grid.Column="1" Name="WinnersSide" Margin="100 0 0 0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="25"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="257*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                                            <StackPanel.Style>
+                                                <Style TargetType="{x:Type StackPanel}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedCustomer}" Value="{x:Null}">
+                                                            <Setter Property="IsEnabled" Value="False"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </StackPanel.Style>
-                                            <TextBlock Text="{Binding SearchingProgressText}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5 0"></TextBlock>
+                                            <Button Content="Старт" Name="StartBtn" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="115" Height="25" Margin="0,0,0,0">
+                                                <Button.Style>
+                                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PlayButtonStyle}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </MultiDataTrigger>
+
+                                                            <DataTrigger Binding="{Binding IsWinnerLotsSearchingPause}" Value="False">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <Button Content="Пауза" Name="PauseBtn" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="112" Height="25" Margin="0,0,0,0" >
+                                                <Button.Style>
+                                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PauseButtonStyle}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
+                                                                    <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <Button Content="Стоп" Command="{Binding WinnerLotsSearchStopCommand}" Width="120" Height="25" Margin="0,0,0,0">
+                                                <Button.Style>
+                                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource StopButtonStyle}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
+                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
                                         </StackPanel>
-                                    </Grid>
-                                </Grid>
-                            </ControlTemplate>
-                        </TextBox.Template>
-                        <TextBox.Style>
-                            <Style>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                        <Setter Property="UIElement.IsEnabled" Value="False"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                    <ProgressBar Margin="0,29,0,-3" IsIndeterminate="True" Panel.ZIndex="-10" Background="Transparent" BorderBrush="Transparent">
-                        <ProgressBar.Style>
-                            <Style TargetType="{x:Type ProgressBar}">
-                                <Setter Property="Foreground" Value="#FF007ACB"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsCustomersSearching}" Value="True">
-                                        <Setter Property="Opacity" Value="1"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsCustomersSearching}" Value="False">
-                                        <Setter Property="Opacity" Value="0"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ProgressBar.Style>
-                    </ProgressBar>
-                </Grid>
-                <Grid Margin="10 0" Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="245*"/>
-                        <RowDefinition Height="50"/>
-                    </Grid.RowDefinitions>
-
-                    <!--ПАНЕЛИ НА ПОБЕДИТЕЛЕЙ-->
-                    <Grid x:Name="MainPanelGrid">
-
-                        <!--ЗаКАЗЧИКИ-->
-                        <Border BorderThickness="0.5 0 0.5 0" BorderBrush="LightGray" Grid.Row="0" Margin="0 0 10 0" Grid.Column="0" Name="CustomersSide" Panel.ZIndex="2">
-                            <Grid Margin="0">
-                                <Border Margin="0" Name="OpenCustomerSide" Visibility="Visible">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Style.Triggers>
-                                                <Trigger Property="Visibility" Value="Visible">
-                                                    <Trigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.EnterActions>
-                                                    <Trigger.ExitActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.ExitActions>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                    <Button Name="OpenCustomerSideBtn" Click="OpenCustomerSideBtn_Click" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Height="100" HorizontalAlignment="Right" Margin="0,90" Width="100">
-                                        <Button.Template>
-                                            <ControlTemplate>
-                                                <Grid Background="Transparent">
-                                                    <ContentPresenter></ContentPresenter>
-                                                    <ed:BlockArrow Name="ArrowRight" Height="25" Margin="10 0 20 0" Orientation="Right" Fill="#FF007ACB" Stroke="#FF007ACB" StrokeThickness="0" VerticalAlignment="Center" />
-                                                </Grid>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Trigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <ThicknessAnimation Storyboard.TargetName="ArrowRight" Storyboard.TargetProperty="Margin" To="10 0 10 0" Duration="0:0:0.2" >
-                                                                        <ThicknessAnimation.EasingFunction>
-                                                                            <ElasticEase></ElasticEase>
-                                                                        </ThicknessAnimation.EasingFunction>
-                                                                    </ThicknessAnimation>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </Trigger.EnterActions>
-                                                        <Trigger.ExitActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <ThicknessAnimation Storyboard.TargetName="ArrowRight" Storyboard.TargetProperty="Margin" To="10 0 20 0" Duration="0:0:0.2">
-                                                                        <ThicknessAnimation.EasingFunction>
-                                                                            <ElasticEase></ElasticEase>
-                                                                        </ThicknessAnimation.EasingFunction>
-                                                                    </ThicknessAnimation>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </Trigger.ExitActions>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                </Border>
-                                <ListView x:Name="CustomersListBox" Margin="0" ItemsSource="{Binding Customers.View}" BorderThickness="0" FontSize="16" SelectedItem="{Binding SelectedCustomer}"
-							    ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseLeave="CustomersSide_MouseLeave" BorderBrush="LightGray">
-                                    <ListView.Style>
-                                        <Style TargetType="ListView">
-                                            <Style.Triggers>
-                                                <Trigger Property="Visibility" Value="Visible">
-                                                    <Trigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.EnterActions>
-                                                    <Trigger.ExitActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1" AutoReverse="False"></DoubleAnimation>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </Trigger.ExitActions>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ListView.Style>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="40"></ColumnDefinition>
-                                                    <ColumnDefinition></ColumnDefinition>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
-                                                <StackPanel Grid.Column="1">
-                                                    <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                    <TextBlock Text="{Binding Vatin}" FontSize="14" />
-                                                </StackPanel>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
-                                            <EventSetter Event="Control.MouseDoubleClick" Handler="CustomerDoubleClick"/>
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-                                </ListView>
-                            </Grid>
-                        </Border>
-
-                        <!--ПОБЕДИТЕЛИ-->
-                        <Border BorderBrush="LightGray" BorderThickness="0.5 0 0.5 0" Grid.Row="0" Grid.Column="1" Name="WinnersSide" Margin="100 0 0 0">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="25"/>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition Height="257*"/>
-                                </Grid.RowDefinitions>
-
-                                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                    <StackPanel.Style>
-                                        <Style TargetType="{x:Type StackPanel}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SelectedCustomer}" Value="{x:Null}">
-                                                    <Setter Property="IsEnabled" Value="False"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </StackPanel.Style>
-                                    <Button Content="Старт" Name="StartBtn" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="115" Height="25" Margin="0,0,0,0">
-                                        <Button.Style>
-                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PlayButtonStyle}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
-                                                            <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="True" />
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="IsEnabled" Value="True"/>
-                                                    </MultiDataTrigger>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
-                                                            <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="False" />
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </MultiDataTrigger>
-
-                                                    <DataTrigger Binding="{Binding IsWinnerLotsSearchingPause}" Value="False">
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                    <Button Content="Пауза" Name="PauseBtn" Command="{Binding WinnerLotsSearchPausePlayCommand}" Width="112" Height="25" Margin="0,0,0,0" >
-                                        <Button.Style>
-                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PauseButtonStyle}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
-                                                            <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="True" />
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </MultiDataTrigger>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding IsWinnerLotsSearching}" Value="True" />
-                                                            <Condition Binding="{Binding IsWinnerLotsSearchingPause}" Value="False" />
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="IsEnabled" Value="True"/>
-                                                    </MultiDataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                    <Button Content="Стоп" Command="{Binding WinnerLotsSearchStopCommand}" Width="120" Height="25" Margin="0,0,0,0">
-                                        <Button.Style>
-                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource StopButtonStyle}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="True">
-                                                        <Setter Property="IsEnabled" Value="True"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsWinnerLotsSearching}" Value="False">
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                </StackPanel>
-                                <TextBlock Grid.Row="1" Text="{Binding SelectedCustomer.Name}" Margin="0" TextTrimming="WordEllipsis" FontSize="18" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding SelectedCustomer.Name}" Margin="0" TextTrimming="WordEllipsis" FontSize="18" HorizontalAlignment="Center"/>
 
 
-                                <ListView x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Lots.View}" BorderThickness="0" FontSize="16"
+                                        <ListView x:Name="WinnersListBox" Margin="0,0,0,0" ItemsSource="{Binding Lots.View}" BorderThickness="0" FontSize="16"
 								AlternationCount="2" SelectedItem="{Binding SelectedLot}"
                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" Grid.Row="2">
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
-                                            <EventSetter Event="Control.MouseDoubleClick" Handler="WinnerDoubleClick"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Order.LawType.Name}" Value="223">
-                                                    <Setter Property="Background" Value="#0AD0F7"></Setter>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Order.LawType.Name}" Value="44">
-                                                    <Setter Property="Background" Value="#E7E284"></Setter>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Order.LawType.Name}" Value="94">
-                                                    <Setter Property="Background" Value="#E7E284"></Setter>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Winner.WinnerStatus.WinnerStatusId}" Value="3">
-                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="40"></ColumnDefinition>
-                                                    <ColumnDefinition></ColumnDefinition>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
-                                                <StackPanel Orientation="Horizontal" Grid.Column="1">
-                                                    <CheckBox IsChecked="{Binding Winner.IsChoosen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5"></CheckBox>
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding Winner.Name}" FontSize="16" TextWrapping="Wrap"/>
-                                                        <TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="Wrap"/>
-                                                        <TextBlock Text="{Binding Winner.Email}" FontSize="14"/>
-                                                        <TextBlock Text="{Binding Winner.Phone}" FontSize="14"/>
-                                                        <telerik:RadRating NumberOfItemsToGenerate="5" Value="{Binding Winner.Rating}" IsReadOnly="True"></telerik:RadRating>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </Grid>
-                                            
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+                                                    <EventSetter Event="Control.MouseDoubleClick" Handler="WinnerDoubleClick"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Order.LawType.Name}" Value="223">
+                                                            <Setter Property="Background" Value="#0AD0F7"></Setter>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Order.LawType.Name}" Value="44">
+                                                            <Setter Property="Background" Value="#E7E284"></Setter>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Order.LawType.Name}" Value="94">
+                                                            <Setter Property="Background" Value="#E7E284"></Setter>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Winner.WinnerStatus.WinnerStatusId}" Value="3">
+                                                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ListView.ItemContainerStyle>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="40"></ColumnDefinition>
+                                                            <ColumnDefinition></ColumnDefinition>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock FontSize="16" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource IndexConverter}}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Light"/>
+                                                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                            <CheckBox IsChecked="{Binding Winner.IsChoosen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5"></CheckBox>
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Winner.Name}" FontSize="16" TextWrapping="Wrap"/>
+                                                                <TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="Wrap"/>
+                                                                <TextBlock Text="{Binding Winner.Email}" FontSize="14"/>
+                                                                <TextBlock Text="{Binding Winner.Phone}" FontSize="14"/>
+                                                                <telerik:RadRating NumberOfItemsToGenerate="5" Value="{Binding Winner.Rating}" IsReadOnly="True"></telerik:RadRating>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </Grid>
+                                </Border>
+
                             </Grid>
-                        </Border>
-
+                            <Button Content="Создать отчёт" FontSize="18" Command="{Binding CreateReportCommand}" Style="{StaticResource OKButtonStyle}" Background="Transparent" Grid.Row="1" Height="25" HorizontalAlignment="Center"/>
+                        </Grid>
                     </Grid>
-                    <Button Content="Создать отчёт" FontSize="18" Command="{Binding CreateReportCommand}" Style="{StaticResource OKButtonStyle}" Background="Transparent" Grid.Row="1" Height="25" HorizontalAlignment="Center"/>
-                </Grid>
+                </Border>
             </Grid>
-
-        </Border>
+        </telerik:RadBusyIndicator>
     </Grid>
 </UserControl>

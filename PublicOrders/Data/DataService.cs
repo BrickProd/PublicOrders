@@ -24,32 +24,30 @@ namespace PublicOrders.Data
 
         public static void UpdateWinnerContext()
         {
-            //var context = ((IObjectContextAdapter)Context).ObjectContext;
+            Context.Winners.Load();
+            
 
-            //Context.Winners.ToList().ForEach(m =>
-            //{
-            //    context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
-            //});
+            var context = ((IObjectContextAdapter)Context).ObjectContext;
+            context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.StoreWins, Context.Winners);
         }
 
         public static void UpdateNotesContext()
         {
             var context = ((IObjectContextAdapter)Context).ObjectContext;
-
-            Context.WinnerNotes.ToList().ForEach(m =>
-            {
-                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
-            });
+            context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.StoreWins, Context.WinnerNotes);
         }
 
         public static void UpdateProductsContext()
         {
             var context = ((IObjectContextAdapter)Context).ObjectContext;
+            context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.StoreWins, Context.Products);
 
-            Context.Products.ToList().ForEach(m =>
-            {
-                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
-            });
+            //var context = ((IObjectContextAdapter)Context).ObjectContext;
+
+            //Context.Products.ToList().ForEach(m =>
+            //{
+            //    context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
+            //});
         }
 
         public static ObservableCollection<Winner> Winners { get; set; } = new ObservableCollection<Winner>(context.Winners);

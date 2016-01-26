@@ -244,17 +244,10 @@ namespace PublicOrders.ViewModels
         {
             DataService.UpdateWinnerContext();
             DataService.UpdateNotesContext();
-            //Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
-            //WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.WinnersDbContext.WinnerStatuses);
-            //Winners = DataService.Winners;
 
-            //ToView.Source = Winners;
             ToView.View.Refresh();
-
-            //Favorites.Source = Winners;
             Favorites.View.Refresh();
 
-            //BlackList.Source = Winners;
             BlackList.View.Refresh();
         }
 
