@@ -44,6 +44,7 @@ namespace PublicOrders.ViewModels
             {
                 _selectedLot = value;
                 OnPropertyChanged("SelectedLot");
+                GetWinnerActivity(null);
             }
         }
 
@@ -552,6 +553,67 @@ namespace PublicOrders.ViewModels
         #endregion
 
 
+        private DelegateCommand _getWinnerActivityCommand;
+        private ObservableCollection<WinnerActivity> _winnerActivities;
+        private int _maxAxis;
+
+        public ICommand GetWinnerActivityCommand
+        {
+            get
+            {
+                if (_getWinnerActivityCommand == null)
+                {
+                    _getWinnerActivityCommand = new DelegateCommand(GetWinnerActivity);
+                }
+                return _getWinnerActivityCommand;
+            }
+        }
+        public ObservableCollection<WinnerActivity> WinnerActivities
+        {
+            get { return _winnerActivities; }
+            set
+            {
+                _winnerActivities = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int MaxAxis
+        {
+            get { return _maxAxis; }
+            set
+            {
+                _maxAxis = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public void GetWinnerActivity(object param)
+        {
+            WinnerActivities.Clear();
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 300});
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(2), Value = 130 });
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(3), Value = 240 });
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(5), Value = 30 });
+
+            WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
+            WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
+            proc.OperateWinDates(SelectedLot.Winner.Name);
+        }
+
+        private void ActivityReady_proc(List<DateTime> dates, ResultType_enum resultType_enum, string message)
+        {
+            DateTime i = DateTime.Now.AddYears(-10);
+            while (i.Date.ToString("yy-MM") != DateTime.Now.ToString("yy-MM"))
+            {
+                WinnerActivities.Add(new WinnerActivity() { Date = i, Value = dates.Count(m => m.Year == i.Year && m.Month == i.Month) });
+                i = i.AddMonths(1);
+            }
+
+            MaxAxis = WinnerActivities.Max(m => m.Value);
+
+        }
+
 
         public WinnerSearchViewModel()
         {
@@ -566,6 +628,8 @@ namespace PublicOrders.ViewModels
             ClientUsers = new ObservableCollection<User>(DataService.Context.Users.Where(m => m.UserStatusId == 2).ToList());
 
             WinnerStatuses = new ObservableCollection<WinnerStatus>(DataService.Context.WinnerStatuses);
+
+            WinnerActivities = new ObservableCollection<WinnerActivity>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -24,12 +24,12 @@ namespace PublicOrders.Data
 
         public static void UpdateWinnerContext()
         {
-            var context = ((IObjectContextAdapter)Context).ObjectContext;
+            //var context = ((IObjectContextAdapter)Context).ObjectContext;
 
-            Context.Winners.ToList().ForEach(m =>
-            {
-                context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
-            });
+            //Context.Winners.ToList().ForEach(m =>
+            //{
+            //    context.Refresh(System.Data.Entity.Core.Objects.RefreshMode.ClientWins, m);
+            //});
         }
 
         public static void UpdateNotesContext()

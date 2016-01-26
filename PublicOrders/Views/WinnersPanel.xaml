@@ -75,7 +75,7 @@
             <TextBlock Text="Статус" Grid.Column="0" Grid.Row="3" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Пользователь" Grid.Column="0" Grid.Row="5" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Рейтинг" Grid.Column="0" Grid.Row="4" FontSize="18" VerticalAlignment="Center" Margin="10"/>
-            <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedWinner.Name}"/>
+            <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Name}" FontSize="18" Margin="10,10,10,10" Grid.Column="1" ToolTip="{Binding SelectedWinner.Name}" TextWrapping="Wrap"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                 <TextBlock Grid.Row="1" Text="Email: " FontSize="18" Margin="10,10,0,10" Grid.Column="1"/>
                 <TextBox IsReadOnly="True" Grid.Row="1" BorderThickness="0" Text="{Binding SelectedWinner.Email}" FontSize="18" Margin="10,10,10,10" Grid.Column="1"/>
@@ -177,11 +177,11 @@
                         
                         <Button Content="Обновить" Style="{StaticResource MiniButtonStyle}" Command="{Binding GetWinnerActivityCommand}" Grid.Row="0"></Button>
                         
-                        <telerik:RadCartesianChart Grid.Row="1">
+                        <telerik:RadCartesianChart Grid.Row="1" Margin="20">
                             <telerik:RadCartesianChart.Resources>
                                 <labelConverter:AxisLabelConverter x:Key="axisLabelConverter" />
                                 <telerik:LinearAxis x:Key="additionalAxis"
-                                    Minimum="0" Maximum="300"
+                                    Minimum="0" Maximum="{Binding MaxAxis}"
                                     HorizontalLocation="Right">
                                     <telerik:LinearAxis.LabelStyle>
                                         <Style TargetType="TextBlock">
@@ -203,30 +203,48 @@
                                 </DataTemplate>
                             </telerik:RadCartesianChart.Resources>
 
-                            <!--<telerik:RadCartesianChart.EmptyContentTemplate>
+                            <telerik:RadCartesianChart.EmptyContentTemplate>
                                 <DataTemplate>
                                     <telerik:RadBusyIndicator IsBusy="True" IsIndeterminate="True" BusyContent="Загрузка данных ..." />
                                 </DataTemplate>
-                            </telerik:RadCartesianChart.EmptyContentTemplate>-->
+                            </telerik:RadCartesianChart.EmptyContentTemplate>
                             <telerik:RadCartesianChart.Series>
-                                <telerik:LineSeries ItemsSource="{Binding WinnerActivities}" Stroke="Red"
-                                    ValueBinding="Close" CategoryBinding="Date"
+                                <telerik:LineSeries ItemsSource="{Binding WinnerActivities}" Stroke="DarkBlue"
+                                    ValueBinding="Value" CategoryBinding="Date"
                                     RenderOptions="{Binding Path=SelectedValue, ElementName=renderingModesList}"
                                     VerticalAxis="{StaticResource additionalAxis}">
                                     <telerik:LineSeries.TrackBallTemplate>
                                         <DataTemplate>
-                                            <Ellipse Height="9" Width="9" Stroke="White" StrokeThickness="1" Fill="Aqua" />
+                                            <Ellipse Height="9" Width="9" Stroke="White" StrokeThickness="1" Fill="Black" />
                                         </DataTemplate>
                                     </telerik:LineSeries.TrackBallTemplate>
                                 </telerik:LineSeries>
                             </telerik:RadCartesianChart.Series>
 
+                            <telerik:RadCartesianChart.TrackBallLineStyle>
+                                <Style />
+                            </telerik:RadCartesianChart.TrackBallLineStyle>
+                            <telerik:RadCartesianChart.TrackBallInfoStyle>
+                                <Style TargetType="telerik:TrackBallInfoControl">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="telerik:TrackBallInfoControl" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </telerik:RadCartesianChart.TrackBallInfoStyle>
+
+                            <telerik:RadCartesianChart.Behaviors>
+                                <telerik:ChartPanAndZoomBehavior PanMode="Horizontal" ZoomMode="Horizontal" DragMode="Pan" />
+                                <telerik:ChartTrackBallBehavior ShowIntersectionPoints="True" TrackInfoUpdated="OnTrackInfoUpdated" />
+                            </telerik:RadCartesianChart.Behaviors>
+
                             <telerik:RadCartesianChart.HorizontalAxis>
-                                <telerik:DateTimeContinuousAxis MajorStep="12" MajorStepUnit="Month" TickOrigin="1-1-2000"
+                                <telerik:DateTimeContinuousAxis MajorStep="4" MajorStepUnit="Month" PlotMode="OnTicks" 
                                                 LabelTemplate="{StaticResource axisLabelTemplate}" />
                             </telerik:RadCartesianChart.HorizontalAxis>
                             <telerik:RadCartesianChart.VerticalAxis>
-                                <telerik:LinearAxis Minimum="0" Maximum="300">
+                                <telerik:LinearAxis Minimum="0" Maximum="{Binding MaxAxis}">
                                     <telerik:LinearAxis.LabelStyle>
                                         <Style TargetType="TextBlock" BasedOn="{StaticResource axisTextStyleMain}">
                                             <Setter Property="Margin" Value="0,0,2,0"/>

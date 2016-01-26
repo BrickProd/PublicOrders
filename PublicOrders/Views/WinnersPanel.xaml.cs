@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using PublicOrders.Data;
 using PublicOrders.Models;
 using PublicOrders.ViewModels;
+using Telerik.Charting;
+using Telerik.Windows.Controls.ChartView;
 
 namespace PublicOrders.Views
 {
@@ -27,6 +29,18 @@ namespace PublicOrders.Views
         public WinnersPanel()
         {
             InitializeComponent();
+        }
+
+        private void OnTrackInfoUpdated(object sender, TrackBallInfoEventArgs e)
+        {
+            if (e.Context.DataPointInfos.Count == 3)
+            {
+                CategoricalDataPoint dp1 = e.Context.DataPointInfos[0].DataPoint as CategoricalDataPoint;
+                //this.date.Text = ((DateTime)dp1.Category).ToString("MMM dd, yyyy");
+                //this.ibmCloseValue.Text = dp1.Value.Value.ToString("F2");
+                //this.msftCloseValue.Text = (e.Context.DataPointInfos[1].DataPoint as CategoricalDataPoint).Value.Value.ToString("F2");
+                //this.hpqCloseValue.Text = (e.Context.DataPointInfos[2].DataPoint as CategoricalDataPoint).Value.Value.ToString("F2");
+            }
         }
 
         private void WinnerDoubleClick(object sender, MouseEventArgs e)

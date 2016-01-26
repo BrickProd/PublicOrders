@@ -38,6 +38,7 @@ namespace PublicOrders.ViewModels
             {
                 _selectedWinner = value;
                 OnPropertyChanged();
+                GetWinnerActivity(null);
             }
         }
 
@@ -121,7 +122,8 @@ namespace PublicOrders.ViewModels
         }
 
         private DelegateCommand _getWinnerActivityCommand;
-        private List<WinnerActivity> _winnerActivities;
+        private ObservableCollection<WinnerActivity> _winnerActivities;
+        private int _maxAxis;
 
         public ICommand GetWinnerActivityCommand
         {
@@ -135,7 +137,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public List<WinnerActivity> WinnerActivities
+        public ObservableCollection<WinnerActivity> WinnerActivities
         {
             get { return _winnerActivities; }
             set
@@ -145,50 +147,39 @@ namespace PublicOrders.ViewModels
             }
         }
 
-
-        //public void DeleteWinner(object param)
-        //{
-        //    if (SelectedWinner == null) return;
-        //    if (MessageBox.Show("Удалить выделенного победителя?", "Предупреждение",
-        //       MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
-        //    {
-        //        SelectedWinner.Rating = 0;
-        //        SelectedWinner.WinnerStatus = null;
-
-        //        DataService.WinnersDbContext.SaveChanges();
-
-        //        Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
-
-        //        ToView.Source = Winners;
-        //        ToView.View.Refresh();
-
-        //        Favorites.Source = Winners;
-        //        Favorites.View.Refresh();
-
-        //        BlackList.Source = Winners;
-        //        BlackList.View.Refresh();
-        //    }
-        //}
-
+        public int MaxAxis
+        {
+            get { return _maxAxis; }
+            set
+            {
+                _maxAxis = value;
+                OnPropertyChanged();
+            }
+        }
 
         public void GetWinnerActivity(object param)
         {
-            WinnerActivities = new List<WinnerActivity>();
+            WinnerActivities.Clear();
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 300});
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(2), Value = 130 });
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(3), Value = 240 });
+            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(5), Value = 30 });
 
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 300});
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(10), Value = 130 });
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(12), Value = 240 });
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(15), Value = 30 });
-
-            //WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
-            //WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
-
-            //proc.OperateWinDates(SelectedWinner.Name);
+            WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
+            WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
+            proc.OperateWinDates(SelectedWinner.Name);
         }
 
         private void ActivityReady_proc(List<DateTime> dates, ResultType_enum resultType_enum, string message)
         {
-            
+            DateTime i = DateTime.Now.AddYears(-10);
+            while (i.Date.ToString("yy-MM")!=DateTime.Now.ToString("yy-MM"))
+            {
+                WinnerActivities.Add(new WinnerActivity() {Date = i, Value = dates.Count(m => m.Year == i.Year && m.Month == i.Month)});
+                i = i.AddMonths(1);
+            }
+
+            MaxAxis = WinnerActivities.Max(m => m.Value);
 
         }
 
@@ -238,12 +229,8 @@ namespace PublicOrders.ViewModels
 
 
 
-            WinnerActivities = new List<WinnerActivity>();
+            WinnerActivities = new ObservableCollection<WinnerActivity>();
 
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 100 });
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(10), Value = 130 });
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(12), Value = 240 });
-            WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddDays(15), Value = 10 });
 
 
         }
