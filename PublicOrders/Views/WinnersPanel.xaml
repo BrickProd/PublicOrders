@@ -11,22 +11,10 @@
              d:DesignHeight="500" d:DesignWidth="700" Padding="20 0 20 0" FontSize="18">
     <UserControl.Resources>
         <Style x:Key="WinnerItemContainerStyle" BasedOn="{StaticResource ListBoxItemStyle}" TargetType="ListViewItem">
-            <EventSetter Event="Control.MouseDoubleClick" Handler="WinnerDoubleClick"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Lot.Order.LawType.Name}" Value="223">
-                    <Setter Property="Background" Value="#0AD0F7"></Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Lot.Order.LawType.Name}" Value="44">
-                    <Setter Property="Background" Value="#E7E284"></Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Lot.Order.LawType.Name}" Value="94">
-                    <Setter Property="Background" Value="#E7E284"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
+            <EventSetter Event="Control.MouseDoubleClick" Handler="WinnerDoubleClick" />
         </Style>
         <DataTemplate x:Key="WinnerDataTemplate">
             <StackPanel Orientation="Horizontal">
-                <!--<CheckBox IsChecked="{Binding IsChoosen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5"></CheckBox>-->
                 <StackPanel>
                     <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding Lot.Name}" FontSize="14" TextWrapping="Wrap"/>
@@ -68,7 +56,7 @@
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
             <Button Grid.Row="8" Style="{StaticResource SlideDownEButtonStyle}"
-				x:Name="CloseWinnerInfoPanel" Command="{Binding SaveProductCommand}" Click="CloseWinnerInfoPanel_Click"
+				x:Name="CloseWinnerInfoPanel" Command="{Binding SaveWinnerCommand}" Click="CloseWinnerInfoPanel_Click"
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
             <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
             <TextBlock Text="Контакты" Grid.Column="0" Grid.Row="2" FontSize="18" VerticalAlignment="Center" Margin="10"/>
@@ -269,23 +257,21 @@
         </Grid>
         <TabControl BorderThickness="0">
             <TabItem Header="Для просмотра" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
-                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding ToView.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding ToView.View}" FontSize="16" 
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
                           ItemTemplate="{StaticResource WinnerDataTemplate}">
 
                 </ListView>
             </TabItem>
             <TabItem Header="Избранное" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
-                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding Favorites.View}" FontSize="16" 
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
                           ItemTemplate="{StaticResource WinnerDataTemplate}">
-                    <ListView.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding DeleteWinnerCommand}"></KeyBinding>
-                    </ListView.InputBindings>
+                   
                 </ListView>
             </TabItem>
             <TabItem Header="Чёрный список" Style="{StaticResource PanelContentStyleMini}" BorderThickness="0">
-                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding BlackList.View}" FontSize="16" SelectedItem="{Binding SelectedWinner}"
+                <ListView Margin="10" BorderThickness="1 0 0 0" ItemsSource="{Binding BlackList.View}" FontSize="16" 
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"	BorderBrush="LightGray" ItemContainerStyle="{StaticResource WinnerItemContainerStyle}"
                           ItemTemplate="{StaticResource WinnerDataTemplate}">
 

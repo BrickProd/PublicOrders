@@ -20,15 +20,18 @@ namespace PublicOrders.ViewModels
 {
     public class WinnersViewModel : INotifyPropertyChanged
     {
-        public UserStatus CurentStatus { get; set; }
+        
 
         private ObservableCollection<Winner> _winners;
         private Winner _selectedWinner;
+        private DelegateCommand _getWinnerActivityCommand;
+        private ObservableCollection<WinnerActivity> _winnerActivities;
+        private int _maxAxis;
 
         public CollectionViewSource ToView { get; set; }
         public CollectionViewSource Favorites { get; set; }
         public CollectionViewSource BlackList { get; set; }
-
+        public UserStatus CurentStatus { get; set; }
         public ObservableCollection<WinnerStatus> WinnerStatuses { get; set; } 
 
         public Winner SelectedWinner
@@ -36,9 +39,9 @@ namespace PublicOrders.ViewModels
             get { return _selectedWinner; }
             set
             {
+                //_selectedWinner = DataService.Winners.FirstOrDefault(m=>m.WinnerId == value.WinnerId);
                 _selectedWinner = value;
                 OnPropertyChanged();
-                GetWinnerActivity(null);
             }
         }
 
@@ -54,18 +57,18 @@ namespace PublicOrders.ViewModels
 
         public ObservableCollection<User> ClientUsers { get; set; }
 
-        //private DelegateCommand _deleteWinnerCommand;
-        //public ICommand DeleteWinnerCommand
-        //{
-        //    get
-        //    {
-        //        if (_deleteWinnerCommand == null)
-        //        {
-        //            _deleteWinnerCommand = new DelegateCommand(DeleteWinner);
-        //        }
-        //        return _deleteWinnerCommand;
-        //    }
-        //}
+        private DelegateCommand _saveWinnerCommand;
+        public ICommand SaveWinnerCommand
+        {
+            get
+            {
+                if (_saveWinnerCommand == null)
+                {
+                    _saveWinnerCommand = new DelegateCommand(SaveWinner);
+                }
+                return _saveWinnerCommand;
+            }
+        }
 
         private DelegateCommand _addNoteCommand;
         public ICommand AddNoteCommand
@@ -121,9 +124,7 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        private DelegateCommand _getWinnerActivityCommand;
-        private ObservableCollection<WinnerActivity> _winnerActivities;
-        private int _maxAxis;
+
 
         public ICommand GetWinnerActivityCommand
         {
@@ -157,38 +158,8 @@ namespace PublicOrders.ViewModels
             }
         }
 
-        public void GetWinnerActivity(object param)
-        {
-            WinnerActivities.Clear();
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now, Value = 300});
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(2), Value = 130 });
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(3), Value = 240 });
-            //WinnerActivities.Add(new WinnerActivity() { Date = DateTime.Now.AddMonths(5), Value = 30 });
-
-            WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
-            WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
-            proc.OperateWinDates(SelectedWinner.Name);
-        }
-
-        private void ActivityReady_proc(List<DateTime> dates, ResultType_enum resultType_enum, string message)
-        {
-            DateTime i = DateTime.Now.AddYears(-10);
-            while (i.Date.ToString("yy-MM")!=DateTime.Now.ToString("yy-MM"))
-            {
-                WinnerActivities.Add(new WinnerActivity() {Date = i, Value = dates.Count(m => m.Year == i.Year && m.Month == i.Month)});
-                i = i.AddMonths(1);
-            }
-
-            MaxAxis = WinnerActivities.Max(m => m.Value);
-
-        }
-
         public WinnersViewModel()
         {
-            //Winners = new ObservableCollection<Winner>(DataService.WinnersDbContext.Winners);
-            //Winners = new ObservableCollection<Winner>(new List<Winner>() { new Winner() {Name = "Jnbbui", WinnerStatus = DataService.WinnersDbContext.WinnerStatuses.Find(1), Rating = 2} });
-            //Winners = DataService.Winners;
-
             WinnerStatuses = DataService.WinnerStatuses;
 
             var isAdmin = DataService.CurrentUser.UserStatus.UserStatusId == 1;
@@ -228,7 +199,6 @@ namespace PublicOrders.ViewModels
             CurentStatus = DataService.CurrentUser.UserStatus;
 
 
-
             WinnerActivities = new ObservableCollection<WinnerActivity>();
 
 
@@ -237,18 +207,55 @@ namespace PublicOrders.ViewModels
 
 
 
+        public void GetWinnerActivity(object param)
+        {
+            WinnerActivities.Clear();
 
+            WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
+            WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
+            if (SelectedWinner != null)
+                proc.OperateWinDates(SelectedWinner.Name);
+        }
+
+        private void ActivityReady_proc(List<DateTime> dates, ResultType_enum resultType_enum, string message)
+        {
+            DateTime i = DateTime.Now.AddYears(-10);
+            while (i.Date.ToString("yy-MM") != DateTime.Now.ToString("yy-MM"))
+            {
+                WinnerActivities.Add(new WinnerActivity() { Date = i, Value = dates.Count(m => m.Year == i.Year && m.Month == i.Month) });
+                i = i.AddMonths(1);
+            }
+
+            MaxAxis = WinnerActivities.Max(m => m.Value);
+
+        }
 
 
         public void RefreshList(object param)
         {
             DataService.UpdateWinnerContext();
-            //DataService.UpdateNotesContext();
 
             ToView.View.Refresh();
             Favorites.View.Refresh();
-
             BlackList.View.Refresh();
+        }
+
+        public void SaveWinner(object param)
+        {
+            try
+            {
+ 
+                DataService.Context.Entry(SelectedWinner).State = EntityState.Modified;
+                DataService.Context.SaveChanges();
+
+                //if(CurentStatus.UserStatusId!=1)
+                    RefreshList(null);
+            }
+            catch (Exception ex)
+            {
+                DataService.Context.Entry(SelectedWinner).State = EntityState.Unchanged;
+                MessageBox.Show("Ошибка! Изменения не сохранены.\nДождитесь окончания работы поиска.");
+            }
         }
 
         public void AddNote(object param)

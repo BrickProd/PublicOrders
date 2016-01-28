@@ -43,9 +43,9 @@ namespace PublicOrders.Views
             }
         }
 
+        //ДАБЛКЛИК НА ВИНЕРЕ
         private void WinnerDoubleClick(object sender, MouseEventArgs e)
         {
-
             ThicknessAnimation anim = new ThicknessAnimation
             {
                 From = new Thickness(0, 50, 0, -50),
@@ -53,7 +53,6 @@ namespace PublicOrders.Views
                 Duration = TimeSpan.FromSeconds(0.3),
                 EasingFunction = new CircleEase()
             };
-
 
             DoubleAnimation anim2 = new DoubleAnimation
             {
@@ -70,7 +69,8 @@ namespace PublicOrders.Views
             var vm = DataContext as WinnersViewModel;
 
             ListViewItem listViewItem = sender as ListViewItem;
-            vm.SelectedWinner = listViewItem.DataContext as Winner;;
+            vm.SelectedWinner = listViewItem.DataContext as Winner;
+            vm.GetWinnerActivityCommand.Execute(null);
         }
 
         //закрыть панель победителя 
@@ -109,8 +109,6 @@ namespace PublicOrders.Views
            
 
             ButtonBackBase_OnClick(null, e);
-
-            vm.RefreshList(null);
         }
 
         //даблклик на заметке
