@@ -371,7 +371,8 @@ namespace PublicOrders.ViewModels
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    DataService.Customers.Add(customer);
+                    var myCustomer = DataService.Context.Customers.Find(customer.CustomerId);
+                    DataService.Customers.Add(myCustomer);
                 }));
             }
             catch {
@@ -524,7 +525,8 @@ namespace PublicOrders.ViewModels
                 if (lot.Winner.Name != "")
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        DataService.Lots.Add(lot);
+                        var myLot = DataService.Context.Lots.Find(lot.LotId);
+                        DataService.Lots.Add(myLot);
                     }));
             }
             catch {

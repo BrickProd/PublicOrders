@@ -22,6 +22,8 @@ namespace PublicOrders.Processors.Internet
 
     public class CustomersSearchProcessor
     {
+        PublicOrdersContext context = new PublicOrdersContext();
+
         private string text = "";
         private HtmlAgilityPack.HtmlDocument doc;
         private InternetRequestEngine internetRequestEngine  = null;
@@ -102,7 +104,7 @@ namespace PublicOrders.Processors.Internet
                 if (resultTypeCheck != ResultType_enum.Done)
                 {
                     customerSearchProgress_delegate("Получение заказчиков из БД..", 0);
-                    ObservableCollection<Customer> customers = new ObservableCollection<Customer>(DataService.Context.Customers.Where(m => ((m.Name.Contains(customerName)) || (m.Vatin.Contains(customerName)))).ToList());
+                    ObservableCollection<Customer> customers = new ObservableCollection<Customer>(context.Customers.Where(m => ((m.Name.Contains(customerName)) || (m.Vatin.Contains(customerName)))).ToList());
 
                     if (customers.Count() > 0)
                     {
@@ -154,20 +156,20 @@ namespace PublicOrders.Processors.Internet
                     if (customerResult == ResultType_enum.Error) continue;
 
                     // Проверить на повтор и записать в БД
-                    Customer repeatCustomer = DataService.Context.Customers.FirstOrDefault(m => (m.Name == customer.Name && m.Vatin == customer.Vatin));
+                    Customer repeatCustomer = context.Customers.FirstOrDefault(m => (m.Name == customer.Name && m.Vatin == customer.Vatin));
                     if (repeatCustomer != null)
                     {
                         if (repeatCustomer.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.Trim().ToLower() == customerType_enum.ToString().ToLower()) == null)
                         {
-                            repeatCustomer.CustomerTypes.Add(DataService.Context.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
+                            repeatCustomer.CustomerTypes.Add(context.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
                         }
                         customer = repeatCustomer;
                     }
                     else {
-                        customer.CustomerTypes.Add(DataService.Context.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
+                        customer.CustomerTypes.Add(context.CustomerTypes.FirstOrDefault(m => m.CustomerTypeCode.ToLower() == customerType_enum.ToString().ToLower()));
                         customer.CreateDateTime = DateTime.Now;
-                        DataService.Context.Customers.Add(customer);
-                        DataService.Context.SaveChanges();
+                        context.Customers.Add(customer);
+                        context.SaveChanges();
                     }
 
                     customerSearched_delegate(customer);
@@ -228,7 +230,7 @@ namespace PublicOrders.Processors.Internet
                     {
                         case (LawType_enum._44_94):
                             string org44Id = match.Value.Substring(match.Value.IndexOf("&organizationId=") + 16, match.Value.Length - (match.Value.IndexOf("&organizationId=") + 16));
-                            Customer customerRepeat = DataService.Context.Customers.ToList().FirstOrDefault(m => (m.Internet44Id == org44Id));
+                            Customer customerRepeat = context.Customers.ToList().FirstOrDefault(m => (m.Internet44Id == org44Id));
                             if (customerRepeat != null)
                             {
                                 customer = customerRepeat;
@@ -328,7 +330,7 @@ namespace PublicOrders.Processors.Internet
                             break;
                     }
                 }
-                customer.CustomerLevel = DataService.Context.CustomerLevels.FirstOrDefault(m => m.CustomerLevelCode == customerLevel.ToString());
+                customer.CustomerLevel = context.CustomerLevels.FirstOrDefault(m => m.CustomerLevelCode == customerLevel.ToString());
 
                 // ИНН (VATIN)
                 text = ".//table";
