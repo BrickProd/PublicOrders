@@ -37,6 +37,7 @@ namespace PublicOrders.Data
             context.Users.Where(m => m.UserStatusId == 2).ToList().ForEach(m => ClientUsers.Add(m));
 
             context.Configuration.LazyLoadingEnabled = true;
+
         }
 
         public static void UpdateNotesContext()

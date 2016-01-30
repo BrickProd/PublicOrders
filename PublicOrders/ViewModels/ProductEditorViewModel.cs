@@ -526,12 +526,15 @@ namespace PublicOrders.ViewModels
             {
                 SelectedProduct.ModifiedDateTime = DateTime.Now;
 
+                var myProduct = DataService.Context.Products.Find(SelectedProduct.ProductId);
                 try
                 {
+                    DataService.Context.Entry(myProduct).CurrentValues.SetValues(SelectedProduct);
                     DataService.Context.SaveChanges();
                 }
                 catch (Exception ex)
                 {
+                    DataService.Context.Entry(myProduct).State = EntityState.Unchanged;
                     MessageBox.Show("Ошибка! Изменения не сохранены.\nДождитесь окончания загрузки продуктов.");
                 }
             }

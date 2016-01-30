@@ -244,12 +244,11 @@ namespace PublicOrders.ViewModels
         {
             try
             {
- 
-                DataService.Context.Entry(SelectedWinner).State = EntityState.Modified;
+                var myWinner = DataService.Context.Winners.Find(SelectedWinner.WinnerId);
+                DataService.Context.Entry(myWinner).CurrentValues.SetValues(SelectedWinner);
                 DataService.Context.SaveChanges();
 
-                //if(CurentStatus.UserStatusId!=1)
-                    RefreshList(null);
+                RefreshList(null);
             }
             catch (Exception ex)
             {

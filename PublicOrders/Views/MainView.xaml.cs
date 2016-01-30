@@ -57,8 +57,8 @@ namespace PublicOrders
         {
             try
             {
-                var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
-                var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
+                //var vm = this.ProductEditorPanel.DataContext as ProductEditorViewModel;
+                //var mvm = Application.Current.Resources["MainViewModel"] as MainViewModel;
 
                 //mvm.RefreshProducts();
                 //vm.Products.Source = mvm.ProductCollection;
@@ -73,6 +73,8 @@ namespace PublicOrders
                 //vm.CustomInstructions.Source = mvm.InstructionCollection.Where(m => m.InstructionId != 1);
                 //vm.CustomInstructions.View.Refresh();
                 //this.ProductEditorPanel.DataContext = new ProductEditorViewModel();
+
+                //DataService.UpdateProductsContext();
             }
             catch (Exception ex)
             {
@@ -147,9 +149,11 @@ namespace PublicOrders
 
 	    private void Selector_OnSelected(object sender, RoutedEventArgs e)
 	    {
-	        var vm=  WinnersPanel.DataContext as WinnersViewModel;
+	        //var vm=  WinnersPanel.DataContext as WinnersViewModel;
 
             //vm.RefreshListCommand.Execute(null);
+
+            //DataService.UpdateWinnerContext();
 	    }
 	}
 }

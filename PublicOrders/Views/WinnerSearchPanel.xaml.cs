@@ -151,14 +151,18 @@ namespace PublicOrders.Views
             //var en2 = DataService.Context.Entry(vm.SelectedLot.Winner).OriginalValues;
             //var s = en == en2;
 
+            var myWinner = DataService.Context.Winners.Find(vm.SelectedLot.Winner.WinnerId);
             try
             {
-                DataService.Context.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
+                DataService.Context.Entry(myWinner).CurrentValues.SetValues(vm.SelectedLot.Winner);
                 DataService.Context.SaveChanges();
+
+                //DataService.Context.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
+                //DataService.Context.SaveChanges();
             }
             catch (Exception ex)
             {
-                DataService.Context.Entry(vm.SelectedLot.Winner).State = EntityState.Unchanged;
+                DataService.Context.Entry(myWinner).State = EntityState.Unchanged;
                 MessageBox.Show("Ошибка! Изменения не сохранены.\nДождитесь окончания работы поиска.");
             }
             

@@ -41,12 +41,13 @@
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
-                        <RowDefinition Height="55"/>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="60"/>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="255*"/>
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
-                    <Button Grid.Row="7" Style="{StaticResource SlideDownEButtonStyle}"
+                    <Button Grid.Row="8" Style="{StaticResource SlideDownEButtonStyle}"
 				x:Name="CloseWinnerInfoPanel" Command="{Binding SaveProductCommand}" Click="CloseWinnerInfoPanel_Click"
                     Margin="10,-80,0,10" HorizontalAlignment="Left" Width="150" Content="Свернуть"/>
                     <TextBlock Text="Название" Grid.Column="0" Grid.Row="1" FontSize="18" VerticalAlignment="Center" Margin="10"/>
@@ -64,12 +65,12 @@
                     <telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}" DisplayMemberPath="Name" telerik:StyleManager.Theme="Windows8Touch"
                                  ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
 
-                    <!--<telerik:RadComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Login" telerik:StyleManager.Theme="Windows8Touch"
-                                 ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>-->
+                    <telerik:RadComboBox Grid.Column="1" Grid.Row="4" Margin="10" SelectedItem="{Binding SelectedLot.Winner.User}" ItemsSource="{Binding ClientUsers}" DisplayMemberPath="Login" telerik:StyleManager.Theme="Windows8Touch"
+                                 ClearSelectionButtonVisibility="Visible" ClearSelectionButtonContent="Не в списках"></telerik:RadComboBox>
                     <!--<ComboBox Grid.Column="1" Grid.Row="3" Margin="10" SelectedItem="{Binding SelectedLot.Winner.WinnerStatus}" ItemsSource="{Binding WinnerStatuses}"  DisplayMemberPath="Name" SelectedValuePath="WinnerStatusId" FontSize="18">
                 
             </ComboBox>-->
-                    <TabControl Grid.Row="4" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
+                    <TabControl Grid.Row="5" Grid.Column="1" Margin="10,0,0,10" Grid.RowSpan="2">
                         <TabItem Header="Лот" Style="{StaticResource PanelContentStyleMini}">
                             <Grid>
                                 <ScrollViewer>
@@ -224,7 +225,7 @@
                             </Grid>
                         </TabItem>
                     </TabControl>
-                    <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
+                    <TextBlock Grid.Row="7" Grid.Column="1" Margin="10,0,0,10" HorizontalAlignment="Right">            
                 <Hyperlink NavigateUri="{Binding SelectedLot.OrderHref}" RequestNavigate="Hyperlink_RequestNavigate">
                     Подробности на сайте
                 </Hyperlink>

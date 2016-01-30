@@ -100,13 +100,6 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
             var vm = DataContext as WinnersViewModel;
-            //vm.ToView.View.Refresh();
-            //vm.Favorites.View.Refresh();
-            //vm.BlackList.View.Refresh();
-
-            
-
-           
 
             ButtonBackBase_OnClick(null, e);
         }
