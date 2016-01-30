@@ -116,8 +116,8 @@ namespace PublicOrders.Views
 
             var vm = DataContext as WinnerSearchViewModel;
 
-            ListViewItem listViewItem = sender as ListViewItem;
-            vm.SelectedLot.Winner = listViewItem.DataContext as Winner;
+            //ListViewItem listViewItem = sender as ListViewItem;
+            //vm.SelectedLot.Winner = listViewItem.DataContext as Winner;
             vm.GetWinnerActivityCommand.Execute(null);
         }
 
@@ -157,7 +157,8 @@ namespace PublicOrders.Views
             //var en2 = DataService.Context.Entry(vm.SelectedLot.Winner).OriginalValues;
             //var s = en == en2;
 
-            var myWinner = DataService.Context.Winners.Find(vm.SelectedLot.Winner.WinnerId);
+
+            var myWinner = DataService.Context.Winners.Find(vm.SelectedLot.Winner != null ? vm.SelectedLot.Winner.WinnerId : vm.SelectedLot.WinnerId);
             try
             {
                 DataService.Context.Entry(myWinner).CurrentValues.SetValues(vm.SelectedLot.Winner);
@@ -171,7 +172,7 @@ namespace PublicOrders.Views
             catch (Exception ex)
             {
                 DataService.Context.Entry(myWinner).State = EntityState.Unchanged;
-                MessageBox.Show("Ошибка! Изменения не сохранены.\nДождитесь окончания работы поиска.");
+                MessageBox.Show("Ошибка!");
             }
             
 
