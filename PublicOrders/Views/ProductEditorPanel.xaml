@@ -122,7 +122,7 @@
 
                             <Button x:Name="CheckGost" HorizontalAlignment="Left" Margin="5,5,5,5" Width="140"
         	                Command="{Binding CheckGostCommand}"
-                            CommandParameter="{Binding ElementName=ProductsListView, Path=SelectedItems}"
+                            CommandParameter="{Binding ElementName=ProductsListView}"
         	                FontSize="16" Content="Проверить ГОСТ"
         	                Height="30" VerticalAlignment="Bottom">
                                 <Button.Style>

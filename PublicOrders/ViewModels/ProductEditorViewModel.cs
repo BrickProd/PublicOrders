@@ -432,6 +432,11 @@ namespace PublicOrders.ViewModels
         private void AllGOSTsChecked_proc(ResultType_enum resultType_enum, string message)
         {
             GostCheckInProcess = false;
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Products.View.Refresh();
+            }));
+            
         }
 
         private void GOSTCheckProgress_proc(string text, int intValue) {
@@ -440,12 +445,8 @@ namespace PublicOrders.ViewModels
 
         private void CheckGost(object param)
         {
-            var obj = param as IEnumerable<object>;
-            var products = obj.Select(m =>
-            {
-                var p = m as Product;
-                return p;
-            }).ToList();
+            ListView productsListView = param as ListView;
+            var products = productsListView.SelectedItems.Cast<Product>().ToList();
 
             if (products != null && products.Any())
             {

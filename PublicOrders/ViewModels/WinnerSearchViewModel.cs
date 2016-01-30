@@ -527,6 +527,7 @@ namespace PublicOrders.ViewModels
                     {
                         var myLot = DataService.Context.Lots.Find(lot.LotId);
                         DataService.Lots.Add(myLot);
+                        DataService.Winners.Add(myLot.Winner);
                     }));
             }
             catch {
