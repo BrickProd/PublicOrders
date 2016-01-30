@@ -614,7 +614,9 @@ namespace PublicOrders.ViewModels
             WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
             WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
             
-            proc.OperateWinDates(SelectedLot.Winner.Name);
+            if(SelectedLot!=null)
+                if(SelectedLot.Winner!=null)
+                    proc.OperateWinDates(SelectedLot.Winner.Name);
         }
 
         private void ActivityReady_proc(List<DateTime> dates, ResultType_enum resultType_enum, string message)

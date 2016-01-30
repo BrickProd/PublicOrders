@@ -113,6 +113,12 @@ namespace PublicOrders.Views
             this.WinnerInfoPanel.BeginAnimation(FrameworkElement.OpacityProperty, anim2);
 
             this.WinnerInfoPanel.Visibility = Visibility.Visible;
+
+            var vm = DataContext as WinnerSearchViewModel;
+
+            ListViewItem listViewItem = sender as ListViewItem;
+            vm.SelectedLot.Winner = listViewItem.DataContext as Winner;
+            vm.GetWinnerActivityCommand.Execute(null);
         }
 
         //закрыть панель победителя 
