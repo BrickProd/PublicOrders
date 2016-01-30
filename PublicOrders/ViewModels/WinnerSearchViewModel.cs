@@ -55,7 +55,7 @@ namespace PublicOrders.ViewModels
             {
                 _selectedLot = value;
                 OnPropertyChanged("SelectedLot");
-                GetWinnerActivity(null);
+               
             }
         }
         public string SearchInput
@@ -613,6 +613,7 @@ namespace PublicOrders.ViewModels
 
             WinnerDatesSearched_delegete wds_delegate = new WinnerDatesSearched_delegete(ActivityReady_proc);
             WinnerActiveProcessor proc = new WinnerActiveProcessor(wds_delegate);
+            
             proc.OperateWinDates(SelectedLot.Winner.Name);
         }
 

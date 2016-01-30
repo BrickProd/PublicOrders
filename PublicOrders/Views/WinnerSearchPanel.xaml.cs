@@ -155,6 +155,8 @@ namespace PublicOrders.Views
             try
             {
                 DataService.Context.Entry(myWinner).CurrentValues.SetValues(vm.SelectedLot.Winner);
+                myWinner.WinnerStatus = vm.SelectedLot.Winner.WinnerStatus;
+                myWinner.User = vm.SelectedLot.Winner.User;
                 DataService.Context.SaveChanges();
 
                 //DataService.Context.Entry(vm.SelectedLot.Winner).State = EntityState.Modified;
