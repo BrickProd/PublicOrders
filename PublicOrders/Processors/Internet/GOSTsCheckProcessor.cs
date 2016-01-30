@@ -119,7 +119,7 @@ namespace PublicOrders.Processors.Internet
 
                 InternetRequestEngine internetRequestEngine = new InternetRequestEngine();
                 //List<Product> products = DataService.Context.Products.ToList();
-                Regex regex = new Regex("гост.*?\\d*-{0,1}\\d{2,4}", RegexOptions.IgnoreCase);
+                Regex regex = new Regex("гост.*?\\d*-\\d{2,4}", RegexOptions.IgnoreCase);
                 MatchCollection mColl = null;
                 Int16 checkResult = -1;
 
