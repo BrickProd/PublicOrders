@@ -429,7 +429,7 @@ namespace PublicOrders.Processors.Internet
                 text =  @"http://new.zakupki.gov.ru/epz/contract/extendedsearch/rss?searchString=&";
                 text += @"pageNumber=1&sortDirection=false&recordsPerPage=_500&sortBy=PO_DATE_OBNOVLENIJA&";
                 text += lawTypeStr + @"customerInn=" + customer.Vatin + "&customerCode=&customerFz223id=" + Convert.ToString(customer.Law_223_ID) + "&";
-                text += @"customerFz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customerTitle=" + /*customer.Name*/@"АДМИНИСТРАЦИЯ%20РЫБАЛОВСКОГО%20СЕЛЬСКОГО%20ПОСЕЛЕНИЯ" + "&";
+                text += @"customerFz94id=" + Convert.ToString(customer.Law_44_94_ID) + "&customerTitle=" + customer.Name /*@"АДМИНИСТРАЦИЯ%20РЫБАЛОВСКОГО%20СЕЛЬСКОГО%20ПОСЕЛЕНИЯ"*/ + "&";
                 text += @"ec=true&priceFrom=" + lowPrice + "&priceTo=" + highPrice + "&contractDateFrom=" + lowPublishDate.ToString("dd.MM.yyyy") + "&";
                 text += @"contractDateTo=" + highPublishDate.ToString("dd.MM.yyyy") + "&budgetaryFunds=on&extraBudgetaryFunds=on&openMode=DEFAULT_SAVED_SETTING";
 
